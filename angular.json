@@ -1,0 +1,168 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "Rib": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss",
+              "src/assets/vendor/slick/slick.min.css",
+              "src/assets/vendor/slick/slick-theme.min.css",
+              "src/assets/vendor/icons/feather.css",
+              "src/assets/vendor/bootstrap/css/bootstrap.min.css",
+              "src/assets/css/style.css",
+              "node_modules/ngx-toastr/toastr.css"
+
+            ],
+            "scripts": [
+              "src/assets/vendor/jquery/jquery.min.js",
+              "src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
+              "src/assets/vendor/slick/slick.min.js",
+              "src/assets/js/osahan.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "Rib:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "Rib:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "Rib:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss",
+              "src/assets/vendor/slick/slick.min.css",
+              "src/assets/vendor/slick/slick-theme.min.css",
+              "src/assets/vendor/icons/feather.css",
+              "src/assets/vendor/bootstrap/css/bootstrap.min.css",
+              "src/assets/css/style.css",
+              "node_modules/ngx-toastr/toastr.css"
+            ],
+            "scripts": [
+              "src/assets/vendor/jquery/jquery.min.js",
+              "src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
+              "src/assets/vendor/slick/slick.min.js",
+              "src/assets/js/osahan.js",
+              "src/assets/landing/js/theme.js",
+              "src/assets/landing/js/owl-carousel/owl.carousel.min.js",
+              "src/assets/landing/js/magnific-popup/jquery.magnific-popup.min.js",
+              "src/assets/landing/js/counter/counter.js",
+              "src/assets/landing/js/countdown/jquery.countdown.min.js",
+              "src/assets/landing/js/canvas.js",
+              "src/assets/landing/js/confetti.js",
+              "src/assets/landing/js/snap.svg.js",
+              "src/assets/landing/js/step.js",
+              "src/assets/landing/js/contact-form/contact-form.js",
+              "src/assets/landing/js/wow.min.js",
+              "src/assets/landing/js/color-customize/color-customizer.js",
+              "src/assets/landing/js/theme-script.js"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "/node_modules/"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "Rib:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "Rib:serve:production"
+            }
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "Rib",
+  "cli": {
+    "analytics": "f2bbbfc8-2143-44de-8ef7-7d803718bdaa"
+  }
+}
