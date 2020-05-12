@@ -1,0 +1,8 @@
+<div class="box shadow-sm border rounded bg-white mb-3">
+  <div class="box-title border-bottom p-3">
+     <h6 class="m-0">People you might know</h6>
+  </div>
+  <div class="box-body p-3" *ngIf="users">
+    <app-connection-aside-item *ngFor="let item of users | async" [currentUser]="item"></app-connection-aside-item>
+  </div>
+</div>

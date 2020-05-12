@@ -1,0 +1,56 @@
+<ul class="nav nav-justified border-bottom osahan-line-tab" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="feather-edit"></i> Share an update</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="feather-image"></i> Upload a file</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false"><i class="feather-clipboard"></i>
+          identify people</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="p-3 d-flex align-items-center w-100" href="#">
+            <div class="dropdown-list-image mr-3">
+                <img class="rounded-circle" [src]="currentUser?.imageprofil" alt="">
+                <div class="status-indicator bg-success"></div>
+            </div>
+            <div class="w-100">
+                <textarea placeholder=" {{currentUser?.nom}} {{currentUser?.prenom}} write your thoughts..." [(ngModel)]="currentPost.description" class="form-control border-0 p-0 shadow-none" rows="1"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="p-3 w-100">
+            <div class="row">
+                <div class=" job-item mb-3 col-lg-3 border rounded align-items-center" *ngFor='let url of urls'>
+                    <img [src]="url" style="width: 100% !important;">
+                </div>
+            </div>
+            <div class="upload-btn-wrapper d-flex justify-content-end">
+                <button class="btn btn-outline-primary btn-sm mr-1">Upload an image</button>
+                <input type="file" name="myfile" (change)="onSelectFile($event)" multiple/>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="p-3 w-100">
+            <app-post-identify></app-post-identify>
+        </div>
+    </div>
+</div>
+<div class="border-top p-3 d-flex align-items-center">
+    <div class="mr-auto">
+        <a class="text-link small" (click)="addLocation()" style="color: rgb(12, 102, 109); cursor: pointer;"><i class="feather-map-pin"></i> Add Location</a>
+    </div>
+
+    <div class="flex-shrink-1">
+        <button type="button" class="btn btn-outline-primary btn-sm mr-1" (click)="savePost()">Post Status</button>
+    </div>
+
+</div>
+<app-post-location *ngIf="location"></app-post-location>

@@ -1,0 +1,13 @@
+
+<div *ngIf="currentUser">
+  <div *ngIf="currentUser.abonnees">
+<div class="row">
+  <div class="col-md-4" *ngFor="let item of currentUser.abonnees">
+    <app-friends-item  [iduser]="item"></app-friends-item>
+  </div>
+</div>
+</div>
+<div *ngIf="!currentUser.abonnees">
+  <span>Nothing to display</span>
+</div>
+</div>

@@ -1,0 +1,68 @@
+<app-header></app-header>
+<div class="py-4" *ngIf="!detail">
+  <div class="container">
+    <div class="row">
+      <!-- Main Content -->
+      <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
+        <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
+          <app-post-form></app-post-form>
+        </div>
+        <app-post-list></app-post-list>
+      </main>
+      <aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
+        <app-user-card></app-user-card>
+        <app-connection-aside></app-connection-aside>
+        <app-rib-solutions></app-rib-solutions>
+      </aside>
+      <aside class="col col-xl-3 order-xl-3 col-lg-6 order-lg-3 col-md-6 col-sm-6 col-12">
+
+        <app-demonstrate-suggestion></app-demonstrate-suggestion>
+        <div class="box shadow-sm border rounded bg-white mb-3">
+          <div class="box-title border-bottom p-3">
+             <h6 class="m-0">Demonstration
+             </h6>
+          </div>
+          <div class="box-body p-3">
+
+          </div>
+        </div>
+
+          <app-job-aside></app-job-aside>
+
+        <app-premium></app-premium>
+        <div class="btn-group-fab" role="group" aria-label="FAB Menu" style="z-index: 10000;">
+          <div>
+            <button type="button" class="btn btn-main btn-primary" data-tooltip="Messaging"> <span class="badge badge-danger" style="position: absolute; margin-left:27%; margin-top:-10%; font-size: 1em; border-radius: 60%;">9+</span> <i class="fa fa-comments fa-2x"></i> </button>
+            <button type="button" class="btn btn-sub btn-info" data-toggle="modal" data-target="#exampleModal" data-tooltip="Parfait Aristand Nzo"> <i class="fa fa-arrows-alt"></i> </button>
+            <button type="button" class="btn btn-sub btn-danger" data-toggle="modal" data-target="#exampleModal" data-tooltip="Parfait Aristand Nzo"> <i class="fa fa-floppy-o"></i> </button>
+            <button type="button" class="btn btn-sub btn-warning" data-toggle="modal" data-target="#exampleModal" data-tooltip="Parfait Aristand Nzo"> <i class="fa fa-download"></i> </button>
+
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+<footer>
+  <app-footer></app-footer>
+</footer>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <span class="row">
+          <span class="col-lg-6">
+            <a routerLink="/messages"><h6>Open in messages</h6></a>
+          </span>
+          <span class="col-lg-6 d-flex justify-content-end">
+            <i class="feather-x" data-dismiss="modal"></i>
+          </span>
+        </span>
+          <hr>
+        <span style="margin-top: -4% !important;">
+          <app-chat-content></app-chat-content>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+import { Component, OnInit } from '@angular/core';
+import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
+import { Skill } from 'src/app/shared/entites/Skill';
+import { Router } from '@angular/router';
+import { SkillsService } from 'src/app/shared/services/skills.service';
+import * as firebase from 'firebase';
+import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
+import { ToastrService } from 'ngx-toastr';
+@Component({
+  selector: 'app-user-settings',
+  templateUrl: './user-settings.component.html',
+  styleUrls: ['./user-settings.component.scss']
+})
+export class UserSettingsComponent implements OnInit {
+  phone = false;
+
+  showoutlet = false;
+  private USER_ROUTE_URL = '/';
+  private _nav: string;
+  fbForm = false;
+  twForm = false;
+  lnForm = false;
+  glForm = false;
+  save = false;
+  currentUser: Utilisateur;
+  file;
+  skills: Array<Skill>;
+  set nav(nav: string) {
+    if (nav === this.USER_ROUTE_URL) {
+      this.showoutlet = false;
+    } else {
+      this.showoutlet = true;
+    }
+    this._nav = nav;
+  }
+
+  get nav() {
+    // this.nav = this.router.getCurrentNavigation();
+    return this._nav;
+  }
+
+  constructor(private router: Router, private userSvc: UtilisateurService,
+    private skSvc: SkillsService,
+    private toasterSvc: ToastrService) {
+    // nav = this.router.url;
+  }
+
+  ngOnInit() {
+    this.nav = this.router.url;
+    // // alert(this.router.url);
+    console.log((this.nav === this.USER_ROUTE_URL));
+    console.log(this.nav);
+    firebase.auth().onAuthStateChanged(val => {
+      if (val) {
+        this.userSvc.getDocRef(val.uid).onSnapshot(data => {
+          if (data.data()) {
+            this.currentUser = data.data() as Utilisateur;
+            this.currentUser.id = data.id;
+            this.skSvc.getSkillsof(val.uid).onSnapshot(all => {
+              this.skills = [];
+              all.forEach(sk => {
+                this.skills.push(sk.data() as Skill);
+              });
+            });
+          }
+        });
+      }
+    });
+    this.currentUser = new Utilisateur();
+  }
+
+  ngAfterViewInit() {
+    this.nav = this.router.url;
+    // // alert('after init ' + this.router.url);
+    console.log((this.nav === this.USER_ROUTE_URL));
+    console.log(this.nav);
+  }
+
+  saveall() {
+    this.userSvc.update(this.currentUser.id, this.currentUser).then(aa => {
+      this.toasterSvc.success('Settings succefully Saved', 'Success' );
+    }).catch(er => {
+      this.toasterSvc.success('Error :' + er.message, 'Ooops!!!' );
+    });
+  }
+  updateLinks() {
+    this.userSvc.update(this.currentUser.id, { facebook: this.currentUser.facebook, googleplus: this.currentUser.googleplus, linkedIn: this.currentUser.linkedIn, twiter: this.currentUser.twiter, youtube: this.currentUser.youtube, }).then(a => {
+      this.toasterSvc.success('Successfully updated', 'Success');
+    }).catch(err => {
+      this.toasterSvc.error('Error: ' + err.message, 'Error while');
+    });
+  }
+  updateAccroche() {
+    this.userSvc.update(this.currentUser.id, { accroche: this.currentUser.accroche }).then(a => {
+      this.toasterSvc.success('Successfully updated', 'Success');
+    }).catch(err => {
+      this.toasterSvc.error('Error: ' + err.message, 'Error while');
+    });
+  }
+  cancel() {
+
+    const b = confirm('Do you realy want to cancel?, By cancelling you will navigate directly to the feeds')
+  if (b) {
+      this.router.navigateByUrl('/feed');
+    }
+  }
+}

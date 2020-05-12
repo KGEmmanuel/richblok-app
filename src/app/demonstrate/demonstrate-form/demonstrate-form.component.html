@@ -1,0 +1,164 @@
+<header>
+  <app-header></app-header>
+</header>
+<div class="py-5 bg-primary">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 mx-auto">
+        <h1 class="text-white font-weight-light"><span class="font-weight-bold">Demonstration of</span> {{currentDemonst.relatedElement |json}}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="py-5">
+  <div class="container">
+    <div class="col-md-8 mx-auto">
+      <div class="bg-white p-5 shadow-sm box border rounded">
+        <div class="font-weight-bold">
+          <div class="form-group">
+            <div *ngIf="step===1">
+              <div>
+                <label>
+                  What do you want to demonstrate?
+                </label>
+                <select [(ngModel)]="currentDemonst.elementType" name="record" class="form-control" id="record">
+                  <option [value]="'FO'">Training</option>
+                  <option [value]="'CO'">Skill</option>
+                  <option [value]="'LN'">Language</option>
+                  <option [value]="'EX'">Experience</option>
+                  <option [value]="'RE'">Realisation</option>
+                </select>
+              </div>
+              <div style="padding-top: 1%;">
+                <label>
+                  Which content do you want to demonstrate?
+                </label>
+                <select name="record" class="form-control" id="record"
+                  *ngIf="currentDemonst.elementType=='CO' && competences" [(ngModel)]="currentDemonst.relatedElement">
+                  <option [value]="item.id" *ngFor="let item of competences">{{item.skillName}}</option>
+                </select>
+
+                <select name="record" class="form-control" *ngIf="currentDemonst.elementType=='FO'" class="form-control"
+                  id="record" [(ngModel)]="currentDemonst.relatedElement">
+                  <option [value]="item.id" *ngFor="let item of formations">{{item.libelle}} in {{item.domaineName}} at
+                    {{item.etablissement}} ({{item.datedeb | date:'short'}} - {{item.datefin | date:'short'}})</option>
+                </select>
+                <select id="record" class="form-control" name="record" *ngIf="currentDemonst.elementType=='LN'"
+                  [(ngModel)]="currentDemonst.relatedElement">
+                  <option [value]="item.id" *ngFor="let item of langues">{{item.libele}}</option>
+                </select>
+
+                <select id="record" class="form-control" name="record" *ngIf="currentDemonst.elementType=='EX'"
+                  [(ngModel)]="currentDemonst.relatedElement">
+                  <option [value]="item.id" *ngFor="let item of experiences">{{item.libelle}} at
+                    {{item.entreprise}}({{item.debut | date:'short'}} - {{item.fin | date:'short'}})</option>
+                </select>
+              </div>
+
+              <div style="padding-top: 3%;">
+                <div class="d-flex justify-content-end" *ngIf="step===1">
+                  <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">Next</button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="step===2">
+
+              <div>
+                <label>
+                  Give a title to your demonstration
+                </label>
+                <input type="text" [(ngModel)]="currentDemonst.title" name="title" class="form-control"
+                  placeholder="Enter the title of your demontration">
+              </div>
+              <div style="padding-top: 1%;">
+                <label>
+                  Briefly describe your demonstration <small style="color: grey;">(Not the demonstration
+                    content)</small>
+                </label>
+                <textarea [(ngModel)]="currentDemonst.description" type="text" name="description" class="form-control"
+                  placeholder="Enter the description to your demonstration"></textarea>
+              </div>
+              <div style="padding-top: 3%;">
+                <div class="d-flex justify-content-end" *ngIf="step===2">
+
+                  <button type="button" (click)="previous()" class="btn btn-light btn-sm">Previous</button>&nbsp;&nbsp;
+                  <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">Next</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="step===3">
+              <div class="col-md-11 col-lg-11">
+                <div>
+                  <label>
+                    Type the Rich content of your demonstration<small style="color: grey;">(Not the demonstration
+                      content)</small>
+                  </label>
+                  <angular-editor id="content" [placeholder]="'Enter text here...'" [(ngModel)]="currentDemonst.content"
+                    [spellcheck]="true"></angular-editor>
+                </div>
+                <div style="display: flex; float: right !important; margin-right: 1%;">
+
+                  <div class="flex-shrink-1" *ngIf="step===3">
+                    <button type="button" (click)="previous()" class="btn btn-light btn-sm">Previous</button>
+                    <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">next</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="step===4">
+              <div class="col-md-11 col-lg-11">
+                <div>
+                  <label>
+                    Import medias related to your demonstration<small style="color: grey;"></small>
+                  </label>
+                  <div class="upload-btn-wrapper d-flex justify-content-end">
+                    <input type="file" name="myfile" (change)="onSelectFile($event)" multiple class="form-control" />
+                  </div>
+                  <ngb-carousel style="margin-top: 30px;" [showNavigationArrows]="true" [showNavigationIndicators]="true" style="max-height: 300px!important;"
+                    [keyboard]="true" [pauseOnHover]="true" [wrap]="true" [activeId]="'secondSlide'">
+                    <ng-template ngbSlide *ngFor="let fil of urls let i=index" [id]="i">
+                      <div class="picsum-img-wrapper">
+                        <img [src]="fil" alt="Angular Carousel 1" style="max-width: 300; max-height: 300;">
+                      </div>
+                      <div class="carousel-caption">
+                        <h3>Img {{i+1}}</h3>
+                      </div>
+                    </ng-template>
+                  </ngb-carousel>
+                </div>
+                <div style="display: flex; float: right !important; margin-right: 1%; margin-top: 20px;">
+
+                  <div class="flex-shrink-1" *ngIf="step===4">
+                    <button type="button" (click)="previous()" class="btn btn-light btn-sm">Previous</button>
+                    <button type="button" (click)="preparepost()" class="btn btn-outline-primary btn-sm">next</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="step===5">
+              <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                <h6 class="font-weight-bold m-0">Preview your demonstration.</h6>
+              </div>
+              <app-post-item [currentPost]="post" [preview]="true"></app-post-item>
+              <div class="col-md-12 col-lg-12">
+                <div style="display: flex; float: right !important; margin-right: 2%;">
+                  <div class="flex-shrink-1" *ngIf="step===5">
+                    <button type="button" (click)="previous()" class="btn btn-light btn-sm">Previous</button>
+                    <button type="button" (click)="save()" class="btn btn-outline-primary btn-sm">Save demonstration</button>
+                    <a type="button" *ngIf="saved" href="/demonstrate" class="btn btn-outline-primary btn-sm">Back</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <app-footer></app-footer>
+</footer>

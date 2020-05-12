@@ -1,0 +1,145 @@
+<header>
+    <app-header></app-header>
+</header>
+<div class="py-4">
+    <div class="container">
+        <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
+            <div class="box-title border-bottom p-3">
+                <h6 class="m-0">Challenge Content</h6>
+            </div>
+            <div class="font-weight-bold">
+                <div class="form-group">
+            
+                    <div class="row">
+                        <div class="col-md-5 col-lg-5" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                            <p class="mb-0 text-muted">Type of challenge?</p> <br>
+                            <select name="record" class="form-control" id="record">
+                                <option value="training">training</option>
+                                <option value="training">skill</option>
+                                <option value="training">language</option>
+                                <option value="training">realisations</option>
+                            </select>
+                    </div>
+                    <div class="col-md-6 col-lg-6" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">challenge content</p> <br>
+                        <select name="record" class="form-control" id="record">
+                            <option value="training">about skill</option>
+                            <option value="training">about training</option>
+                            <option value="training">about language</option>
+                            <option value="training">about realisations</option>
+                        </select>
+                    </div>
+                
+            </div>
+            <div style="margin-left: 1% !important; margin-top: 10% !important;" class="bloc2">
+                <div class="row" *ngIf="etape===1">
+        
+                        
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">how many questions will you challenge count? </p> <br>
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="give an unsigned number to anwser please!">
+                        </div>
+                    </div>
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="give the title!">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" placeholder="enter your challenge description"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div style="display: flex; float: right !important; margin-right: 3%;">
+                            <div class="flex-shrink-1">
+                                <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">next</button>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="etape===2">
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">list your questions! </p> <br>
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" placeholder="question 1"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" placeholder="question 2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" placeholder="question 3"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" placeholder="question 4"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" placeholder="question 5"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div style="display: flex; float: right !important; margin-right: 3%;">
+                            <div class="flex-shrink-1">
+                                <button type="button" (click)="previous()" class="btn btn-light btn-sm">Previous</button>
+                                <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">next</button>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="etape===3">
+                    
+                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <h6 class="font-weight-bold m-0">Preview your challenge.</h6>
+                    </div>
+                    <ol>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">define Oriented Object Programming?</p>
+                    </li>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">define JNDI?</p>
+                    </li>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">Give two famous framework used to develop mobile app?</p>
+                    </li>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">define BIOS</p>
+                    </li>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">how much is the last Samsung Galaxymade by Corian company?</p>
+                    </li>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">what is the latest version of android OS?</p>
+                    </li>
+                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
+                        <p class="mb-0 text-muted">which enterprise deployes RichBlok?</p>
+                    </li>
+                </ol>
+                    <div class="col-md-12 col-lg-12">
+                        <div style="display: flex; float: right !important; margin-right: 2%;">
+                            <div class="flex-shrink-1">
+                                <button type="button"  (click)="previous()" class="btn btn-light btn-sm">Previous</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm">Post challenge</button>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <app-footer></app-footer>
+</footer>

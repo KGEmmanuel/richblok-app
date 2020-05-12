@@ -1,0 +1,21 @@
+.focus:hover > i{
+ color: #fff;
+}
+
+.focus:hover{
+    background-color: #047B80;
+    color: #fff;
+}
+
+.focus{
+    cursor: pointer;
+    border: 1px solid #047B80;
+}
+
+.focus > i {
+    color: #047B80;
+}
+
+.focus > i:hover, .focus:hover {
+    color: #fff;
+}

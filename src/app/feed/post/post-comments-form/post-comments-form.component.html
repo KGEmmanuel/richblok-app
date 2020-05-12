@@ -1,0 +1,8 @@
+<div class="input-group mb-3 col" style="padding-top: 2%;">
+
+    <input type="text" name="reply" [(ngModel)]="reply" class="form-control" placeholder="Enter you comment" aria-describedby="button-addon2">
+    <div class="input-group-append">
+        <button [disabled]="!reply" (click)="sendReply()" class="btn btn-outline-secondary" type="submit" id="button-addon2">Comment</button>
+    </div>
+</div>
+<app-loading-spinner></app-loading-spinner>

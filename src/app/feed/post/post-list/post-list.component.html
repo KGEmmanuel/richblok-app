@@ -1,0 +1,10 @@
+<div class="scrollbar" id="style" appScrollable (scrollPosition)="scrollHandler($event)">
+    <div class="force-overflow">
+        <div *ngFor="let item of page.data | async" style="height: 100%!important;">
+            <app-post-item [currentPost]="item"></app-post-item>
+        </div>
+
+        <p *ngIf="page.done | async">All items displayed</p>
+        <app-loading-spinner *ngIf="page.loading | async"></app-loading-spinner>
+    </div>
+</div>
