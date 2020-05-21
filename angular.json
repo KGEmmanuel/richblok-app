@@ -35,7 +35,6 @@
               "src/assets/vendor/bootstrap/css/bootstrap.min.css",
               "src/assets/css/style.css",
               "node_modules/ngx-toastr/toastr.css"
-
             ],
             "scripts": [
               "src/assets/vendor/jquery/jquery.min.js",
@@ -102,6 +101,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets"
+
             ],
             "styles": [
               "src/styles.scss",
@@ -130,6 +130,7 @@
               "src/assets/landing/js/wow.min.js",
               "src/assets/landing/js/color-customize/color-customizer.js",
               "src/assets/landing/js/theme-script.js"
+
             ]
           }
         },

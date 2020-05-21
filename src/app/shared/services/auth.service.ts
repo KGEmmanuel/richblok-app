@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import * as firebase from 'firebase/app';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { TagsService } from './tags.service';
+import { tag } from '@turf/turf';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +22,8 @@ export class AuthService {
     public afs: AngularFirestore,   // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
-    public ngZone: NgZone // NgZone service to remove outside scope warning
+    public ngZone: NgZone, // NgZone service to remove outside scope warning
+    public tagSvc:  TagsService
   ) {
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
@@ -116,7 +119,8 @@ export class AuthService {
       email: user.email,
       nom: user.displayName,
       imageprofil: user.photoURL,
-      emailVerified: user.emailVerified
+      emailVerified: user.emailVerified,
+      tags: this.tagSvc.buildTags([user.displayName])
     }
     return userRef.set(userData, {
       merge: true

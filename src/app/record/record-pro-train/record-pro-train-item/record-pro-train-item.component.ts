@@ -21,10 +21,9 @@ export class RecordProTrainItemComponent implements OnInit {
   @Input()
   displaymode = 'priv';
 
-  constructor(private trainSvc: FormationService, private orgSvc:OrganisationService, private afAuth: AngularFireAuth) { }
+  constructor(private trainSvc: FormationService, private orgSvc: OrganisationService, private afAuth: AngularFireAuth) { }
 
   ngOnInit() {
-    console.log('vvvvv',this.currentItem);
     this.afAuth.authState.subscribe(v=>{
       if(v){
         this.uid = v.uid;

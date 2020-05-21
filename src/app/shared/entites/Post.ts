@@ -19,4 +19,5 @@ export class Post {
   competences?: string[];
   userliked?: string[] = new Array();
   userviewed?: string[] = new Array();
+  location;
 }

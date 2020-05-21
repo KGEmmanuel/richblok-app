@@ -12,11 +12,16 @@ export class LoginComponent implements OnInit {
   pass;
   errorMessage ;;
   successMessage ;
+  fieldTextType: boolean;
+
   constructor(private AuthSvc: AuthService) { }
 
   ngOnInit() {
   }
 
+  toggleFieldTextType() {
+    this.fieldTextType = !this.fieldTextType;
+  }
 
   login(){
 

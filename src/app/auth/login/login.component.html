@@ -1,52 +1,55 @@
 <body>
     <div class="bg-white">
-       <div class="container">
-          <div class="row justify-content-center align-items-center d-flex vh-100">
-             <div class="col-md-4 mx-auto">
-                <div class="osahan-login py-4">
-                   <div class="text-center mb-4">
-                      <a href=""><img src="../../../assets/img/log.png" alt="" style="max-height: 100px;"></a>
-                      <h5 class="font-weight-bold mt-3">Welcome Back</h5>
-                      <p class="text-muted">Don't miss your next opportunity. Sign in to stay updated on your professional world.</p>
-                   </div>
-                   <label *ngIf="errorMessage" class="mb-1" style="color: red!important;">{{errorMessage}}</label>
-                   <label  *ngIf="errorMessage" class="mb-1" style="color: green!important;">{{successMessage}}</label>
-                   <form #loginForm="ngForm" (ngSubmit)="login()">
-                      <div class="form-group">
-                         <label class="mb-1">Email</label>
-                         <div class="position-relative icon-form-control">
-                            <i class="feather-user position-absolute"></i>
-                            <input required type="email" name="email" class="form-control" [(ngModel)]="mail">
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <label class="mb-1">Password</label>
-                         <div class="position-relative icon-form-control">
-                            <i class="feather-unlock position-absolute"></i>
-                            <input required type="password" name="password" class="form-control" [(ngModel)]="pass">
-                         </div>
-                      </div>
-                      <div class="custom-control custom-checkbox mb-3">
-                         <input type="checkbox" class="custom-control-input" id="customCheck1">
-                         <label class="custom-control-label" for="customCheck1">Remember password</label>
-                      </div>
-                      <button class="btn btn-primary btn-block text-uppercase" type="submit" > Sign in </button>
-                      <div class="text-center mt-3 border-bottom pb-3">
-                         <p class="small text-muted">Or login with</p>
-                         <div class="row">
-                            <div class="col-12">
-                               <button type="button" class="btn btn-sm btn-outline-instagram btn-block" (click)="loginWithGoogle()"><i class="fe-google"></i> Google</button>
+        <div class="container">
+            <div class="row justify-content-center align-items-center d-flex vh-100">
+                <div class="col-md-4 mx-auto">
+                    <div class="osahan-login py-4">
+                        <div class="text-center mb-4">
+                            <a href=""><img src="../../../assets/img/log.png" alt="" style="max-height: 100px;"></a>
+                            <h5 class="font-weight-bold mt-3">Welcome Back</h5>
+                            <p class="text-muted">Don't miss your next opportunity. Sign in to stay updated on your professional world.</p>
+                        </div>
+                        <label *ngIf="errorMessage" class="mb-1" style="color: red!important;">{{errorMessage}}</label>
+                        <label *ngIf="errorMessage" class="mb-1" style="color: green!important;">{{successMessage}}</label>
+                        <form #loginForm="ngForm" (ngSubmit)="login()">
+                            <div class="form-group">
+                                <label class="mb-1">Email</label>
+                                <div class="position-relative icon-form-control">
+                                    <i class="feather-user position-absolute"></i>
+                                    <input required type="email" name="email" class="form-control" [(ngModel)]="mail">
+                                </div>
                             </div>
-                         </div>
-                      </div>
-                      <div class="py-3 d-flex align-item-center">
-                         <a href="forgot-password">Forgot password?</a>
-                         <span class="ml-auto"> New to RichBlok? <a class="font-weight-bold" href="register">Join now</a></span>
-                      </div>
-                   </form>
+                            <div class="form-group">
+                                <label class="mb-1">Password</label>
+                                <div class="position-relative icon-form-control">
+                                    <i class="fa position-absolute" [ngClass]="{
+                            'fa-eye-slash': !fieldTextType,
+                            'fa-eye': fieldTextType
+                          }" (click)="toggleFieldTextType()"></i>
+                                    <input required [type]="fieldTextType ? 'text' : 'password'" name="password" class="form-control" [(ngModel)]="pass">
+                                </div>
+                            </div>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                <label class="custom-control-label" for="customCheck1">Remember password</label>
+                            </div>
+                            <button class="btn btn-primary btn-block text-uppercase" type="submit"> Sign in </button>
+                            <div class="text-center mt-3 border-bottom pb-3">
+                                <p class="small text-muted">Or login with</p>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button type="button" class="btn btn-sm btn-outline-instagram btn-block" (click)="loginWithGoogle()"><i class="fe-google"></i> Google</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="py-3 d-flex align-item-center">
+                                <a href="forgot-password">Forgot password?</a>
+                                <span class="ml-auto"> New to RichBlok? <a class="font-weight-bold" href="register">Join now</a></span>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-             </div>
-          </div>
-       </div>
+            </div>
+        </div>
     </div>
- </body>
+</body>

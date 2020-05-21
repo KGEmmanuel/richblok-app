@@ -8,7 +8,6 @@ import * as firebase from 'firebase';
 export class ChalengeService {
 
   readonly path = 'challenges';
-
   db = firebase.firestore();
 
   constructor() { }
@@ -21,7 +20,14 @@ export class ChalengeService {
 
   }
 
-  save(job: Challenge, orgid: string) {
+  save(job: Challenge) {
+    job.dateCreation = new Date();
     return this.db.collection(this.path).add(Object.assign({}, job));
+  }
+  update(job: Challenge){
+    return this.db.collection(this.path).doc(job.id).update(Object.assign({},job));
+  }
+  getDocRef(id) {
+    return this.db.collection(this.path).doc(id);
   }
 }

@@ -1,35 +1,31 @@
-
-
-  <div class="card text-white bg-dark mb-3 ">
+<div class="card text-white bg-dark mb-3 ">
     <div class="card-header">
-      <div class="card-title row">
-        <span class="col-lg-6">
+        <div class="card-title row">
+            <span class="col-lg-6">
           <h5>{{currentItem.libele}}</h5>
         </span>
-        <span class="col-lg-6 d-flex justify-content-end">
+            <span class="col-lg-6 d-flex justify-content-end">
           <i class="feather-edit" style="color: rgb(175, 129, 31);" (click)="edit()"></i> &nbsp;&nbsp; <i (click)="delete()" class="feather-trash"  style="color: rgb(161, 67, 67);"></i>
         </span>
+        </div>
     </div>
-      </div>
     <div class="card-body" style="font-weight:bold ;">
-       <span class="card-title">
+        <span class="card-title">
          <span style="color: rgb(3, 94, 97);">
            Speaking level
+        </span> : {{currentItem.niveauParle}}
         </span>
-        : {{currentItem.niveauParle}}
-      </span>
-      <span class="card-title">
+        <br>
+        <span class="card-title">
         <span style="color: rgb(3, 94, 97);">
           Reading level
-       </span>
-       : {{currentItem.niveauLu}}
-     </span>
-     <span class="card-title">
+       </span> : {{currentItem.niveauLu}}
+        </span>
+        <br>
+        <span class="card-title">
       <span style="color: rgb(3, 94, 97);">
         Writting level
-     </span>
-     : {{currentItem.niveauEcrit}}
-   </span>
+     </span> : {{currentItem.niveauEcrit}}
+        </span>
     </div>
-  </div>
-
+</div>

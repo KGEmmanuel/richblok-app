@@ -9,15 +9,13 @@ export class Realisation {
    * Accadémique, professionnel, freelance
    */
   typeProj: string;
-  outilsutilises: Array<string>;
-  refcadreprojet: string;
-  client: string;
-  positioncommanditaire: string;
+  outilsutilises: Array<string> = [];
+  clientname: string;
+  clientcontact: string;
   clientref: string;
   datedeb;
   datefin;
-  referencescommanditaire: string;
   actionsrealises: Array<ActionRealisee>;
   medias: Array<Media>;
-  encours: boolean;
+  encours: string;
 }

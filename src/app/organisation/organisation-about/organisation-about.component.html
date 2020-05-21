@@ -3,9 +3,7 @@
      <h6 class="m-0">About</h6>
   </div>
   <div class="box-body p-3">
-     <p>Google’s mission is to organize the world‘s information and make it universally accessible and useful.
-     </p>
-     <p class="mb-0">Since our founding in 1998, Google has grown by leaps and bounds. From offering search in a single language we now offer dozens of products and services—including various forms of advertising and web applications for all kinds of tasks—in scores of languages. And starting from two computer science students in a university dorm room, we now have thousands of employees and offices around the world. A lot has changed since the first Google search engine appeared. But some things haven’t changed: our dedication to our users and our belief in the possibilities of the Internet itself.
+     <p class="mb-0">{{currentorg.description}}
      </p>
   </div>
 </div>
@@ -18,28 +16,32 @@
         <tbody>
            <tr class="border-bottom">
               <th class="p-3">Website</th>
-              <td class="p-3"><a href="#">www.google.com</a></td>
+              <td class="p-3"><a href="https://{{currentorg.siteweb}}">{{currentorg.siteweb}} </a></td>
            </tr>
            <tr class="border-bottom">
               <th class="p-3">Industry</th>
-              <td class="p-3">Internet</td>
+              <td class="p-3">{{currentorg.domaine}}</td>
            </tr>
            <tr class="border-bottom">
               <th class="p-3">Company size</th>
-              <td class="p-3">10,001+ employees <i data-toggle="tooltip" data-placement="top" title="Google’s mission is to organize the world‘s information and make it universally accessible and useful.
+              <td class="p-3">{{currentorg.taille}}employees <i data-toggle="tooltip" data-placement="top" title="{{currentorg.slogan}}
                  " class="feather-info text-info"></i> </td>
            </tr>
            <tr class="border-bottom">
               <th class="p-3">Headquarters</th>
-              <td class="p-3">Mountain View, CA</td>
+              <td class="p-3">{{currentorg.pays}}, {{currentorg.ville}}</td>
            </tr>
            <tr class="border-bottom">
+            <th class="p-3">Telephone</th>
+            <td class="p-3">{{currentorg.telephones}}</td>
+         </tr>
+           <tr class="border-bottom">
               <th class="p-3">Type</th>
-              <td class="p-3">Public Company</td>
+              <td class="p-3">{{currentorg.typeEntreprise}}</td>
            </tr>
            <tr class="border-bottom">
               <th class="p-3">Founded</th>
-              <td class="p-3">1998</td>
+              <td class="p-3">{{currentorg.dateCreation.toDate() | date: 'medium'}}</td>
            </tr>
            <tr>
               <th class="p-3">Specialties</th>
@@ -47,34 +49,5 @@
            </tr>
         </tbody>
      </table>
-  </div>
-</div>
-<div class="box shadow-sm border rounded bg-white mb-3">
-  <div class="box-title border-bottom p-3">
-     <h6 class="m-0">Locations</h6>
-  </div>
-  <div class="p-3">
-     <div class="row">
-        <div class="col-md-6">
-           <div class="card overflow-hidden">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501889.172354371!2d73.15671299623955!3d31.003573085499198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391964aa569e7355%3A0x8fbd263103a38861!2sPunjab!5e0!3m2!1sen!2sin!4v1575738201305!5m2!1sen!2sin" width="100%" height="150" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
-              <div class="card-body">
-                 <h6 class="card-title">Postal Address</h6>
-                 <p class="card-text">PO Box 16122 Collins Street West Victoria 8007 Australia</p>
-                 <a href="#" class="text-link font-weight-bold"><i class="feather-external-link"></i> Get Directions</a>
-              </div>
-           </div>
-        </div>
-        <div class="col-md-6">
-           <div class="card overflow-hidden">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d109552.19658166621!2d75.78663235513761!3d30.900473637624447!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391a837462345a7d%3A0x681102348ec60610!2sLudhiana%2C%20Punjab!5e0!3m2!1sen!2sin!4v1575738867148!5m2!1sen!2sin" width="100%" height="150" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
-              <div class="card-body">
-                 <h6 class="card-title">Envato HQ</h6>
-                 <p class="card-text">121 King Street, Melbourne Victoria 3000 Australia</p>
-                 <a href="#" class="text-link font-weight-bold"><i class="feather-external-link"></i> Get Directions</a>
-              </div>
-           </div>
-        </div>
-     </div>
   </div>
 </div>

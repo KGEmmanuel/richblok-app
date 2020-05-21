@@ -1,60 +1,98 @@
 <div class="box mb-3 shadow-sm border rounded bg-white osahan-post">
-  <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
-    <div class="dropdown-list-image mr-3">
-      <img class="rounded-circle" [src]="ownedUser?.imageprofil" alt="">
-      <div class="status-indicator bg-success"></div>
-    </div>
-    <div class="font-weight-bold">
-      <div class="text-truncate">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
-      <div class="small text-gray-500">{{ownedUser?.poste}} at {{ownedUser?.lieu}}</div>
-    </div>
-    <span *ngIf="!preview" class="ml-auto small"
-      style="color: grey;">{{currentPost?.date?.toDate() | date:"medium"}}
+    <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+        <div class="dropdown-list-image mr-3">
+            <img class="rounded-circle" [src]="ownedUser?.imageprofil" alt="">
+            <div class="status-indicator bg-success"></div>
+        </div>
+        <div class="font-weight-bold">
+            <div class="text-truncate pop" data-container="body" data-toggle="popover" data-placement="right" data-content="" data-original-title="" title="" style="cursor: pointer;" routerLink="/profile">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
+            <div class="small" style="color: grey;">{{ownedUser?.poste}} at {{ownedUser?.lieu}}</div>
+            <div class="small" style="color: grey;"><i class="feather-map-pin" *ngIf="currentPost?.location != null"></i> {{currentPost?.location}}</div>
+        </div>
+        <span *ngIf="!preview" class="ml-auto small" style="color: grey;"><i class="feather-clock"></i> {{currentPost?.date?.toDate() | date:"medium"}}
       <br>
       <div class="d-flex justify-content-end" style="padding-top: 2%;">
-        <span class="badge badge-primary" style="font-size: 1em;">{{currentPost?.typePost}}</span>
-      </div>
-
+        <span class="text-primary" style="font-size: 1.2m; font-weight: bold;">{{currentPost?.typePost}}</span>
+    </div>
     </span>
     <span *ngIf="preview" class="ml-auto small" style="color: grey;">{{currentPost?.date | date:"short"}}</span>
-  </div>
-  <div class="p-3 border-bottom osahan-post-body">
+</div>
+<div class="p-3 border-bottom osahan-post-body">
     <h4>{{currentPost.titre}}</h4>
     <p> {{currentPost?.description}} </p>
-      <img *ngIf="currentPost?.medias" [src]="currentPost?.medias[0]?.src" style="width: 100%;" class="img-fluid">
+    <!--<img *ngIf="currentPost?.medias" [src]="currentPost?.medias[0]?.src" style="width: 100%;" class="img-fluid">-->
+    <div class="accordian" *ngIf="currentPost?.medias.length>0">
+        <ul>
+            <li *ngFor="let med of currentPost?.medias">
+                <img data-toggle="modal" data-target="#imageModal" [src]="med.src" />
+            </li>
+        </ul>
+    </div>
 
-
-  </div>
-  <div class="p-3 border-bottom osahan-post-footer">
+</div>
+<div class="p-3 border-bottom osahan-post-footer">
     <div class="row">
-      <div class="col-lg-8">
-        <a class="mr-3 text-secondary" (click)="tooglelike()"><i class="feather-heart text-primary"
+        <div class="col-lg-8">
+            <a class="mr-3 text-secondary" (click)="tooglelike()"><i class="feather-heart text-primary"
             *ngIf="hasliked" title="dislike"></i> <i class="feather-heart like" *ngIf="!hasliked" title="Like"></i>
           {{currentPost?.userliked?.length}}</a>
-        <a class="mr-3 text-secondary" (click)="tooglecomments()"><i class="feather-message-square" title="Comment"></i>
+            <a class="mr-3 text-secondary" (click)="tooglecomments()"><i class="feather-message-square" title="Comment"></i>
           {{commentcount}}</a>
-        <a class="mr-3 text-secondary" data-toggle="modal" data-target="#exampleModalshare" title="Repost"><i class="feather-repeat"></i> </a>
-      </div>
-      <div class="col-lg-4 d-flex justify-content-end">
-        <app-certify-item></app-certify-item>
-      </div>
+            <a class="mr-3 text-secondary" data-toggle="modal" data-target="#exampleModalshare" title="Repost"><i class="feather-repeat"></i> </a>
+        </div>
+        <div class="col-lg-4 d-flex justify-content-end">
+            <app-certify-item></app-certify-item>
+        </div>
     </div>
-
-  </div>
-  <app-post-comments [postItem]="currentPost" [currentUser]="currentuser" *ngIf="showcomments"></app-post-comments>
+</div>
+<app-post-comments [postItem]="currentPost" [currentUser]="currentuser" *ngIf="showcomments"></app-post-comments>
 </div>
 <div class="modal fade" id="exampleModalshare" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-          <span class="col-lg-12 d-flex justify-content-end">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <span class="col-lg-12 d-flex justify-content-end">
             <i class="feather-x" data-dismiss="modal"></i>
           </span>
-          <hr>
-        <span style="margin-top: -4% !important;">
+                <hr>
+                <span style="margin-top: -4% !important;">
          <app-post-share></app-post-share>
         </span>
-      </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                   
+                    <div class="carousel-inner" >
+                        <div class="carousel-item " *ngFor="let med of currentPost?.medias">
+                            <img class="d-block w-100"  [src]="med.src" alt="First slide">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
 </div>

@@ -76,7 +76,7 @@ export abstract class BaseService<T extends IBaseEntity> implements IBaseService
     console.log('[BaseService] adding item', item);
     item.dateCreation = new Date();
     const promise = new Promise<T>((resolve, reject) => {
-      this.collection.add(item).then(ref => {
+      this.collection.add(Object.assign({},item)).then(ref => {
         const newItem = {
           id: ref.id,
 
@@ -96,7 +96,7 @@ export abstract class BaseService<T extends IBaseEntity> implements IBaseService
     const promise = new Promise<T>((resolve, reject) => {
       const docRef = this.collection
         .doc<T>(item.id)
-        .set(item)
+        .set(Object.assign({},item))
         .then(() => {
           resolve({
             ...(item as any)

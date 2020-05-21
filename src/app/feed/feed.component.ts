@@ -7,23 +7,16 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./feed.component.scss']
 })
 export class FeedComponent implements OnInit {
+
   detail = false;
   constructor(private authSvc: AuthService) { }
 
-
   ngOnInit() {
-    
-    
   }
-
-  
-
   showDetail(){
     this.detail = true;
   }
   hideDetail(){
     this.detail = false;
   }
-
-
 }

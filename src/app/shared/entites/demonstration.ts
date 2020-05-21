@@ -15,5 +15,6 @@ export class Demonstration {
   contentLink: string;
   medias: Array<Media>;
   relatedElement;
+  viewers = new Array<string> ();
 
 }

@@ -1,4 +1,4 @@
 export class ChallengeReponse {
    text: string;
-   istrue: boolean;
+   istrue: string;
 }

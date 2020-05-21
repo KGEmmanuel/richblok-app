@@ -38,4 +38,8 @@ export class SkillsService {
     return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk).delete();
   }
 
+  getSkill(user, sk){
+    return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk);
+  }
+
 }

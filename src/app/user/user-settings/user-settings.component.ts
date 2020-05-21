@@ -6,6 +6,7 @@ import { SkillsService } from 'src/app/shared/services/skills.service';
 import * as firebase from 'firebase';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { ToastrService } from 'ngx-toastr';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
@@ -41,7 +42,8 @@ export class UserSettingsComponent implements OnInit {
 
   constructor(private router: Router, private userSvc: UtilisateurService,
     private skSvc: SkillsService,
-    private toasterSvc: ToastrService) {
+    private toasterSvc: ToastrService,
+    private loadsvc: NgxUiLoaderService) {
     // nav = this.router.url;
   }
 
@@ -77,23 +79,32 @@ export class UserSettingsComponent implements OnInit {
   }
 
   saveall() {
+    this.loadsvc.start();
     this.userSvc.update(this.currentUser.id, this.currentUser).then(aa => {
-      this.toasterSvc.success('Settings succefully Saved', 'Success' );
+      this.loadsvc.stop();
+      this.toasterSvc.success('Changes succefully Saved', 'Success' );
     }).catch(er => {
+      this.loadsvc.stop();
       this.toasterSvc.success('Error :' + er.message, 'Ooops!!!' );
     });
   }
   updateLinks() {
+    this.loadsvc.start();
     this.userSvc.update(this.currentUser.id, { facebook: this.currentUser.facebook, googleplus: this.currentUser.googleplus, linkedIn: this.currentUser.linkedIn, twiter: this.currentUser.twiter, youtube: this.currentUser.youtube, }).then(a => {
+      this.loadsvc.stop();
       this.toasterSvc.success('Successfully updated', 'Success');
     }).catch(err => {
+      this.loadsvc.stop();
       this.toasterSvc.error('Error: ' + err.message, 'Error while');
     });
   }
   updateAccroche() {
+    this.loadsvc.start();
     this.userSvc.update(this.currentUser.id, { accroche: this.currentUser.accroche }).then(a => {
+      this.loadsvc.stop();
       this.toasterSvc.success('Successfully updated', 'Success');
     }).catch(err => {
+      this.loadsvc.stop();
       this.toasterSvc.error('Error: ' + err.message, 'Error while');
     });
   }

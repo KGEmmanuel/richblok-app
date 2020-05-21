@@ -18,11 +18,11 @@
       </span>
     </h6>
   </div>
-  <app-record-skills-form *ngIf="form" (skillSaved)="hideForm()"></app-record-skills-form>
+  <app-record-skills-form *ngIf="form" (skillSaved)="hideForm()" [currentSkill]="currentSkil"></app-record-skills-form>
   <div class="box-body " *ngIf="!form">
     <div class="row">
       <div class="col-lg-6" *ngFor="let skil of userSkills">
-        <app-record-skills-item [currentSkill]="skil"></app-record-skills-item>
+        <app-record-skills-item [currentSkill]="skil" [userid]="uid" (itemEdited)="edit($event)"></app-record-skills-item>
       </div>
     </div>
 

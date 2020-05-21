@@ -36,6 +36,8 @@ import { JobStep3Component } from './jobs/jobs-post/job-step3/job-step3.componen
 import { JobStep4Component } from './jobs/jobs-post/job-step4/job-step4.component';
 import { JobStep5Component } from './jobs/jobs-post/job-step5/job-step5.component';
 import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonstrate-form.component';
+import { OrganisationViewComponent } from './organisation-view/organisation-view.component';
+import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
@@ -43,7 +45,8 @@ const routes: Routes = [
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'feed', component: FeedComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: UserComponent},
-  { path: 'profile/:name', component: UserViewComponent},
+  { path: 'profile/:id', component: UserViewComponent},
+  { path: 'organisation/:id', component: OrganisationViewComponent},
   { path: 'messages', component: ChatComponent},
   { path: 'notifications', component: NotificationsComponent},
   { path: 'jobs', component: JobsComponent},
@@ -63,7 +66,7 @@ const routes: Routes = [
   { path: 'terms', component: TermsComponent},
   { path: 'policy', component: PolicyComponent},
   { path: 'contact', component: ContactComponent},
-  { path: 'job-profile', component: UserJobProfileComponent},
+  { path: 'job-profile/:id', component: UserJobProfileComponent},
   { path: 'post-jobs', component: JobsPostComponent},
   { path: 'post-job-step-one', component: JobStep1Component},
   { path: 'post-job-step-two', component: JobStep2Component},
@@ -72,7 +75,9 @@ const routes: Routes = [
   { path: 'post-job-step-five', component: JobStep5Component},
   { path: 'demo/:type/:id', component: DemonstrateFormComponent},
   { path: 'demo', component: DemonstrateFormComponent},
-  { path: 'landing', component: LandingComponent}
+  { path: 'landing', component: LandingComponent},
+  { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
+{ path: 'create-challenge', component: EvaluateFormComponent}
 
 
 ];

@@ -1,9 +1,10 @@
-import { Component, OnInit, ɵConsole, EventEmitter } from '@angular/core';
+import { Component, OnInit, ɵConsole, EventEmitter, Output, Input } from '@angular/core';
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
 import { Skill } from '../../../shared/entites/Skill';
 import { SkillsService } from '../../../shared/services/skills.service';
 import * as firebase from 'firebase';
 import { ToastrService } from 'ngx-toastr';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
   selector: 'app-record-skills-form',
   templateUrl: './record-skills-form.component.html',
@@ -11,10 +12,17 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class RecordSkillsFormComponent implements OnInit {
   item:string;
+
   curskil: Skill;
+  @Output()
   skillSaved = new EventEmitter<boolean>();
+
   loading = false;
+  @Input()
   set currentSkill(sk: Skill) {
+    if(!sk){
+      return;
+    }
     this.curskil = sk;
     this.item = this.curskil.skillLevel;
   }
@@ -25,7 +33,7 @@ export class RecordSkillsFormComponent implements OnInit {
   owner;
   skillpropositions = [];
   constructor(private userSvc: UtilisateurService, private skillSvc: SkillsService,
-              private tostSvc: ToastrService) {
+              private tostSvc: ToastrService, private loadsvc: NgxUiLoaderService) {
 
   }
 
@@ -52,28 +60,33 @@ export class RecordSkillsFormComponent implements OnInit {
   name:any;
 
   save() {
+    this.loadsvc.start();
     this.currentSkill.skillName = this.currentSkill.skillName.toUpperCase();
     this.loading = true;
     this.currentSkill.archived = false;
-    this.currentSkill.skillLevel = this.item;
+    //this.currentSkill.skillLevel = this.item;
     console.log(this.currentSkill);
     // this.currentSkill.skillLevel = this.name;
     if (this.owner) {
       if (this.currentSkill.id) {
         this.skillSvc.updateuserSkill(this.owner, this.currentSkill).then(d => {
+          this.loadsvc.stop();
           this.tostSvc.success('Skill successfully updated');
           this.loading = false;
           this.skillSaved.emit(true);
         }).catch(err => {
+          this.loadsvc.stop();
           this.tostSvc.error('Error Occured : ' + err.message);
           this.loading = false;
         });
       } else {
         this.skillSvc.adduserSkill(this.owner, this.currentSkill).then(d => {
+          this.loadsvc.stop();
           this.tostSvc.success('Skill successfully saved');
           this.loading = false;
           this.skillSaved.emit(true);
         }).catch(err => {
+          this.loadsvc.stop();
           this.tostSvc.error('Error Occured : ' + err.message);
           this.loading = false;
         });

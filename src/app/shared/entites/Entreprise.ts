@@ -27,4 +27,6 @@ export class Entreprise {
     ville: string;
     createdDate: Date;
     about: string;
+    taille: number;
+    description:string;
 }

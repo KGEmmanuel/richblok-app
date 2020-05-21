@@ -175,6 +175,17 @@ import { JobsItemComponent } from './jobs/jobs-item/jobs-item.component';
 import { JobsCreatedComponent } from './jobs/jobs-created/jobs-created.component';
 import { JobsSavedComponent } from './jobs/jobs-saved/jobs-saved.component';
 import { JobsAppliedComponent } from './jobs/jobs-applied/jobs-applied.component';
+import { CountdownModule } from 'ngx-countdown';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import {NgxUiLoaderModule, NgxUiLoaderRouterModule} from 'ngx-ui-loader';
+import { JobsAppliedItemComponent } from './jobs/jobs-applied/jobs-applied-item/jobs-applied-item.component';
+import { JobsAppliedDetailsComponent } from './jobs/jobs-applied/jobs-applied-details/jobs-applied-details.component'
+import { RecordRealisationComponent } from './record/record-realisation/record-realisation.component';
+import { RecordRealisationDetailsComponent } from './record/record-realisation/record-realisation-item/record-realisation-details/record-realisation-details.component';
+import { RecordRealisationFormComponent } from './record/record-realisation/record-realisation-form/record-realisation-form.component';
+import { RecordRealisationItemComponent } from './record/record-realisation/record-realisation-item/record-realisation-item.component';
+import { DocumentComponent } from './document/document.component';
+import { RealisationComponent } from './realisation/realisation.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -333,7 +344,23 @@ import { JobsAppliedComponent } from './jobs/jobs-applied/jobs-applied.component
     JobsItemComponent,
     JobsCreatedComponent,
     JobsSavedComponent,
-    JobsAppliedComponent
+    JobsAppliedComponent,
+    JobsAppliedItemComponent,
+    JobsAppliedDetailsComponent,
+    RecordRealisationComponent,
+    RecordRealisationDetailsComponent,
+    RecordRealisationFormComponent,
+    RecordRealisationItemComponent,
+    ParticipateToChallengeComponent,
+    RecordExperiencesFormComponent,
+    CvComponent,
+    DocumentComponent,
+    OrganisationAboutComponent,
+    OrganisationProfileComponent,
+    OrganisationSettingsComponent,
+    RealisationComponent,
+    RecordRealisationItemComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -349,6 +376,7 @@ import { JobsAppliedComponent } from './jobs/jobs-applied/jobs-applied.component
     GooglePlaceModule,
     HttpClientModule,
     AgmCoreModule.forRoot(),
+    NgMultiSelectDropDownModule.forRoot(),
     // SignaturePadModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCD7cXCYuY2__P5Hlfvx28L-UiqO06uGmY',
@@ -356,7 +384,10 @@ import { JobsAppliedComponent } from './jobs/jobs-applied/jobs-applied.component
     }),
     MatGoogleMapsAutocompleteModule,
     NgbModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxUiLoaderModule,
+    NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
+    CountdownModule
   ],
   providers: [
     ApiService,

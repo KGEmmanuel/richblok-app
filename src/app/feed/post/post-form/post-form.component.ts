@@ -14,6 +14,7 @@ import { Media } from 'src/app/shared/entites/Media';
 import { ToastrService } from 'ngx-toastr';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
   selector: 'app-post-form',
   templateUrl: './post-form.component.html',
@@ -27,8 +28,8 @@ export class PostFormComponent implements OnInit {
   currentPost: Post = new Post();
 
   constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth, private toassvc: ToastrService,
-    private afs: AngularFirestore, private afStorage: AngularFireStorage, private userSvc: UserService, private router: Router, private postSvc: PostService) {
-
+    private afs: AngularFirestore, private afStorage: AngularFireStorage, private userSvc: UserService, private router: Router, private postSvc: PostService,
+    private loadsvc: NgxUiLoaderService) {
   }
 
   onSelectFile(event) {
@@ -45,7 +46,6 @@ export class PostFormComponent implements OnInit {
         }
         this.files.push(event.target.files[i]);
         reader.readAsDataURL(event.target.files[i]);
-        //this.files.push(reader)
       }
     }
   }
@@ -145,7 +145,11 @@ export class PostFormComponent implements OnInit {
 
   async savePost() {
     // alert('saving post');
+    this.loadsvc.start();
     this.currentPost.abonnees = this.currentUser.abonnees;
+    if(!this.currentUser.abonnees){
+      this.currentPost.abonnees = [];
+    }
     this.currentPost.abonnees.push(this.currentUser.id);
     this.currentPost.date = new Date();
     this.currentPost.owner = this.currentUser.id;
@@ -153,14 +157,13 @@ export class PostFormComponent implements OnInit {
     console.log(this.currentPost.medias);
     const filesAmount = this.files.length;
     Promise.all(this.uploadallFiles(this.files)).then(v => {
-      alert('test 1');
       console.log('Medias is ' + this.currentPost.medias)
       this.postSvc.savePost(this.currentPost).then(val => {
-
+        this.loadsvc.stop();
         this.currentPost = new Post();
         this.toassvc.success('Publication successfully saved');
-        alert('test 2');
       }).catch(err => {
+        this.loadsvc.stop();
         this.toassvc.error('Error : ' + err.message);
       });
     })

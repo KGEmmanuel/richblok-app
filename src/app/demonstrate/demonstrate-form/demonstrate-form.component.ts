@@ -239,6 +239,8 @@ export class DemonstrateFormComponent implements OnInit {
     Promise.all(this.uploadpromise).then(alls => {
       this.demoSvc.add(this.uid, this.currentDemonst).then(val => {
         this.post.abonnees = this.user.abonnees;
+        this.post.typePost = 'Demonstration';
+        this.post.refSrc = val.id;
         this.postSvc.savePost(this.post).then(v => {
           this.tostSvc.success('Richblok has successfuly create publication of your demonstration', 'Success');
         });

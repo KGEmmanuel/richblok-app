@@ -7,13 +7,14 @@ import { UserService } from '../shared/services/user.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-
+organisations: boolean = false;
   currentUser: Utilisateur;
   constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
     private afs: AngularFirestore, private userSvc: UserService, private router: Router) {
@@ -35,7 +36,9 @@ export class HeaderComponent implements OnInit {
   logout(){
     this.AuthSvc.SignOut();
   }
-
+showOrgs(){
+  this.organisations = !this.organisations;
+}
   feed() {
     this.router.navigateByUrl('/feed');
   }

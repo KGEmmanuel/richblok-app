@@ -1,1 +1,6 @@
-<p>jobs-applied works!</p>
+<div class="row">
+    <div class="border job-item mb-3" *ngFor="let item of jobapplications">
+        <app-jobs-applied-item [currentApplication]="item"></app-jobs-applied-item>
+        
+    </div>
+</div>

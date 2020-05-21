@@ -24,7 +24,10 @@ export class PortfolioService {
     return this.db.collection(this.basepath).doc(user).collection(this.path);
   }
 
-  delete(user, id) {
-    return this.db.collection(this.basepath).doc(user).collection(this.path).doc(id).delete();
+  delete(userid: string, id: string){
+    return  this.db.collection(this.basepath).doc(userid).collection(this.path).doc(id).delete();
+  }
+  update(user, data: Realisation){
+    return this.db.collection(this.basepath).doc(user).collection(this.path).doc(data.id).update(Object.assign({},data));
   }
 }

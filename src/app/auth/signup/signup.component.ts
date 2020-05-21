@@ -13,7 +13,8 @@ export class SignupComponent implements OnInit {
   confirmpassword;
   step: number;
   regexp:any;
-
+  fieldTextType: boolean;
+  repeatFieldTextType: boolean;
 
   user: Utilisateur;
   constructor(private AuthSvc: AuthService, private toastr: ToastrService) { }
@@ -58,4 +59,12 @@ export class SignupComponent implements OnInit {
   loginWithGoogle() {
     this.AuthSvc.GoogleAuth();
   }
+  toggleFieldTextType() {
+    this.fieldTextType = !this.fieldTextType;
+  }
+
+  toggleRepeatFieldTextType() {
+    this.repeatFieldTextType = !this.repeatFieldTextType;
+  }
+
 }

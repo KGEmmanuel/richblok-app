@@ -33,5 +33,7 @@ export class OffresEmploi extends IBaseEntity{
   adressurl: string;
   location: Location;
   tags =new Array<string>();
+  postulants = new Array<string>();
+  recruteurs = new Array<string>();
 
 }

@@ -46,4 +46,5 @@ export class Utilisateur  extends IBaseEntity {
   richcoin? = 0;
   emailVerified? = false;
   visiteurs?: Array<{user: string, time:Date}> = [];
+  savedJobs?: Array<string> = [];
 }

@@ -1,6 +1,6 @@
-<div class="scrollbar" id="style" appScrollable (scrollPosition)="scrollHandler($event)">
+<div class="scrollbar" id="style" appScrollable (scrollPosition)="scrollHandler($event)" style="width: 100%!important;">
     <div class="force-overflow">
-        <div *ngFor="let item of page.data | async" style="height: 100%!important;">
+        <div *ngFor="let item of page.data | async" style="height: 60%;">
             <app-post-item [currentPost]="item"></app-post-item>
         </div>
 

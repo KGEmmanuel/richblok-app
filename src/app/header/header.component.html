@@ -1,14 +1,14 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark osahan-nav-top p-0">
     <div class="container">
-        <a class="navbar-brand mr-2" routerLink="/landing"><img src="../../assets/img/log.png" alt="">
+        <a class="navbar-brand mr-2" routerLink="/landing"><img src="../../assets/../../assets/img/log.png" alt="">
         </a>
         <form class="d-none d-sm-inline-block form-inline mr-auto my-2 my-md-0 mw-100 navbar-search">
             <div class="input-group">
                 <input type="text" class="form-control shadow-none border-0" placeholder="Search people, jobs & more..." aria-label="Search" aria-describedby="basic-addon2">
                 <div class="input-group-append">
                     <button class="btn" type="button">
-                <i class="feather-search"></i>
-                </button>
+            <i class="feather-search"></i>
+          </button>
                 </div>
             </div>
         </form>
@@ -25,40 +25,46 @@
                             <input type="text" class="form-control border-0 shadow-none" placeholder="Search people, jobs and more..." aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button class="btn" type="button">
-                         <i class="feather-search"></i>
-                         </button>
+                  <i class="feather-search"></i>
+                </button>
                             </div>
                         </div>
                     </form>
                 </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" style="cursor: pointer;" (click)="feed()"><i class="feather-home mr-2"></i><span class="d-none d-lg-inline">Home</span></a>
-          </li>
-            <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer;" (click)="record()"><i class="feather-edit mr-2"></i><span class="d-none d-lg-inline">Records</span></a>
+                <a class="nav-link" style="cursor: pointer;" (click)="feed()"><i class="feather-home mr-2"></i><span
+            class="d-none d-lg-inline">Home</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer;" (click)="demonstrate()"><i class="feather-speaker mr-2"></i><span class="d-none d-lg-inline">Demonstrate</span></a>
+                <a class="nav-link" style="cursor: pointer;" (click)="record()"><i class="feather-edit mr-2"></i><span
+            class="d-none d-lg-inline">Records</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer;" (click)="evaluate()"><i class="feather-award mr-2"></i><span class="d-none d-lg-inline">Evalaute</span></a>
+                <a class="nav-link" style="cursor: pointer;" (click)="demonstrate()"><i class="feather-speaker mr-2"></i><span
+            class="d-none d-lg-inline">Demonstrate</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer;" (click)="jobs()"><i class="feather-briefcase mr-2"></i><span class="d-none d-lg-inline">Jobs</span></a>
+                <a class="nav-link" style="cursor: pointer;" (click)="evaluate()"><i class="feather-award mr-2"></i><span
+            class="d-none d-lg-inline">Evalaute</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer;" (click)="friends()"><i class="feather-users mr-2"></i><span class="d-none d-lg-inline">Connection</span></a>
+                <a class="nav-link" style="cursor: pointer;" (click)="jobs()"><i class="feather-briefcase mr-2"></i><span
+            class="d-none d-lg-inline">Jobs</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="friends()"><i class="feather-users mr-2"></i><span
+            class="d-none d-lg-inline">Connection</span></a>
             </li>
 
-            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown" ngbDropdown>
+                <a class="nav-link dropdown-toggle" role="button" ngbDropdownToggle id="message">
                     <i class="feather-message-square"></i>
                     <!-- Counter - Alerts -->
                     <span class="badge badge-danger badge-counter">8</span>
                 </a>
                 <!-- Dropdown - Alerts -->
-                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-sm">
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-sm" ngbDropdownMenu aria-labelledby="message">
                     <h6 class="dropdown-header">
                         Message Center
                     </h6>
@@ -68,7 +74,8 @@
                             <div class="status-indicator bg-success"></div>
                         </div>
                         <div class="font-weight-bold overflow-hidden">
-                            <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
+                            <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.
+                            </div>
                             <div class="small text-gray-500">Emily Fowler · 58m</div>
                         </div>
                     </a>
@@ -78,7 +85,8 @@
                             <div class="status-indicator"></div>
                         </div>
                         <div class="overflow-hidden">
-                            <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?</div>
+                            <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?
+                            </div>
                             <div class="small text-gray-500">Jae Chun · 1d</div>
                         </div>
                     </a>
@@ -105,16 +113,16 @@
                     <a class="dropdown-item text-center small text-gray-500" href="messages">Read More Messages</a>
                 </div>
             </li>
-            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown" ngbDropdown>
+                <a class="nav-link dropdown-toggle" ngbDropdownToggle id="message">
                     <i class="feather-bell"></i>
                     <!-- Counter - Alerts -->
                     <span class="badge badge-info badge-counter">6</span>
                 </a>
                 <!-- Dropdown - Alerts -->
-                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-sm">
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-sm" ngbDropdownMenu aria-labelledby="message">
                     <h6 class="dropdown-header">
-
+                        Notifications
                     </h6>
                     <a class="dropdown-item d-flex align-items-center" style="cursor: pointer;" (click)="notifications()">
                         <div class="mr-3">
@@ -153,36 +161,47 @@
                 </div>
             </li>
             <!-- Nav Item - User Information -->
-            <li class="nav-item dropdown no-arrow ml-1 osahan-profile-dropdown">
-                <a class="nav-link dropdown-toggle pr-0" id="profiletoogle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="img-profile rounded-circle" [src]="currentUser.imageprofil">
-                </a>
-                <!-- Dropdown - User Information -->
-                <div class="dropdown-menu dropdown-menu-right shadow-sm" aria-labelledby="profiletoogle">
-                    <div class="p-3 d-flex align-items-center">
-                        <div class="dropdown-list-image mr-3">
-                            <img class="rounded-circle" [src]="currentUser?.imageprofil" alt="">
-                            <div class="status-indicator bg-success"></div>
+            <li class="nav-item ml-1 osahan-profile-dropdown">
+                <div ngbDropdown class="d-inline-block" display="dynamic">
+                    <a class="nav-link pr-0" role="button" ngbDropdownToggle id="dropdownBasic1">
+                        <img class="img-profile rounded-circle" [src]="currentUser?.imageprofil">
+                    </a>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <div class="p-3 d-flex align-items-center">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" [src]="currentUser?.imageprofil" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold">
+                                <div class="text-truncate"> {{currentUser?.nom}} {{currentUser?.prenom}} </div>
+                                <div class="small text-gray-500">{{currentUser?.poste}} at {{currentUser?.lieu}}</div>
+                            </div>
                         </div>
-                        <div class="font-weight-bold">
-                            <div class="text-truncate"> {{currentUser?.nom}} {{currentUser?.prenom}} </div>
-                            <div class="small text-gray-500">{{currentUser?.poste}} at {{currentUser?.lieu}}</div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item profile" href="profile"><i class="feather-user mr-1"></i> My Profile</a>
+                        <a class="dropdown-item" href="settings"><i class="feather-edit-2 mr-1"></i> Edit Profile</a>
+                        <a class="dropdown-item" href="post-jobs"><i class="feather-archive mr-1"></i> Post a job</a>
+                        <a class="dropdown-item" href="create-organisation"><i class="feather-plus-square mr-1"></i> Create
+              organisation</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="user-jobs"><i class="feather-inbox mr-1"></i> My Jobs</a>
+
+                        <span class="item" (click)="showOrgs()"><i class="feather-layers mr-1"></i> My Organisations</span>
+                        <div *ngIf="organisations" style="margin: 4%;">
+                            <a class="dropdown-item profile">My Account</a>
+                            <a class="dropdown-item">Edit Profile</a>
+                            <a class="dropdown-item">Post a job</a>
                         </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="pricing"><i class="feather-gift mr-1"></i> Pricing</a>
+                        <a class="dropdown-item" href="settings"><i class="feather-settings mr-1"></i> Settings</a>
+                        <a class="dropdown-item" (click)="logout()"><i class="feather-log-out mr-1"></i> Logout</a>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item profile" href="profile"><i class="feather-edit mr-1"></i> My Account</a>
-                    <a class="dropdown-item" href="settings"><i class="feather-user mr-1"></i> Edit Profile</a>
-                    <a class="dropdown-item" href="post-jobs"><i class="feather-plus-square mr-1"></i> Post a job</a>
-                    <a class="dropdown-item" href="create-organisation"><i class="feather-plus-square mr-1"></i> Create organisation</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="user-jobs"><i class="feather-edit mr-1"></i> My Jobs</a>
-                    <a class="dropdown-item" href="organisation"><i class="feather-user mr-1"></i> My Organisations</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="pricing"><i class="feather-edit mr-1"></i> Pricing</a>
-                    <a class="dropdown-item" href="user-organisations"><i class="feather-user mr-1"></i> Settings</a>
-                    <a class="dropdown-item" (click)="logout()"><i class="feather-log-out mr-1"></i> Logout</a>
                 </div>
+
+
             </li>
         </ul>
     </div>
+
 </nav>

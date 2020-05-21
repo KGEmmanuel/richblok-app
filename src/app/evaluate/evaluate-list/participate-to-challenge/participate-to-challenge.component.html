@@ -1,142 +1,84 @@
 <header>
     <app-header></app-header>
 </header>
-<div class="py-4">
+<div class="py-5 bg-primary">
     <div class="container">
-        <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
-            <div class="box-title border-bottom p-3">
-                <h6 class="m-0">Challenge Content</h6>
-            </div>
-            <div class="font-weight-bold">
-                <div class="form-group">
-            
-                    <div class="row">
-                        <div class="col-md-5 col-lg-5" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                            <p class="mb-0 text-muted">Type of challenge?</p> <br>
-                            <select name="record" class="form-control" id="record">
-                                <option value="training">training</option>
-                                <option value="training">skill</option>
-                                <option value="training">language</option>
-                                <option value="training">realisations</option>
-                            </select>
-                    </div>
-                    <div class="col-md-6 col-lg-6" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">challenge content</p> <br>
-                        <select name="record" class="form-control" id="record">
-                            <option value="training">about skill</option>
-                            <option value="training">about training</option>
-                            <option value="training">about language</option>
-                            <option value="training">about realisations</option>
-                        </select>
-                    </div>
-                
-            </div>
-            <div style="margin-left: 1% !important; margin-top: 10% !important;" class="bloc2">
-                <div class="row" *ngIf="etape===1">
-        
-                        
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">how many questions will you challenge count? </p> <br>
-                        <div class="form-group">
-                            <input type="number" class="form-control" placeholder="give an unsigned number to anwser please!">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <h2 class="text-white font-weight-light"><span class="font-weight-bold">RichBlok</span> Challenge</h2>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <h5>Challenge on : {{currentChal?.titre}}</h5>
+                        <div class="row">
+                            <div class="col-lg-1">
+                                <h5>Skills:</h5>
+                            </div>
+                            <div class="col-lg-11">
+                                <div *ngFor="let item of currentChal?.skills let i = index;" style=" display: inline-block;">
+                                    <span class="badge badge-dark span" style="margin-bottom: 2% !important;">{{item}}</span> &nbsp; &nbsp;
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="give the title!">
+                    <div class="col-lg-2">
+                        <div class=" d-flex justify-content-end">
+                            <h6><span style="font-size: 1.5em;">{{currentChal?.questions?.length}} Question<span *ngIf="currentChal.questions.length > 1">s</span></span>
+                            </h6>
                         </div>
-                    </div>
-                    
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <div class="form-group">
-                            <textarea name="description" class="form-control" placeholder="enter your challenge description"></textarea>
+                        <div class=" d-flex justify-content-end">
+                            <h6>
+                                <span style="font-size: 1.5em;">{{currentChal?.duree}} Seconds</span>
+                            </h6>
                         </div>
-                    </div>
-                    <div class="col-md-12 col-lg-12">
-                        <div style="display: flex; float: right !important; margin-right: 3%;">
-                            <div class="flex-shrink-1">
-                                <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">next</button>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" *ngIf="etape===2">
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">list your questions! </p> <br>
-                        <div class="form-group">
-                            <textarea name="description" class="form-control" placeholder="question 1"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <div class="form-group">
-                            <textarea name="description" class="form-control" placeholder="question 2"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <div class="form-group">
-                            <textarea name="description" class="form-control" placeholder="question 3"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <div class="form-group">
-                            <textarea name="description" class="form-control" placeholder="question 4"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <div class="form-group">
-                            <textarea name="description" class="form-control" placeholder="question 5"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-12">
-                        <div style="display: flex; float: right !important; margin-right: 3%;">
-                            <div class="flex-shrink-1">
-                                <button type="button" (click)="previous()" class="btn btn-light btn-sm">Previous</button>
-                                <button type="button" (click)="next()" class="btn btn-outline-primary btn-sm">next</button>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row" *ngIf="etape===3">
-                    
-                    <div class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <h6 class="font-weight-bold m-0">Preview your challenge.</h6>
-                    </div>
-                    <ol>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">define Oriented Object Programming?</p>
-                    </li>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">define JNDI?</p>
-                    </li>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">Give two famous framework used to develop mobile app?</p>
-                    </li>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">define BIOS</p>
-                    </li>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">how much is the last Samsung Galaxymade by Corian company?</p>
-                    </li>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">what is the latest version of android OS?</p>
-                    </li>
-                    <li class="col-md-11 col-lg-11" style="margin-left: 1% !important; margin-bottom: 2% !important;">
-                        <p class="mb-0 text-muted">which enterprise deployes RichBlok?</p>
-                    </li>
-                </ol>
-                    <div class="col-md-12 col-lg-12">
-                        <div style="display: flex; float: right !important; margin-right: 2%;">
-                            <div class="flex-shrink-1">
-                                <button type="button"  (click)="previous()" class="btn btn-light btn-sm">Previous</button>
-                                <button type="button" class="btn btn-outline-primary btn-sm">Post challenge</button>
-                             </div>
+                        <div class="d-flex justify-content-end">
+                            <span style="font-size: 1em; font-weight: bold;" class="text-danger" *ngIf="currentChal?.note != null">Pass mark : {{currentChal.note}}/{{currentChal.questions.length}}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class="bg-white p-5 shadow-sm box border rounded">
+                    <span *ngIf="!show" style="font-size:1.2em;">{{currentChal.description}}</span>
+                    <br>
+                    <div class="d-flex justify-content-end" style="margin-top: 5%;">
+                        <button type="button" (click)="start()" *ngIf="!show" class="btn btn-outline-primary btn-sm mr-1">Start with the questions</button>
+                    </div>
+                    <div class="row" *ngIf="show">
+                        <div class="col-lg-6">
+                            <h5>Question number : {{etape}}</h5>
+
+                            <div style="margin-top: 10%;">
+                                <h4 style="margin-top: 2%;"> {{currentChal.questions[etape-1].question}}</h4>
+                                <br>
+                                <span class="text-danger d-flex justify-content-center" style="margin-top: 10%;">
+                                <h3>
+                                    <countdown [config]="{leftTime: currentChal.questions[etape-1].duration}" (event)="next()"></countdown>
+                                </h3>
+                              </span>
+                            </div>
+                        </div>
+                        <div class="vertical"></div>
+                        <div class="col-lg-6">
+                            <div *ngFor="let ans of currentChal.questions[etape-1].reposesPossible let i=index">
+                                <div class="custom-control custom-checkbox mb-3">
+                                    <input type="radio" class="custom-control-input" [(ngModel)]="currentAnswer.isright" name="reponse" id="exampleRadios{{i}}" [value]="i" [checked]="ans.text == currentAnswer.answer" (change)="selectAnswer($event)">
+                                    <label class="custom-control-label" for="exampleRadios{{i}}"><span [innerHTML]="ans.text"></span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="show" class="d-flex justify-content-end" style="margin-top: 5%;">
+                        <button type="button" (click)="next()" *ngIf="etape < currentChal.questions.length" class="btn btn-outline-primary btn-sm mr-1">Next</button>
+                        <button type="button" (click)="next()" *ngIf="etape === currentChal.questions.length" class="btn btn-outline-primary btn-sm mr-1">Send your Answers</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

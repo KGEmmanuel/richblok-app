@@ -35,8 +35,14 @@ export class OffreEmploiService {
       .orderBy('datefin');
   }
 
+  //alloffres()
+
 
   offresByTag(tags:string[]){
+    console.log('tags', tags);
+    if(!tags){
+     return this.db.collection(this.path).where('statut','==','PU').orderBy('datedeb');
+    }
      return this.db.collection(this.path).where('tags',"array-contains-any",tags).where('statut','==','PU').orderBy('datedeb');
   }
 
@@ -74,9 +80,12 @@ export class OffreEmploiService {
     return t;
   }
 
+  getDocRef(jobId: string){
+    return this.db.collection(this.path).doc(jobId);
+  }
 
 
-  jobsRelated(user:string){
+  jobsRelated(user:string) {
    return this.skilSvc.getSkillsof(user).onSnapshot(v=>{
       const t = [];
       v.forEach(k=>{

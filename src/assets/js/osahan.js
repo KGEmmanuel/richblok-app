@@ -7,12 +7,10 @@ Version: 1.0
 
 (function($) {
   "use strict"; // Start of use strict
-  
-  $(document).ready(function () {
-    $('.btn-group-fab').on('click', '.btn', function() {
-     
-      $('.btn-group-fab').toggleClass('active');
-    });
+
+  $('.btn-group-fab').on('click', '.btn', function() {
+    $('.btn-group-fab').toggleClass('active');
+  });
 // Tooltip
 $('[data-toggle="tooltip"]').tooltip();
 
@@ -42,5 +40,5 @@ $('.osahan-slider').slick({
     }
   ]
 });
-  });
+
 })(jQuery); // End of use strict

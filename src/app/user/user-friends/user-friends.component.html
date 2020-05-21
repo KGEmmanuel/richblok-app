@@ -1,11 +1,17 @@
 <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
-  <div class="box shadow-sm border rounded bg-white mb-3">
     <div class="box-title border-bottom p-3">
-       <h6 class="m-0">Connections (125)</h6>
+        <h6 class="m-0">Connections {{currentUser?.abonnees?.length}}</h6>
     </div>
-    <div class="box-body p-3">
-      <app-user-friends-item></app-user-friends-item>
-
+    <div *ngIf="currentUser" style="margin: 2%;">
+        <div *ngIf="currentUser.abonnees">
+            <div class="row">
+                <div class="col-md-6" *ngFor="let item of currentUser.abonnees">
+                    <app-friends-item [iduser]="item"></app-friends-item>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!currentUser.abonnees">
+            <span>Nothing to display</span>
+        </div>
     </div>
-  </div>
 </div>
