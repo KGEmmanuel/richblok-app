@@ -1,3 +1,4 @@
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Component, OnInit, Input } from '@angular/core';
 import { Commentaire } from '../../../shared/entites/Commentaire';
 import { Utilisateur } from '../../../shared/entites/Utilisateur';
@@ -16,22 +17,22 @@ export class PostCommentsFormComponent implements OnInit {
   currentUser: Utilisateur;
   @Input()
   postItem: Post;
-  constructor(private postSvc: PostService, private toasSvc: ToastrService) { }
+  constructor(private postSvc: PostService, private toasSvc: ToastrService, private loadSvc: NgxUiLoaderService) { }
 
   ngOnInit(): void {
   }
 
   sendReply() {
-    alert('sending reply');
+    this.loadSvc.start();
     const commentaire = new Commentaire();
     commentaire.message = this.reply;
     commentaire.owner = this.currentUser.id;
     commentaire.parent = null;
     commentaire.date = new Date();
     this.postSvc.saveComment(this.postItem, null, commentaire).then(val => {
-      this.toasSvc.success('Cool!!!', 'Comment successfuly sent...');
+      this.loadSvc.stop();
+      this.toasSvc.success('Comment successfuly sent...', 'Success');
       this.reply = '';
     });
   }
-
 }

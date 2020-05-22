@@ -360,7 +360,7 @@ import { RealisationComponent } from './realisation/realisation.component';
     OrganisationSettingsComponent,
     RealisationComponent,
     RecordRealisationItemComponent,
-    
+
   ],
   imports: [
     BrowserModule,
@@ -387,7 +387,8 @@ import { RealisationComponent } from './realisation/realisation.component';
     HttpClientModule,
     NgxUiLoaderModule,
     NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
-    CountdownModule
+    CountdownModule,
+    GooglePlaceModule
   ],
   providers: [
     ApiService,

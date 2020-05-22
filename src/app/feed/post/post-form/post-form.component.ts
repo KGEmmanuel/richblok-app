@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { AuthService } from '../../../shared/services/auth.service';
 import { Utilisateur } from '../../../shared/entites/Utilisateur';
@@ -15,6 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
 @Component({
   selector: 'app-post-form',
   templateUrl: './post-form.component.html',
@@ -26,7 +27,7 @@ export class PostFormComponent implements OnInit {
   urls = [];
   files: File[] = [];
   currentPost: Post = new Post();
-
+  @ViewChild("placesRef") placesRef : GooglePlaceDirective;
   constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth, private toassvc: ToastrService,
     private afs: AngularFirestore, private afStorage: AngularFireStorage, private userSvc: UserService, private router: Router, private postSvc: PostService,
     private loadsvc: NgxUiLoaderService) {
@@ -53,6 +54,10 @@ export class PostFormComponent implements OnInit {
     this.location = !this.location;
   }
 
+
+ public handleAddressChange() {
+        // Do some stuff
+    }
 
   ngOnInit() {
     this.afAuth.authState.subscribe(user => {

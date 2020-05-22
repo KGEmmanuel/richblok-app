@@ -1,8 +1,10 @@
-import { Component, Inject, ElementRef, ViewChild, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, ElementRef, ViewChild, NgZone, OnInit, Output } from '@angular/core';
 import * as turf from '@turf/turf';
 
 import { ApiService, Maps } from './api.service';
 import PlaceResult = google.maps.places.PlaceResult;
+import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
+import { Post } from 'src/app/shared/entites/Post';
 
 @Component({
   selector: 'app-post-location',
@@ -12,6 +14,8 @@ import PlaceResult = google.maps.places.PlaceResult;
 
 
 export class PostLocationComponent implements OnInit {
+  currentPost: Post = new Post();
+  @Output()
 
  ngOnInit(){
 
