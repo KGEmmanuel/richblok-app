@@ -18,6 +18,8 @@ import { Experience } from 'src/app/shared/entites/Experience';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { ToastrService } from 'ngx-toastr';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-user-job-profile',
@@ -35,20 +37,25 @@ export class UserJobProfileComponent implements OnInit {
   usersSkils: Array<Skill>;
   usersTraining: Array<Formation>;
   userExperiences: Array<Experience>;
+  dispApply = true;
+  dispProcess= false;
+  dispSav = true;
+  currentUser: Utilisateur;
 
 
-  constructor(private route: ActivatedRoute, private jobSvc: OffreEmploiService, private orgSvc: OrganisationService,
+  constructor(private route: ActivatedRoute, private jobSvc: OffreEmploiService, private orgSvc: OrganisationService,private loadingSvc: NgxUiLoaderService,
     private userSvc: UtilisateurService, private skilSvc: SkillsService, private trainSvc: FormationService,
-    private expSvc: ExperienceService, private JobApplicationSvc: JobApplicationService, private toastrSvc: ToastrService) { }
+    private expSvc: ExperienceService, private JobApplicationSvc: JobApplicationService, private toastrSvc: ToastrService,
+    private afAuth: AngularFireAuth) { }
 
   ngOnInit() {
 
     this.route.params.subscribe(params => {
       const id = params['id'];
       this.jobSvc.getDocRef(id).onSnapshot(obj => {
+
         this.currentJob = obj.data() as OffresEmploi;
         this.currentJob.id = obj.id;
-
         if (this.currentJob.ownerOrg) {
           this.jobSvc.getDocRef(this.currentJob.ownerOrg).onSnapshot(or => {
             this.org = or.data() as Entreprise;
@@ -59,33 +66,43 @@ export class UserJobProfileComponent implements OnInit {
           this.userSvc.getDocRef(this.currentJob.ownerUser).onSnapshot(us => {
             this.user = us.data() as Utilisateur;
             this.user.id = us.id;
-            this.skilSvc.getSkillsof(this.user.id).onSnapshot(all => {
-              this.usersSkils = [];
-              all.forEach(sk => {
-                const s = sk.data() as Skill;
-                s.id = sk.id;
-                this.usersSkils.push(s);
-              })
-            })
-            this.trainSvc.editableFormationsListQuery(this.user.id).onSnapshot(train => {
-              this.usersTraining = [];
-              train.forEach(t => {
-                const tr = t.data() as Formation;
-                tr.id = t.id;
-                this.usersTraining.push(tr);
-              })
-            })
-            this.expSvc.listExperiences(this.user.id).onSnapshot(exps => {
-              this.userExperiences = [];
-              exps.forEach(e => {
-                const exp = e.data() as Experience;
-                exp.id = e.id;
-                this.userExperiences.push(exp);
-              })
-            })
           })
         }
-
+        this.afAuth.auth.onAuthStateChanged(val => {
+          if (val) {
+            this.userSvc.getDocRef(val.uid).onSnapshot(u => {
+              this.currentUser = u.data() as Utilisateur;
+              this.currentUser.id = u.id;
+              this.checkDispApply();
+              this.dispSav = !this.currentUser.savedJobs?.includes(id);
+              console.log(this.currentUser.savedJobs);
+              this.skilSvc.getSkillsof(this.currentUser.id).onSnapshot(all => {
+                this.usersSkils = [];
+                all.forEach(sk => {
+                  const s = sk.data() as Skill;
+                  s.id = sk.id;
+                  this.usersSkils.push(s);
+                })
+              })
+              this.trainSvc.editableFormationsListQuery(this.currentUser.id).onSnapshot(train => {
+                this.usersTraining = [];
+                train.forEach(t => {
+                  const tr = t.data() as Formation;
+                  tr.id = t.id;
+                  this.usersTraining.push(tr);
+                })
+              })
+              this.expSvc.listExperiences(this.currentUser.id).onSnapshot(exps => {
+                this.userExperiences = [];
+                exps.forEach(e => {
+                  const exp = e.data() as Experience;
+                  exp.id = e.id;
+                  this.userExperiences.push(exp);
+                })
+              })
+            })
+          }
+        })
       })
     });
   }
@@ -103,22 +120,25 @@ export class UserJobProfileComponent implements OnInit {
   }
 
   apply() {
-    this.currentApplication.userRef = this.user.id;
+    this.loadingSvc.start();
+    this.currentApplication.userRef = this.currentUser.id;
     this.currentApplication.jobref = this.currentJob.id;
-    this.JobApplicationSvc.add(this.currentApplication).then(v=>{
-        this.toastrSvc.success('Successfully applied')
-        this.currentApplication = new JobApplication();
-
-    }).catch(err=>{
-      this.toastrSvc.error('An Error occured',err.message)
+    this.JobApplicationSvc.add(this.currentApplication).then(v => {
+      this.toastrSvc.success('Successfully applied')
+      this.currentApplication = new JobApplication();
+      this.loadingSvc.stop();
+    }).catch(err => {
+      this.loadingSvc.stop();
+      this.toastrSvc.error('An Error occured', err.message)
+      
     })
   }
 
   changed(event) {
-    if(event.currentTarget.checked){
+    if (event.currentTarget.checked) {
       this.currentApplication.skillsRef.push(event.currentTarget.value)
     }
-    else{
+    else {
       const index = this.currentApplication.skillsRef.indexOf(event.currentTarget.value, 0);
       if (index > -1) {
         this.currentApplication.skillsRef.splice(index, 1);
@@ -127,10 +147,10 @@ export class UserJobProfileComponent implements OnInit {
   }
 
   expchanged(event) {
-    if(event.currentTarget.checked){
+    if (event.currentTarget.checked) {
       this.currentApplication.exp.push(event.currentTarget.value)
     }
-    else{
+    else {
       const index = this.currentApplication.exp.indexOf(event.currentTarget.value, 0);
       if (index > -1) {
         this.currentApplication.exp.splice(index, 1);
@@ -139,16 +159,43 @@ export class UserJobProfileComponent implements OnInit {
   }
 
   trainchanged(event) {
-    if(event.currentTarget.checked){
+    if (event.currentTarget.checked) {
       this.currentApplication.trainings.push(event.currentTarget.value)
     }
-    else{
+    else {
       const index = this.currentApplication.trainings.indexOf(event.currentTarget.value, 0);
       if (index > -1) {
         this.currentApplication.trainings.splice(index, 1);
       }
     }
   }
+
+  checkDispApply() {
+    alert(this.currentJob.ownerUser + '    ' + this.user.id)
+    if (this.currentJob.ownerUser) {
+      if (this.currentUser.id === this.currentJob.ownerUser) {
+        this.dispApply = false;
+      }
+    }
+    this.JobApplicationSvc.findByfilters(['userRef', 'jobref'], ["==", "=="], [this.currentUser.id, this.currentJob.id]).snapshotChanges().subscribe(val => {
+      if (val) {
+        this.dispApply = false;
+      }
+    })
+  }
+
+  save(){
+    this.loadingSvc.start()
+    this.userSvc.saveJob(this.currentUser.id,this.currentJob.id).then(t=>{
+      this.toastrSvc.success('Job offer succefully saved in your');
+    }).catch(err=>{
+       this.toastrSvc.error('An error occured'+err.message);
+    }).finally(()=>{
+      this.loadingSvc.stop();
+    })
+  }
+
+  
 
 
 }

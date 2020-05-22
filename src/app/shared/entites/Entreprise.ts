@@ -16,7 +16,7 @@ export class Entreprise {
     offreEtudeProjet: boolean;
     offreCertifCation: boolean;
     offreEmploi: boolean;
-    dateCreation: Date;
+    dateCreation;
     telephones: string;
     pays: string;
     mail: string;

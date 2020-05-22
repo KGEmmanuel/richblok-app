@@ -13,12 +13,14 @@
                 {{org.nom}}
               </a>
               <i class="feather-map-pin"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted
-              {{currentJob?.dateCreation?.toDate() | date}}
-          </div>
+              {{currentJob?.dateCreation?.toDate() | date}} 
+          </div> 
           <div class="profile-right ml-auto">
-            <button type="button" class="btn btn-light mr-1"> &nbsp; Save &nbsp; </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#interviewmodal"> &nbsp;
+            <button *ngIf="dispSav" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save &nbsp; </button>
+            <button *ngIf="dispApply" type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#interviewmodal"> &nbsp;
               Apply &nbsp; </button>
+            <button *ngIf="!dispApply" type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#interviewmodal"> &nbsp;
+              View Process &nbsp; </button>
           </div>
         </div>
       </div>
@@ -187,7 +189,8 @@
             <div class="col-lg-6">
               <h6 style="color: grey;">Your skills</h6>
               <div class="custom-control custom-checkbox mb-3" *ngFor="let sk of usersSkils let i = index">
-                <input type="checkbox" [checked]="currentApplication.skillsRef.includes(sk.id)" class="custom-control-input" [id]="'sk'+i" (change)="changed($event)" [value]="sk.id">
+                <input type="checkbox" [checked]="currentApplication.skillsRef.includes(sk.id)"
+                  class="custom-control-input" [id]="'sk'+i" (change)="changed($event)" [value]="sk.id">
                 <label class="custom-control-label" [for]="'sk'+i">{{sk.skillName}}({{sk.skillStringValue}})</label>
               </div>
             </div>
@@ -208,8 +211,10 @@
             <div class="col-lg-6">
               <h6 style="color: grey;">Your Diplomas</h6>
               <div class="custom-control custom-checkbox mb-3" *ngFor="let dip of usersTraining let i = index">
-                <input type="checkbox" class="custom-control-input" [checked]="currentApplication.trainings.includes(dip.id)"  [id]="'train'+i" (change)="trainchanged($event)" [value]="dip.id">
-                <label class="custom-control-label"[for]="'train'+i">{{dip.libelle}} in {{dip.domaineName}}</label>
+                <input type="checkbox" class="custom-control-input"
+                  [checked]="currentApplication.trainings.includes(dip.id)" [id]="'train'+i"
+                  (change)="trainchanged($event)" [value]="dip.id">
+                <label class="custom-control-label" [for]="'train'+i">{{dip.libelle}} in {{dip.domaineName}}</label>
               </div>
             </div>
             <div style="float: right; margin-top: 10px;">
@@ -229,8 +234,9 @@
             <div class="col-lg-6">
               <h6 style="color: grey;">Your Experiences</h6>
               <div class="custom-control custom-checkbox mb-3" *ngFor="let exp of userExperiences let i = index">
-                <input type="checkbox" class="custom-control-input" [id]="'train'+i" (change)="expchanged($event)" [value]="exp.id" [checked]="currentApplication.exp.includes(exp.id)" >
-                <label class="custom-control-label"[for]="'train'+i">{{exp.libelle}}</label>
+                <input type="checkbox" class="custom-control-input" [id]="'train'+i" (change)="expchanged($event)"
+                  [value]="exp.id" [checked]="currentApplication.exp.includes(exp.id)">
+                <label class="custom-control-label" [for]="'train'+i">{{exp.libelle}}</label>
               </div>
             </div>
             <div style="float: right; margin-top: 10px;">

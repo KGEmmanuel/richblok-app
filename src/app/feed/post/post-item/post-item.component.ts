@@ -39,7 +39,8 @@ export class PostItemComponent implements OnInit {
     });
 
     if (this.currentPost) {
-      this.userSvc.getDocRef(this.currentPost.owner).onSnapshot(val => {
+      if(this.currentPost?.owner)
+      this.userSvc.getDocRef(this.currentPost?.owner).onSnapshot(val => {
         this.ownedUser = val.data() as Utilisateur;
         this.ownedUser.id = val.id;
       });
