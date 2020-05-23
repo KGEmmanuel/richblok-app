@@ -1,0 +1,7 @@
+<div class="d-flex align-items-center p-3 border-top border-bottom job-item-body">
+    <div class="overlap-rounded-circle" *ngFor="let item of users">
+        <app-userslist-inline-item [userid]="item"></app-userslist-inline-item>
+    </div>
+    <span class="font-weight-bold text-primary" *ngIf="users?.length> 0">{{users?.length}} {{title}}</span>
+    <span class="font-weight-bold text-primary" *ngIf="users?.length === 0">0 {{title}}</span>
+</div>

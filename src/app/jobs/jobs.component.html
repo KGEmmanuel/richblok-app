@@ -1,485 +1,144 @@
 <header>
-   <app-header></app-header>
+    <app-header></app-header>
 </header>
 
 <div class="py-4">
-   <div class="container">
-      <div class="row">
-         <!-- Main Content -->
-         <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
-            <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
-               <form class="job-search p-3 border-bottom">
-                  <div class="input-group">
-                     <input type="text" class="form-control" placeholder="Search jobs" aria-label="Search"
-                        aria-describedby="basic-addon2">
-                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
+                <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
+                    <form class="job-search p-3 border-bottom">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search jobs" aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button">
                            <i class="feather-search"></i>
                         </button>
-                     </div>
-                  </div>
-               </form>
-               <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
-                  <li class="nav-item">
-                     <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                        aria-controls="home" aria-selected="true">All</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                        aria-controls="profile" aria-selected="false">Saved Jobs</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
-                        aria-controls="contact" aria-selected="false">Applied for</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" id="type-tab" data-toggle="tab" href="#type" role="tab" aria-controls="type"
-                        aria-selected="false">Published</a>
-                  </li>
-               </ul>
-               <div class="tab-content" id="myTabContent">
-                  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                     <div class="p-3 border-top">
-                        <div class="row">
-                           <div class="col-md-6" *ngFor="let job of allJobs">
-                              <app-jobs-item [currentJob]="job"></app-jobs-item>
-                           </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-                  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                     <div class="p-3 w-100">
-                        <div class="row">
-                           <div class="col-md-6" *ngFor="let job of savedJobs">
-                              <app-jobs-item [currentJob]="job"></app-jobs-item>
-                           </div>
+                    </form>
+                    <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">All</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Saved Jobs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Applied for</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="type-tab" data-toggle="tab" href="#type" role="tab" aria-controls="type" aria-selected="false">Published</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="p-3 border-top">
+                                <div class="row">
+                                    <div class="col-md-6" *ngFor="let job of allJobs">
+                                        <app-jobs-item [currentJob]="job"></app-jobs-item>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="p-3 w-100">
+                                <div class="row">
+                                    <div class="col-md-6" *ngFor="let job of savedJobs">
+                                        <app-jobs-item [currentJob]="job"></app-jobs-item>
+                                    </div>
 
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-                  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                     <div class="p-3 w-100">
-                       <app-jobs-applied></app-jobs-applied>
-                     </div>
-                  </div>
-                  <div class="tab-pane fade" id="type" role="tabpanel" aria-labelledby="type-tab">
-                     <div class="p-3 w-100">
-                        <div class="row">
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p2.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">John Doe</h6>
-                                          <div class="small text-black-50 truncate">Traveler</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p6.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p7.png" alt=""
-                                             data-original-title="John Doe">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p8.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p9.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p3.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Julia Cox</h6>
-                                          <div class="small text-black-50 truncate">Art Designer</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p10.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p11.png" alt=""
-                                             data-original-title="John Doe">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p12.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p13.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p4.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Robert Cook</h6>
-                                          <div class="small text-black-50 truncate">Graphic Designer</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p1.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p3.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p4.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p5.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Stella Bergmann</h6>
-                                          <div class="small text-black-50 truncate">Photography</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p5.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p6.png" alt=""
-                                             data-original-title="John Doe">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p7.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p8.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p6.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Dan Walker</h6>
-                                          <div class="small text-black-50 truncate">UI/UX Designer</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p9.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p13.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p8.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p7.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Julia Cox</h6>
-                                          <div class="small text-black-50 truncate">Art Designer</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p10.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p11.png" alt=""
-                                             data-original-title="John Doe">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p12.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p13.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p8.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Robert Cook</h6>
-                                          <div class="small text-black-50 truncate">Graphic Designer</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p1.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p3.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p4.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
-                           <div class="col-md-6">
-                              <a href="profile.html">
-                                 <div class="border network-item rounded mb-3">
-                                    <div class="p-3 d-flex align-items-center network-item-header">
-                                       <div class="dropdown-list-image mr-3">
-                                          <img class="rounded-circle" src="../../assets/img/p9.png" alt="">
-                                       </div>
-                                       <div class="font-weight-bold">
-                                          <h6 class="font-weight-bold text-dark mb-0">Stella Bergmann</h6>
-                                          <div class="small text-black-50 truncate">Photography</div>
-                                       </div>
-                                    </div>
-                                    <div
-                                       class="d-flex align-items-center p-3 border-top border-bottom network-item-body">
-                                       <div class="overlap-rounded-circle">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p5.png" alt=""
-                                             data-original-title="Sophia Lee">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p6.png" alt=""
-                                             data-original-title="John Doe">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p7.png" alt=""
-                                             data-original-title="Julia Cox">
-                                          <img class="rounded-circle shadow-sm" data-toggle="tooltip"
-                                             data-placement="top" title="" src="../../assets/img/p8.png" alt=""
-                                             data-original-title="Robert Cook">
-                                       </div>
-                                       <span class="font-weight-bold small text-primary">4 mutual connections</span>
-                                    </div>
-                                    <div class="network-item-footer py-3 d-flex text-center">
-                                       <div class="col-6 pl-3 pr-1">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block"> Connect
-                                          </button>
-                                       </div>
-                                       <div class="col-6 pr-3 pl-1">
-                                          <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i
-                                                class="feather-user-plus"></i> Follow </button>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </a>
-                           </div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <div class="p-3 w-100">
+                                <app-jobs-applied></app-jobs-applied>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </main>
-         <aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
-            <app-rib-solutions></app-rib-solutions>
-            <div class="shadow-sm rounded bg-white job-item-2 p-3 mb-3">
-               <div class="media">
-                  <div class="u-avatar mr-3">
-                     <img class="img-fluid" src="../../assets/img/l3.png" alt="Image Description">
-                  </div>
-                  <div class="media-body">
-                     <div class="mb-3">
-                        <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">C# Developer</a></h6>
-                        <a class="d-inline-block small pt-1" href="job-profile">
-                           <span class="text-warning">
-                              <span class="feather-star"></span>
-                              <span class="feather-star"></span>
-                              <span class="feather-star"></span>
-                              <span class="feather-star text-gray-500"></span>
-                              <span class="feather-star text-gray-500"></span>
-                           </span>
-                           <span class="text-dark font-weight-bold ml-2">3.74</span>
-                           <span class="text-muted">(567 reviews)</span>
-                        </a>
-                     </div>
-                     <div class="d-flex align-items-center">
-                        <div class="border-right pr-3 mr-3">
-                           <a class="text-secondary small" href="job-profile">Salaries</a>
+                        <div class="tab-pane fade" id="type" role="tabpanel" aria-labelledby="type-tab">
+                            <div class="p-3 w-100">
+                                <app-jobs-created></app-jobs-created>
+                            </div>
                         </div>
-                        <a class="small" href="job-profile">Open jobs</a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="shadow-sm  rounded bg-white job-item-2 p-3 mb-3">
-               <div class="media">
-                  <div class="u-avatar mr-3">
-                     <img class="img-fluid" src="../../assets/img/l2.png" alt="Image Description">
-                  </div>
-                  <div class="media-body">
-                     <div class="mb-3">
-                        <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">Junior UX Designer</a>
-                        </h6>
-                        <a class="d-inline-block small pt-1" href="job-profile">
-                           <span class="text-warning">
-                              <span class="feather-star"></span>
-                              <span class="feather-star"></span>
-                              <span class="feather-star"></span>
-                              <span class="feather-star"></span>
-                              <span class="feather-star"></span>
-                           </span>
-                           <span class="text-dark font-weight-bold ml-2">3.74</span>
-                           <span class="text-muted">(567 reviews)</span>
-                        </a>
-                     </div>
-                     <div class="d-flex align-items-center">
-                        <div class="border-right pr-3 mr-3">
-                           <a class="text-secondary small" href="job-profile">Salaries</a>
+                    </div>
+                </div>
+            </main>
+            <aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
+                <app-rib-solutions></app-rib-solutions>
+                <div class="shadow-sm rounded bg-white job-item-2 p-3 mb-3">
+                    <div class="media">
+                        <div class="u-avatar mr-3">
+                            <img class="img-fluid" src="../../assets/img/l3.png" alt="Image Description">
                         </div>
-                        <a class="small" href="job-profile">Open jobs</a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </aside>
-         <aside class="col col-xl-3 order-xl-3 col-lg-6 order-lg-3 col-md-6 col-sm-6 col-12">
-            <div class="pb-3">
-               <h6 class="font-weight-bold text-dark mb-1">Because you viewed</h6>
-               <p class="mb-0 text-muted">Designer at Google?</p>
-            </div>
-            <app-job-aside-item></app-job-aside-item>
-            <app-connection-aside></app-connection-aside>
-         </aside>
-      </div>
-   </div>
+                        <div class="media-body">
+                            <div class="mb-3">
+                                <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">C# Developer</a></h6>
+                                <a class="d-inline-block small pt-1" href="job-profile">
+                                    <span class="text-warning">
+                              <span class="feather-star"></span>
+                                    <span class="feather-star"></span>
+                                    <span class="feather-star"></span>
+                                    <span class="feather-star text-gray-500"></span>
+                                    <span class="feather-star text-gray-500"></span>
+                                    </span>
+                                    <span class="text-dark font-weight-bold ml-2">3.74</span>
+                                    <span class="text-muted">(567 reviews)</span>
+                                </a>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="border-right pr-3 mr-3">
+                                    <a class="text-secondary small" href="job-profile">Salaries</a>
+                                </div>
+                                <a class="small" href="job-profile">Open jobs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="shadow-sm  rounded bg-white job-item-2 p-3 mb-3">
+                    <div class="media">
+                        <div class="u-avatar mr-3">
+                            <img class="img-fluid" src="../../assets/img/l2.png" alt="Image Description">
+                        </div>
+                        <div class="media-body">
+                            <div class="mb-3">
+                                <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">Junior UX Designer</a>
+                                </h6>
+                                <a class="d-inline-block small pt-1" href="job-profile">
+                                    <span class="text-warning">
+                              <span class="feather-star"></span>
+                                    <span class="feather-star"></span>
+                                    <span class="feather-star"></span>
+                                    <span class="feather-star"></span>
+                                    <span class="feather-star"></span>
+                                    </span>
+                                    <span class="text-dark font-weight-bold ml-2">3.74</span>
+                                    <span class="text-muted">(567 reviews)</span>
+                                </a>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="border-right pr-3 mr-3">
+                                    <a class="text-secondary small" href="job-profile">Salaries</a>
+                                </div>
+                                <a class="small" href="job-profile">Open jobs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <aside class="col col-xl-3 order-xl-3 col-lg-6 order-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="pb-3">
+                    <h6 class="font-weight-bold text-dark mb-1">Because you viewed</h6>
+                    <p class="mb-0 text-muted">Designer at Google?</p>
+                </div>
+                <app-job-aside-item></app-job-aside-item>
+                <app-connection-aside></app-connection-aside>
+            </aside>
+        </div>
+    </div>
 </div>
 
 <footer>
-   <app-footer></app-footer>
+    <app-footer></app-footer>
 </footer>

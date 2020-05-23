@@ -186,6 +186,10 @@ import { RecordRealisationFormComponent } from './record/record-realisation/reco
 import { RecordRealisationItemComponent } from './record/record-realisation/record-realisation-item/record-realisation-item.component';
 import { DocumentComponent } from './document/document.component';
 import { RealisationComponent } from './realisation/realisation.component';
+import { UserslistInlineComponent } from './users/userslist-inline/userslist-inline.component';
+import { UserslistInlineItemComponent } from './users/userslist-inline-item/userslist-inline-item.component';
+import { JobProcessComponent } from './job-profile/job-process/job-process.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -360,6 +364,9 @@ import { RealisationComponent } from './realisation/realisation.component';
     OrganisationSettingsComponent,
     RealisationComponent,
     RecordRealisationItemComponent,
+    UserslistInlineComponent,
+    UserslistInlineItemComponent,
+    JobProcessComponent,
 
   ],
   imports: [
@@ -388,12 +395,15 @@ import { RealisationComponent } from './realisation/realisation.component';
     NgxUiLoaderModule,
     NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
     CountdownModule,
-    GooglePlaceModule
+    GooglePlaceModule,
+    PdfViewerModule
   ],
   providers: [
     ApiService,
     PostService,
   ],
   bootstrap: [AppComponent]
+
 })
 export class AppModule { }
+

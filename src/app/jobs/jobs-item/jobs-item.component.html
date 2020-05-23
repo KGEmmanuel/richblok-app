@@ -1,31 +1,26 @@
-<a [routerLink]="['/job-profile/'+currentJob.id]" routerLinkActive="router-link-active">
-    <div class="border job-item mb-3">
-        <div class="d-flex align-items-center p-3 job-item-header">
-            <div class="overflow-hidden mr-2">
-                <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{currentJob.libelle}}</h6>
-                <div class="text-truncate text-primary" *ngIf="org">{{org.nom}}</div>
-                <div class="text-truncate text-primary" *ngIf="user && !org">{{user.nom}} {{user.prenom}}</div>
-                <div class="small text-gray-500 text-truncate "><i class="feather-map-pin"></i> <span [innerHTML]="currentJob.completeAddress"></span></div>
-            </div>
-            <img *ngIf="org" class="img-fluid ml-auto" [src]="org.logo" alt="">
-            <img *ngIf="user && !org" class="img-fluid ml-auto" [src]="user.imageprofil" alt="">
-        </div>
-        <div class="d-flex p-3 border-top border-bottom job-item-body">
-            <div class="overlap-rounded-circle">
-                <img *ngFor="let item of connections" class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="{{item.nom}} {{item.prenom}}" [src]="item.imageprofil" alt="">
-            </div>
-            <span class="font-weight-bold text-primary">{{connections.length}} connections</span>
-        </div>
-        <div class="p-3 job-item-footer">
-            <div class="row">
-                <div class="col-lg-6">
-                    <small class="text-gray-500"><i class="feather-clock"></i> {{currentJob.datedeb}} </small>
-
-                </div>
-                <div class="col-lg-6 d-flex justify-content-end">
-                    <button class="btn btn-outline-primary" [routerLink]="['/job-profile/'+currentJob.id]">Details</button>
-                </div>
+<div class="border job-item mb-3">
+    <div class="d-flex align-items-center p-3 job-item-header">
+        <div class="overflow-hidden mr-2">
+            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{currentJob.libelle}}</h6>
+            <div class="text-truncate text-primary" *ngIf="org"><a [routerLink]="['/organisation/'+org.id]">{{org.nom}}</a></div>
+            <div class="text-truncate text-primary" *ngIf="user && !org"><a [routerLink]="['/profile/'+ user.id]">{{user.nom}} {{user.prenom}}</a></div>
+            <div class="small text-gray-500 text-truncate"><i class="feather-map-pin"></i>&nbsp;
+                <span [innerHTML]=" currentJob.completeAddress"></span>
             </div>
         </div>
+        <img *ngIf="org" class="img-fluid ml-auto" [src]="org.logo" alt="">
+        <img *ngIf="user && !org" class="img-fluid ml-auto" [src]="user.imageprofil" alt="">
     </div>
-</a>
+    <app-userslist-inline [users]="currentJob.postulants" [title]="connections"></app-userslist-inline>
+    <div class="p-3 job-item-footer">
+        <div class="row">
+            <div class="col-lg-6">
+                <small class="text-gray-500"><i class="feather-clock"></i> {{currentJob.datedeb}} </small>
+            </div>
+            <div class="col-lg-6 d-flex justify-content-end">
+                <button class="btn btn-outline-primary" [routerLink]="['/job-profile/'+currentJob.id]">Details</button>
+            </div>
+        </div>
+
+    </div>
+</div>

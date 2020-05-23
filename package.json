@@ -37,6 +37,7 @@
     "jspdf": "^1.5.3",
     "ng-bootstrap-modal": "^1.1.19",
     "ng-multiselect-dropdown": "^0.2.10",
+    "ng2-pdf-viewer": "^6.3.0",
     "ngx-countdown": "^9.0.1",
     "ngx-google-places-autocomplete": "^2.0.4",
     "ngx-skeleton-loader": "^1.2.6",

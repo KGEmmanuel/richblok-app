@@ -361,6 +361,12 @@ export class UtilisateurService {
       });
   }
 
+  saveJob(uid,jobId){
+    return this.afs.collection(this.path).doc(uid).update({
+      savedJobs: firebase.firestore.FieldValue.arrayUnion(jobId)
+      }); 
+  }
+
   confirmconnection(of:string, by: string){
     return this.afs.collection(this.path).doc(by).update({
       demandesabonnees: firebase.firestore.FieldValue.arrayRemove(of)

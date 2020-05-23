@@ -16,7 +16,7 @@ export class UserPostItemComponent implements OnInit {
 
   ngOnInit() {
     if (this.currentPost) {
-      this.userSvc.getDocRef(this.currentPost.owner).onSnapshot(val => {
+      this.userSvc.getDocRef(this.currentPost?.owner).onSnapshot(val => {
         this.ownedUser = val.data() as Utilisateur;
         this.ownedUser.id = val.id;
       });

@@ -1,0 +1,280 @@
+<header>
+    <app-header></app-header>
+</header>
+<div class="bg-white shadow-sm border-bottom">
+    <div class="container">
+        <h3 class="card-title">Job Process for : {{currentJob.libelle}}</h3>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-danger" *ngIf="!back" (click)="retour()"><i class="feather-arrow-left-circle"></i>
+        Back</button>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-timeline3">
+                    <div class="timeline" style=" cursor: pointer;" *ngIf="apply" (click)="dispApply()">
+                        <div class="timeline-icon"><span class="year">Step 1</span></div>
+                        <div class="timeline-content">
+                            <h3 class="title">Apply for the job</h3>
+                            <p class="description">
+                                At this level you are required to send your CV to the employer
+                            </p>
+                            <br>
+                            <div class="d-flex justify-content-end">
+                                <i class="feather-check" style="font-size: 1.7em;"></i> Step completed
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="timeline" style=" cursor: pointer;" *ngIf="sorting" (click)="dispSorting()">
+                        <div class="timeline-icon"><span class="year">Step 2</span></div>
+                        <div class="timeline-content">
+                            <h3 class="title">Sorting</h3>
+                            <p class="description">
+                                At this step our AI has sorted the best between the applicants and sent them to the employer. The employer will invite you to a pre-interview
+                            </p>
+                            <br>
+                            <div class="d-flex justify-content-end">
+                                <i class="feather-check" style="font-size: 1.7em;"></i> Step completed
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline" style=" cursor: pointer;" *ngIf="scoring" (click)="dispScoring()">
+                        <div class="timeline-icon"><span class="year">Step 3</span></div>
+                        <div class="timeline-content">
+                            <h3 class="title">Scoring</h3>
+                            <p class="description">
+                                Here your pre-interview score will be published, the formulation of your salary package will be sent to you and an invitation to the final interview
+                            </p>
+                            <br>
+                            <div class="d-flex justify-content-end">
+                                <i class="feather-check" style="font-size: 1.7em;"></i> Step completed
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline" style=" cursor: pointer;" *ngIf="purposes" (click)="dispPurposes()">
+                        <div class="timeline-icon"><span class="year">Step 4</span></div>
+                        <div class="timeline-content">
+                            <h3 class="title">Purposes</h3>
+                            <p class="description">
+                                The final interview is done!. You will receive the process report for the job
+                            </p>
+                            <br>
+                            <div class="d-flex justify-content-end">
+                                <i class="feather-check" style="font-size: 1.7em;"></i> Step completed
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="timeline" style=" cursor: pointer;" *ngIf="recruited" (click)="dispRecruited()">
+                        <div class="timeline-icon"><span class="year">Step 5</span></div>
+                        <div class="timeline-content">
+                            <h3 class="title">Recruited</h3>
+                            <p class="description" style="cursor: pointer;">
+                                The certified recruitement notes and smart contract have being sent to you. Consult it and get back to your recruiter
+                            </p>
+                            <br>
+                            <div class="d-flex justify-content-end">
+                                <i class="feather-check" style="font-size: 1.7em;"></i> Step completed
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" *ngIf="ap">
+            <div class="box shadow-sm border rounded bg-white mb-3 col-lg-6">
+                <div class="box-title border-bottom p-3">
+                    <h6 class="m-0">CV Details</h6>
+                </div>
+                <div class="box-body">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                            <tr class="border-bottom">
+                                <th class="p-3">Name</th>
+                                <td class="p-3">{{currentUser?.prenom}} {{currentUser?.nom}}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <th class="p-3">Occupation</th>
+                                <td class="p-3">{{currentUser?.poste}} <span *ngIf="currentUser.lieu != null">At</span> {{currentUser?.lieu}}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <th class="p-3">Date of birth</th>
+                                <td class="p-3">{{currentUser?.dateNaissance}} <span *ngIf="currentUser.lieuNaissance != null">At</span> {{currentUser?.lieuNaissance}}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <th class="p-3">About you</th>
+                                <td class="p-3">{{currentUser?.accroche}}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <th class="p-3">Motivation for this job</th>
+                                <td class="p-3">{{currentApplication?.motivation}}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <th class="p-3">Experiences</th>
+                                <td class="p-3">
+                                    <div *ngFor="let item of currentApplication?.exp">{{item}}
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <th class="p-3">Skills</th>
+                                <td class="p-9">
+                                    <div *ngFor="let item of currentApplication?.skillsRef">{{item}}
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="p-3">Trainings</th>
+                                <td class="p-9">
+                                    <div *ngFor="let item of currentApplication?.trainings"> {{item}} </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" *ngIf="so">
+            <div class="col-lg-6">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Applicants Rank</h6>
+                    </div>
+                    <div class="box-body p-3">
+
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="../../assets/img/p9.png" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">John Doe</div>
+                                <div class="small text-gray-500">Traveler
+                                </div>
+                            </div>
+                            <span class="ml-auto"><button type="button" class="btn btn-light btn-sm">Connent</button>
+              </span>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="../../assets/img/p10.png" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Julia Cox</div>
+                                <div class="small text-gray-500">Art Designer
+                                </div>
+                            </div>
+                            <span class="ml-auto"><button type="button" class="btn btn-light btn-sm">Connent</button>
+              </span>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="../../assets/img/p11.png" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Robert Cook</div>
+                                <div class="small text-gray-500">@Photography
+                                </div>
+                            </div>
+                            <span class="ml-auto"><button type="button" class="btn btn-light btn-sm">Connent</button>
+              </span>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="{{currentUser.imageprofil}}" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">{{currentUser?.nom}} {{currentUser?.prenom}}</div>
+                                <div class="small text-gray-500">{{currentUser?.poste}} <span *ngIf="user?.lieu != null">at</span> {{currentUser?.lieu}}
+                                </div>
+                            </div>
+                            <span class="ml-auto">
+              </span>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="../../assets/img/p12.png" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Richard Bell</div>
+                                <div class="small text-gray-500">@Envato
+                                </div>
+                            </div>
+                            <span class="ml-auto"><button type="button" class="btn btn-light btn-sm">Connent</button>
+              </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center" *ngIf="sc">
+            <div class="col-lg-6">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Pre-interview Scoring</h6>
+                    </div>
+                    <div class="box-body p-3">
+                        <div class="d-flex justify-content-center">
+                            <h1 class="text-primary">14/20</h1>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                Salary package
+                                <hr>
+                                <span>200,000 XAF</span>
+                            </div>
+                            <div class="col-lg-6">
+                                Final interview invitation
+                                <hr>
+                                <span>Programed for the 21/10/2020</span>
+                                <div class="d-flex justify-content-end" style="margin-top: 5% !important;">
+                                    <button class="btn btn-outline-gold"><i></i> Set alert for the interview</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" *ngIf="pu">
+            <div class="col-lg-6">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Process report</h6>
+                    </div>
+                    <div class="box-body p-3">
+                        <pdf-viewer [src]="pdfSrc" [render-text]="true" style="display: block;"></pdf-viewer>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" *ngIf="re">
+            <div class="col-lg-6">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Job contract</h6>
+                    </div>
+                    <div class="box-body p-3">
+                        <pdf-viewer [src]="pdfSrc" [render-text]="true" style="display: block;"></pdf-viewer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <app-footer></app-footer>
+</footer>

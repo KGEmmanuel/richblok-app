@@ -38,6 +38,7 @@ import { JobStep5Component } from './jobs/jobs-post/job-step5/job-step5.componen
 import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonstrate-form.component';
 import { OrganisationViewComponent } from './organisation-view/organisation-view.component';
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
+import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
@@ -67,6 +68,7 @@ const routes: Routes = [
   { path: 'policy', component: PolicyComponent},
   { path: 'contact', component: ContactComponent},
   { path: 'job-profile/:id', component: UserJobProfileComponent},
+  { path: 'job-process/:id', component: JobProcessComponent},
   { path: 'post-jobs', component: JobsPostComponent},
   { path: 'post-job-step-one', component: JobStep1Component},
   { path: 'post-job-step-two', component: JobStep2Component},

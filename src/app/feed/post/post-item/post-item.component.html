@@ -5,7 +5,7 @@
             <div class="status-indicator bg-success"></div>
         </div>
         <div class="font-weight-bold">
-            <div class="text-truncate pop" data-container="body" data-toggle="popover" data-placement="right" data-content="" data-original-title="" title="" style="cursor: pointer;" routerLink="/profile">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
+            <div class="text-truncate pop" data-container="body" data-toggle="popover" data-placement="right" data-content="" data-original-title="" title="" style="cursor: pointer;" [routerLink]="['/profile/'+ ownedUser.id]">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
             <div class="small" style="color: grey;">{{ownedUser?.poste}} at {{ownedUser?.lieu}}</div>
             <div class="small" style="color: grey;"><i class="feather-map-pin" *ngIf="currentPost?.location != null"></i> {{currentPost?.location}}</div>
         </div>

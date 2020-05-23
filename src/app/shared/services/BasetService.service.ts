@@ -57,7 +57,7 @@ export abstract class BaseService<T extends IBaseEntity> implements IBaseService
     }
   }
 
-  findByfilters(keys: string[], operator: firebase.firestore.WhereFilterOp[], values: object[], orderby?: string) {
+  findByfilters(keys: string[], operator: firebase.firestore.WhereFilterOp[], values: any[], orderby?: string) {
     return this.afs.collection(this.dbpath, ref => {
       let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
       let i = 0;

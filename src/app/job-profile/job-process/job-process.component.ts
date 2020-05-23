@@ -20,27 +20,32 @@ import { JobApplicationService } from 'src/app/shared/services/job-application.s
 import { ToastrService } from 'ngx-toastr';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-
 @Component({
-  selector: 'app-user-job-profile',
-  templateUrl: './user-job-profile.component.html',
-  styleUrls: ['./user-job-profile.component.scss']
+  selector: 'app-job-process',
+  templateUrl: './job-process.component.html',
+  styleUrls: ['./job-process.component.scss']
 })
-export class UserJobProfileComponent implements OnInit {
-
-  currentJob: OffresEmploi;
+export class JobProcessComponent implements OnInit {
+  pdfSrc = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
+  currentJob = new OffresEmploi();
   org: Entreprise;
   user: Utilisateur;
   currentApplication = new JobApplication();
-  step = 1;
-
   usersSkils: Array<Skill>;
   usersTraining: Array<Formation>;
   userExperiences: Array<Experience>;
-  dispApply = true;
-  dispProcess= false;
-  dispSav = true;
   currentUser: Utilisateur;
+  apply = true;
+  sorting = true;
+  scoring = true;
+  purposes = true;
+  recruited = true;
+  back = true;
+  ap = false;
+  so = false;
+  sc = false;
+  pu = false;
+  re = false;
 
 
   constructor(private route: ActivatedRoute, private jobSvc: OffreEmploiService, private orgSvc: OrganisationService,private loadingSvc: NgxUiLoaderService,
@@ -73,8 +78,6 @@ export class UserJobProfileComponent implements OnInit {
             this.userSvc.getDocRef(val.uid).onSnapshot(u => {
               this.currentUser = u.data() as Utilisateur;
               this.currentUser.id = u.id;
-              this.checkDispApply();
-              this.dispSav = !this.currentUser.savedJobs?.includes(id);
               console.log(this.currentUser.savedJobs);
               this.skilSvc.getSkillsof(this.currentUser.id).onSnapshot(all => {
                 this.usersSkils = [];
@@ -106,96 +109,78 @@ export class UserJobProfileComponent implements OnInit {
       })
     });
   }
-
-  next() {
-    if (this.step < 4) {
-      this.step++;
-    }
+  dispApply(){
+    this.apply = true;
+    this.sorting = false;
+    this.scoring = false;
+    this.purposes = false;
+    this.recruited = false;
+    this.back = true;
+    this.ap = true;
+    this.back = false;
+    this.so = false;
+    this.sc = false;
+    this.pu = false;
+    this.re = false;
   }
-
-  prev() {
-    if (this.step > 1) {
-      this.step--;
-    }
+  dispSorting(){
+    this.sorting = true;
+    this.scoring = false;
+    this.purposes = false;
+    this.recruited = false;
+    this.back = true;
+    this.so = true
+    this.back = false;
+    this.ap = false;
+    this.sc = false;
+    this.pu = false;
+    this.re = false;
   }
-
-  apply() {
-    this.loadingSvc.start();
-    this.currentApplication.userRef = this.currentUser.id;
-    this.currentApplication.jobref = this.currentJob.id;
-    this.JobApplicationSvc.add(this.currentApplication).then(v => {
-      this.toastrSvc.success('Successfully applied')
-      this.currentApplication = new JobApplication();
-      this.loadingSvc.stop();
-    }).catch(err => {
-      this.loadingSvc.stop();
-      this.toastrSvc.error('An Error occured', err.message)
-
-    })
+  dispScoring(){
+    this.scoring = true;
+    this.purposes = false;
+    this.recruited = false;
+    this.back = true;
+    this.sc = true;
+    this.back = false;
+    this.ap = false;
+    this.so = false;
+    this.pu = false;
+    this.re = false;
   }
-
-  changed(event) {
-    if (event.currentTarget.checked) {
-      this.currentApplication.skillsRef.push(event.currentTarget.value)
-    }
-    else {
-      const index = this.currentApplication.skillsRef.indexOf(event.currentTarget.value, 0);
-      if (index > -1) {
-        this.currentApplication.skillsRef.splice(index, 1);
-      }
-    }
+  dispPurposes(){
+    this.purposes = true;
+    this.recruited = false;
+    this.back = true;
+    this.pu = true;
+    this.back = false;
+    this.ap = false;
+    this.so = false;
+    this.sc = false;
+    this.re = false;
   }
-
-  expchanged(event) {
-    if (event.currentTarget.checked) {
-      this.currentApplication.exp.push(event.currentTarget.value)
-    }
-    else {
-      const index = this.currentApplication.exp.indexOf(event.currentTarget.value, 0);
-      if (index > -1) {
-        this.currentApplication.exp.splice(index, 1);
-      }
-    }
+  dispRecruited(){
+    this.recruited = true;
+    this.back = true;
+    this.re = true;
+    this.back = false;
+    this.ap = false;
+    this.so = false;
+    this.sc = false;
+    this.pu = false;
   }
+  retour(){
+    this.recruited = true;
+    this.sorting = true;
+    this.scoring = true;
+    this.apply = true;
+    this.purposes = true;
+    this.back = true;
+    this.ap = false;
+    this.so = false;
+    this.sc = false;
+    this.pu = false;
+    this.re = false;
 
-  trainchanged(event) {
-    if (event.currentTarget.checked) {
-      this.currentApplication.trainings.push(event.currentTarget.value)
-    }
-    else {
-      const index = this.currentApplication.trainings.indexOf(event.currentTarget.value, 0);
-      if (index > -1) {
-        this.currentApplication.trainings.splice(index, 1);
-      }
-    }
   }
-
-  checkDispApply() {
-    if (this.currentJob.ownerUser) {
-      if (this.currentUser.id === this.currentJob.ownerUser) {
-        this.dispApply = false;
-      }
-    }
-    this.JobApplicationSvc.findByfilters(['userRef', 'jobref'], ["==", "=="], [this.currentUser.id, this.currentJob.id]).snapshotChanges().subscribe(val => {
-      if (val) {
-        this.dispApply = false;
-      }
-    })
-  }
-
-  save(){
-    this.loadingSvc.start()
-    this.userSvc.saveJob(this.currentUser.id,this.currentJob.id).then(t=>{
-      this.loadingSvc.stop()
-      this.toastrSvc.success('Job offer succefully saved', 'Success');
-    }).catch(err=>{
-       this.toastrSvc.error('An error occured'+err.message);
-    }).finally(()=>{
-      this.loadingSvc.stop();
-    })
-  }
-
-
-
-
 }
