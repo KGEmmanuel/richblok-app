@@ -154,13 +154,13 @@ export class PostShareFormComponent implements OnInit {
     console.log(this.currentPost.medias);
     const filesAmount = this.files.length;
     Promise.all(this.uploadallFiles(this.files)).then(v => {
-      alert('test 1');
+     // alert('test 1');
       console.log('Medias is ' + this.currentPost.medias)
       this.postSvc.savePost(this.currentPost).then(val => {
 
         this.currentPost = new Post();
         this.toassvc.success('Publication successfully saved');
-        alert('test 2');
+      //  alert('test 2');
       }).catch(err => {
         this.toassvc.error('Error : ' + err.message);
       });

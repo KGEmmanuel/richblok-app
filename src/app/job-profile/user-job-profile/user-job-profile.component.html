@@ -19,7 +19,7 @@
             <button *ngIf="dispSav" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save &nbsp; </button>
             <button *ngIf="dispApply" type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#interviewmodal"> &nbsp;
               Apply &nbsp; </button>
-            <button *ngIf="!dispApply" type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#interviewmodal"> &nbsp;
+            <button *ngIf="!dispApply" type="button" class="btn btn-primary mr-1" (click)="navToViewProcess()"> &nbsp;
               View Process &nbsp; </button>
           </div>
         </div>

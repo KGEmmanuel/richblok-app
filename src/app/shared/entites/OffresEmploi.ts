@@ -35,5 +35,8 @@ export class OffresEmploi extends IBaseEntity{
   tags =new Array<string>();
   postulants = new Array<string>();
   recruteurs = new Array<string>();
+  currentStep = 1;
+  preinterviewOMarks = 0;
+  preinterviewPercentageMaks = 0;
 
 }

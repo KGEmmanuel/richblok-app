@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/compiler/src/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
@@ -46,7 +46,7 @@ export class UserJobProfileComponent implements OnInit {
   constructor(private route: ActivatedRoute, private jobSvc: OffreEmploiService, private orgSvc: OrganisationService,private loadingSvc: NgxUiLoaderService,
     private userSvc: UtilisateurService, private skilSvc: SkillsService, private trainSvc: FormationService,
     private expSvc: ExperienceService, private JobApplicationSvc: JobApplicationService, private toastrSvc: ToastrService,
-    private afAuth: AngularFireAuth) { }
+    private afAuth: AngularFireAuth, private router: Router) { }
 
   ngOnInit() {
 
@@ -171,7 +171,7 @@ export class UserJobProfileComponent implements OnInit {
   }
 
   checkDispApply() {
-    alert(this.currentJob.ownerUser + '    ' + this.user.id)
+   // alert(this.currentJob.ownerUser + '    ' + this.user.id)
     if (this.currentJob.ownerUser) {
       if (this.currentUser.id === this.currentJob.ownerUser) {
         this.dispApply = false;
@@ -193,6 +193,11 @@ export class UserJobProfileComponent implements OnInit {
     }).finally(()=>{
       this.loadingSvc.stop();
     })
+  }
+
+  navToViewProcess(){
+   // alert('Test');
+    this.router.navigate(['post-jobs',{id:this.currentJob.id}]);
   }
 
   

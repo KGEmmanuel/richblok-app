@@ -77,7 +77,7 @@ const routes: Routes = [
   { path: 'demo', component: DemonstrateFormComponent},
   { path: 'landing', component: LandingComponent},
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
-{ path: 'create-challenge', component: EvaluateFormComponent}
+  { path: 'create-challenge', component: EvaluateFormComponent}
 
 
 ];

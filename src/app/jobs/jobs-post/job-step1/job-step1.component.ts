@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
 import { JobSkill } from 'src/app/shared/entites/jobSkill';
 import { ToastrService } from 'ngx-toastr';
@@ -8,7 +8,8 @@ import { OrganisationService } from 'src/app/shared/services/organisation.servic
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
   selector: 'app-job-step1',
   templateUrl: './job-step1.component.html',
@@ -18,6 +19,7 @@ export class JobStep1Component implements OnInit {
 
   skill: JobSkill;
   offres: OffresEmploi;
+  mode: string;
   numberSkills: number;
 
   numberdiploma: number;
@@ -25,7 +27,7 @@ export class JobStep1Component implements OnInit {
   organisations : Array<Entreprise>;
   uid: string;
   constructor(private toastr: ToastrService, private orgSvc: OrganisationService, private offreSvc: OffreEmploiService, 
-    private afAuth: AngularFireAuth, private router: Router) { }
+    private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService) { }
 
   ngOnInit() {
     this.numberSkills = 0;
@@ -33,6 +35,22 @@ export class JobStep1Component implements OnInit {
     this.skill = new JobSkill();
     this.offres = new OffresEmploi();
     this.diplome = new EmploiFormation();
+    let id = this.route.snapshot.paramMap.get('id');
+    let accessMode = this.route.snapshot.paramMap.get('mode');
+    if(id){
+       this.offreSvc.getDocRef(id).onSnapshot(sn=>{
+          if(sn){
+            this.offres = sn.data() as OffresEmploi;
+            this.offres.id = id;
+            this.numberSkills = this.offres.competencessup?.length;
+            this.numberdiploma = this.offres.formations?.length;
+          }
+       })
+    }
+    else{
+      this.offres = new OffresEmploi();
+    }
+
     this.afAuth.authState.subscribe(v=>{
        if(v)
        {
@@ -108,13 +126,30 @@ export class JobStep1Component implements OnInit {
   }
 
   save(){
+    this.loadingSvc.start();
     this.offres.ownerUser  = this.uid;
-    this.offreSvc.save(this.offres).then(()=>{
-      this.toastr.success("Job Offert saved");
-      this.router.navigate(['jobs']);
-    }).catch(err=>{
-      this.toastr.error(err.message);
-    })
+    if(this.offres.id){
+      this.offreSvc.update(this.offres).then(val=>{
+        this.toastr.success("Job Offert saved");
+        this.router.navigate(['jobs']);
+      }).catch(err=>{
+        this.toastr.error(err.message);
+      }).finally(()=>{
+         this.loadingSvc.stop();
+      })
+    }
+    else{
+      this.offreSvc.save(this.offres).then(val=>{
+        this.toastr.success("Job Offert saved");
+        this.router.navigate(['jobs']);
+        
+      }).catch(err=>{
+        this.toastr.error(err.message);
+      }).finally(()=>{
+        this.loadingSvc.stop()
+      })
+    }
+    
 
   }
 

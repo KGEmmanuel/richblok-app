@@ -49,8 +49,9 @@ export class JobStep2Component implements OnInit {
       return;
     }
     this.offre.preinterview.push(this.skill);
-    this.skill = new Preinterview();
     this.numberSkill += 1;
+    this.offre.preinterviewOMarks += +this.skill.overallmarks;
+    this.skill = new Preinterview();
     this.toastr.success('Skill added succesfully', 'Success');
   }
 
