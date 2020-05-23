@@ -40,7 +40,7 @@ import { OrganisationViewComponent } from './organisation-view/organisation-view
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
+  { path: '', redirectTo: '/landing', pathMatch: 'full' },
   { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'feed', component: FeedComponent, canActivate: [AuthGuard] },
