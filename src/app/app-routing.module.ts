@@ -41,7 +41,7 @@ import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.co
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
+  { path: '', redirectTo: '/landing', pathMatch: 'full' },
   { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'feed', component: FeedComponent, canActivate: [AuthGuard] },
@@ -79,7 +79,7 @@ const routes: Routes = [
   { path: 'demo', component: DemonstrateFormComponent},
   { path: 'landing', component: LandingComponent},
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
-{ path: 'create-challenge', component: EvaluateFormComponent}
+  { path: 'create-challenge', component: EvaluateFormComponent}
 
 
 ];

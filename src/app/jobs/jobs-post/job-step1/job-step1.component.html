@@ -23,7 +23,7 @@
                             <label class="mb-1">Requesting Organisation </label>
                             <div class="position-relative icon-form-control">
                                 <i class="feather-pocket position-absolute"></i>
-                                <select [(ngModel)]="offres.ownerOrg" name="org" class="form-control">
+                                <select [disabled]="offres.currentStep > 1" [(ngModel)]="offres.ownerOrg" name="org" class="form-control">
                            <option *ngFor="let item of organisations" [value]="item.id">{{item}}</option>
                         </select>
                             </div>
@@ -34,128 +34,153 @@
                                     <label class="mb-1">Post</label>
                                     <div class="position-relative icon-form-control">
                                         <i class="feather-pocket position-absolute"></i>
-                                        <input required type="text" [(ngModel)]="offres.libelle" name="lbl" class="form-control" placeholder="Enter the post to be occupied">
+                                        <input [disabled]="offres.currentStep > 1" required type="text" [(ngModel)]="offres.libelle" name="lbl" class="form-control" placeholder="Enter the post to be occupied">
                                     </div>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
-                                    <label class="mb-1">Location</label>
+                                    <label class="mb-1">Location ( <small [innerHTML]="offres?.completeAddress"></small>)</label>
                                     <div class="position-relative icon-form-control">
                                         <i class="feather-map-pin position-absolute"></i>
-                                        <input type="text" name="location" class="form-control" matGoogleMapsAutocomplete placeholder="Enter the job location" #search (onAutocompleteSelected)="onAutocompleteSelected($event)" (onLocationSelected)="onLocationSelected($event)">
+                                        <input [disabled]="offres.currentStep > 1" type="text" name="location" class="form-control" matGoogleMapsAutocomplete placeholder="Enter the job location" #search (onAutocompleteSelected)="onAutocompleteSelected($event)" (onLocationSelected)="onLocationSelected($event)">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <label class="form-label">
+                                <label class="form-label">
                      Job type
-
                   </label>
-                        <div class="row">
-                            <!-- Input -->
-                            <div class="col-md-12 mb-3 mb-sm-12">
-                                <div class="js-form-message">
-                                    <div class="form-group">
-                                        <select [(ngModel)]="offres.jobType" name="jobtype" class="form-control custom-select" required="" data-msg="Please select job type" data-error-class="u-has-error" data-success-class="u-has-success">
+                                <div class="row">
+                                    <!-- Input -->
+                                    <div class="col-md-12 mb-3 mb-sm-12">
+                                        <div class="js-form-message">
+                                            <div class="form-group">
+                                                <select [disabled]="offres.currentStep > 1" [(ngModel)]="offres.jobType" name="jobtype" class="form-control custom-select" required="" data-msg="Please select job type" data-error-class="u-has-error" data-success-class="u-has-success">
                                  <option value="">Select type</option>
-                                 <option value="Full time" selected="selected">Full time</option>
+                                 <option value="Full Time" selected="selected">Full time</option>
                                  <option value="FreeLance">FreeLance</option>
                                  <option value="Part time">Part time</option>
 
                               </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <label>Job offer period </label>
-                        <div class="form-row">
-                            <div class="col">
+                                <label>Job offer period </label>
+                                <div class="form-row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="mb-1">From</label>
+                                            <div class="position-relative icon-form-control">
+                                                <i class="feather-clock position-absolute"></i>
+                                                <input [(ngModel)]="offres.datedeb" type="date" name="from" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="mb-1">To</label>
+                                            <div class="position-relative icon-form-control">
+                                                <i class="feather-clock position-absolute"></i>
+                                                <input [(ngModel)]="offres.datefin" type="date" name="to" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label class="mb-1">From</label>
                                     <div class="position-relative icon-form-control">
                                         <i class="feather-clock position-absolute"></i>
-                                        <input [(ngModel)]="offres.datedeb" type="date" name="from" class="form-control">
+                                        <input [disabled]="offres.currentStep > 1" [(ngModel)]="offres.datedeb" type="date" name="from" class="form-control">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col">
                                 <div class="form-group">
                                     <label class="mb-1">To</label>
                                     <div class="position-relative icon-form-control">
                                         <i class="feather-clock position-absolute"></i>
-                                        <input [(ngModel)]="offres.datefin" type="date" name="to" class="form-control">
+                                        <input [disabled]="offres.currentStep > 1" [(ngModel)]="offres.datefin" type="date" name="to" class="form-control">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="form-group">
+                                    <label class="mb-1">Required Skills. You added {{numberSkills}} skill(s)</label>
+                                    <div class="flex-shrink-1">
+                                        <button type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#skillmodal">Add skills</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="mb-1">Required Diploma. You added {{numberdiploma}} required diploma</label>
+                                    <div class="flex-shrink-1">
+                                        <button type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#diplomamodal">Add Diploma</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="mb-1">Status </label>
+                                    <div class="position-relative icon-form-control">
 
-                        <div class="form-group">
-                            <label class="mb-1">Job function</label>
-                            <div class="position-relative icon-form-control">
-                                <i class="feather-anchor position-absolute"></i>
-                                <input [(ngModel)]="offres.fonction" type="text" name="function" class="form-control" placeholder="Enter the jpb functions">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="mb-1">Job description</label>
-                            <div class="position-relative icon-form-control">
-                                <i class="feather-align-justify position-absolute"></i>
-                                <textarea [(ngModel)]="offres.description" type="text" name="desc" class="form-control" placeholder="Enter a description of youe job"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="mb-1">Required Skills. You added {{numberSkills}} skill(s)</label>
-                            <div class="flex-shrink-1">
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#skillmodal">Add skills</button>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="mb-1">Required Diploma. You added {{numberdiploma}} required diploma</label>
-                            <div class="flex-shrink-1">
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#diplomamodal">Add Diploma</button>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="mb-1">Status </label>
-                            <div class="position-relative icon-form-control">
-
-                                <select [(ngModel)]="offres.statut" name="status" class="form-control">
+                                        <div class="form-group">
+                                            <label class="mb-1">Job function</label>
+                                            <div class="position-relative icon-form-control">
+                                                <i class="feather-anchor position-absolute"></i>
+                                                <input [disabled]="offres.currentStep > 1" [(ngModel)]="offres.fonction" type="text" name="function" class="form-control" placeholder="Enter the jpb functions">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="mb-1">Job description</label>
+                                            <div class="position-relative icon-form-control">
+                                                <i class="feather-align-justify position-absolute"></i>
+                                                <textarea [disabled]="offres.currentStep > 1" [(ngModel)]="offres.description" type="text" name="desc" class="form-control" placeholder="Enter a description of youe job"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="mb-1">Required Skills. You added {{numberSkills}} skill(s)</label>
+                                            <div class="flex-shrink-1">
+                                                <button [disabled]="offres.currentStep > 1" type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#skillmodal">Add skills</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="mb-1">Required Diploma. You added {{numberdiploma}} required diploma</label>
+                                            <div class="flex-shrink-1">
+                                                <button [disabled]="offres.currentStep > 1" type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#diplomamodal">Add Diploma</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="mb-1">Status </label>
+                                            <div class="position-relative icon-form-control">
+                                                <select [disabled]="offres.currentStep > 1" [(ngModel)]="offres.statut" name="status" class="form-control">
                            <option  [value]="'UP'" title="only visible by your org">Unpublished</option>
                            <option  [value]="'PU'" title="visible by candidates, and can postulate">Published</option>
                            <option  [value]="'CL'" title="The recruitment is done">Closed</option>
                            <option  [value]="'EN'" title="Candidates can't postulate anymore">Ended</option>
                            <option  [value]="'SU'" title="suspended, can be republished or not">Suspended</option>
                         </select>
+                                            </div>
+                                        </div>
+
+                                        <button *ngIf="offres.currentStep == 1" class="btn btn-primary btn-block text-uppercase" type="submit" [disabled]="form.form.invalid "> Post the job offer </button>
+
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <button class="btn btn-primary btn-block text-uppercase" type="submit" [disabled]="form.form.invalid"> Post the job offer </button>
-
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="skillmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <span class="row">
+                        <div class="modal fade" id="skillmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <span class="row">
                <span class="col-lg-6">
                   <a>
                      <h6>Add skills</h6>
                   </a>
                </span>
-                <span class="col-lg-6 d-flex justify-content-end">
+                                        <span class="col-lg-6 d-flex justify-content-end">
                   <i class="feather-x" data-dismiss="modal"></i>
                </span>
-                </span>
-                <hr>
-                <form #xpForm="ngForm" (ngSubmit)="addSkill()">
-                    <span style="margin-top: -4% !important;">
+                                        </span>
+                                        <hr>
+                                        <form #xpForm="ngForm" (ngSubmit)="addSkill()">
+                                            <span style="margin-top: -4% !important;">
                   <div class="form-group">
                      <label class="mb-1">Skill name</label>
                      <div class="icon-form-control">
@@ -182,51 +207,51 @@
                      </div>
                   </div>
                </span>
-                    <div class="d-flex justify-content-end">
-                        <div>
-                            <button type="submit" [disabled]="!xpForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
-                        </div>
-                    </div>
-                </form>
-                <div *ngFor="let item of offres.competencessup let i=index;">
-                    <div class="col-lg-6">
-                        <div class="border job-item mb-3">
-                            <div class="d-flex align-items-center p-3 job-item-header">
-                                <div class="overflow-hidden mr-2">
-                                    <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.skillName}}</h6>
-                                    <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
-                                    <div class="small text-gray-500">{{item.skillMinvValText}}</div>
-                                </div>
-                                <div class="img-fluid ml-auto">
-                                    <i class="feather-trash" style="color:red;" (click)="deleteSkill(i)"></i>
+                                            <div class="d-flex justify-content-end">
+                                                <div>
+                                                    <button type="submit" [disabled]="!xpForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div *ngFor="let item of offres.competencessup let i=index;">
+                                            <div class="col-lg-6">
+                                                <div class="border job-item mb-3">
+                                                    <div class="d-flex align-items-center p-3 job-item-header">
+                                                        <div class="overflow-hidden mr-2">
+                                                            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.skillName}}</h6>
+                                                            <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
+                                                            <div class="small text-gray-500">{{item.skillMinvValText}}</div>
+                                                        </div>
+                                                        <div class="img-fluid ml-auto">
+                                                            <i class="feather-trash" style="color:red;" (click)="deleteSkill(i)"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
-<div class="modal fade" id="diplomamodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <span class="row">
+                        <div class="modal fade" id="diplomamodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <span class="row">
                <span class="col-lg-6">
                   <a>
                      <h6>Add Diploma</h6>
                   </a>
                </span>
-                <span class="col-lg-6 d-flex justify-content-end">
+                                        <span class="col-lg-6 d-flex justify-content-end">
                   <i class="feather-x" data-dismiss="modal"></i>
                </span>
-                </span>
-                <hr>
-                <form #dipForm="ngForm" (ngSubmit)="addDiploma()">
-                    <span style="margin-top: -4% !important;">
+                                        </span>
+                                        <hr>
+                                        <form #dipForm="ngForm" (ngSubmit)="addDiploma()">
+                                            <span style="margin-top: -4% !important;">
                   <div class="form-group">
                      <label class="mb-1">Diploma name</label>
                      <div class="icon-form-control">
@@ -249,32 +274,32 @@
                      </div>
                   </div>
                </span>
-                    <div class="d-flex justify-content-end">
-                        <div>
-                            <button type="submit" [disabled]="!dipForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
-                        </div>
-                    </div>
-                </form>
-                <div *ngFor="let item of offres.formations let i=index;">
-                    <div class="col-lg-6">
-                        <div class="border job-item mb-3">
-                            <div class="d-flex align-items-center p-3 job-item-header">
-                                <div class="overflow-hidden mr-2">
-                                    <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.nomDiplome}}</h6>
-                                    <div class="small text-gray-500">{{item.domaine}}</div>
-                                    <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
-                                </div>
-                                <div class="img-fluid ml-auto">
-                                    <i class="feather-trash" style="color:red;" (click)="deleteDiploma(i)"></i>
+                                            <div class="d-flex justify-content-end">
+                                                <div>
+                                                    <button type="submit" [disabled]="!dipForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div *ngFor="let item of offres.formations let i=index;">
+                                            <div class="col-lg-6">
+                                                <div class="border job-item mb-3">
+                                                    <div class="d-flex align-items-center p-3 job-item-header">
+                                                        <div class="overflow-hidden mr-2">
+                                                            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.nomDiplome}}</h6>
+                                                            <div class="small text-gray-500">{{item.domaine}}</div>
+                                                            <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
+                                                        </div>
+                                                        <div class="img-fluid ml-auto">
+                                                            <i class="feather-trash" style="color:red;" (click)="deleteDiploma(i)"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<footer>
-    <app-footer></app-footer>
-</footer>
+                        <footer>
+                            <app-footer></app-footer>
+                        </footer>

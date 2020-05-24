@@ -35,7 +35,6 @@ export class JobsComponent implements OnInit {
           this.allJobs.push(job);
         });
     });
-
     this.afAuth.auth.onAuthStateChanged(v=>{
       if(v){
         this.userSvc.getDocRef(v.uid).onSnapshot(u=>{
