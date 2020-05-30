@@ -4,7 +4,7 @@ import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { ToastrService } from 'ngx-toastr';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -20,10 +20,14 @@ export class SignupComponent implements OnInit {
   repeatFieldTextType: boolean;
 
   user: Utilisateur;
-  constructor(private AuthSvc: AuthService, private toastr: ToastrService, private userSvc: UtilisateurService, private loadingSvc: NgxUiLoaderService,public ngZone: NgZone, private router: Router) { }
+  constructor(private AuthSvc: AuthService, private toastr: ToastrService, private userSvc: UtilisateurService, private loadingSvc: NgxUiLoaderService,public ngZone: NgZone, private router: Router, private route: ActivatedRoute) { }
   ngOnInit() {
     this.step = 1;
     this.user = new Utilisateur();
+    if (this.route.snapshot.paramMap.get('mail')) {
+      this.email = this.route.snapshot.paramMap.get('mail'); 
+     // alert(this.currentitemId);
+    }
     // tslint:disable-next-line: max-line-length
   }
   valid(): boolean{

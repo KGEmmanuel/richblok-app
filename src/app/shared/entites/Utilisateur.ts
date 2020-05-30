@@ -45,6 +45,6 @@ export class Utilisateur  extends IBaseEntity {
   config_pin?: string;
   richcoin? = 0;
   emailVerified? = false;
-  visiteurs?: Array<{user: string, time:Date}> = [];
+  visiteurs?: Array<string> = [];
   savedJobs?: Array<string> = [];
 }

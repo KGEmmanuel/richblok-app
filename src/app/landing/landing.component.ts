@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase';
 import { Router } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { UtilisateurService } from '../shared/services/utilisateur.service';
 
 @Component({
   selector: 'app-landing',
@@ -12,8 +14,8 @@ import { Router } from '@angular/router';
 '../../assets/landing/css/responsive.css', '../../assets/landing/css/theme-color/color-2.css', '../../assets/landing/css/color-customize/color-customizer.css' ]
 })
 export class LandingComponent implements OnInit {
-
-  constructor(private route: Router) { }
+  email;
+  constructor(private route: Router, private loadingSvc: NgxUiLoaderService, private userSvc:  UtilisateurService) { }
 form = false;
   ngOnInit() {
   }
