@@ -51,7 +51,7 @@ email: string;
           this.route.navigate(['/sign-up',{mail:this.email}]);
         }
     });
-  
+
   }
   }
   gotoCreate(){
@@ -71,7 +71,7 @@ email: string;
             this.route.navigate(['/sign-up',{mail:this.email}]);
           }
       });
-    
+
     }
 }
-
+}

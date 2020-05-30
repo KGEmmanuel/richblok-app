@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,9 +15,13 @@ export class LoginComponent implements OnInit {
   successMessage ;
   fieldTextType: boolean;
 
-  constructor(private AuthSvc: AuthService) { }
+  constructor(private AuthSvc: AuthService,private route: ActivatedRoute) { }
 
   ngOnInit() {
+    if (this.route.snapshot.paramMap.get('mail')) {
+      this.mail = this.route.snapshot.paramMap.get('mail'); 
+     // alert(this.currentitemId);
+    }
   }
 
   toggleFieldTextType() {
