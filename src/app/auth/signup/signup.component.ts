@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { ToastrService } from 'ngx-toastr';
+import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -17,7 +20,7 @@ export class SignupComponent implements OnInit {
   repeatFieldTextType: boolean;
 
   user: Utilisateur;
-  constructor(private AuthSvc: AuthService, private toastr: ToastrService) { }
+  constructor(private AuthSvc: AuthService, private toastr: ToastrService, private userSvc: UtilisateurService, private loadingSvc: NgxUiLoaderService,public ngZone: NgZone, private router: Router) { }
   ngOnInit() {
     this.step = 1;
     this.user = new Utilisateur();
@@ -53,8 +56,37 @@ export class SignupComponent implements OnInit {
 
   signUp() {
     // tslint:disable-next-line: no-unused-expression
-    this.AuthSvc.SignUp(this.email, this.password).then;
+    this.loadingSvc.start();
+    this.AuthSvc.SignUp(this.email, this.password).then(v=>{
+      this.user.email = this.email;
+
+        this.userSvc.set(this.user,v.user.uid).then(v=>{
+         
+            this.ngZone.run(() => {
+              this.router.navigate(['sign-in']);
+            });
+         
+        }).catch(err=>{
+           this.toastr.error('An error occured, '+err.message);
+        })
+    }).catch(err=>{
+      this.toastr.error('An error occured, '+err.message);
+   })
   }
+
+  deleteCenterOfInterest(tag){
+    const idx = this.user.tags.indexOf(tag);
+    this.user.tags.splice(idx,1);
+  }
+
+  addCenterOfInterest(tag){
+    if(!this.user.tags)
+    {
+      this.user.tags = [];
+    }
+    this.user.tags.push(tag);
+  }
+
 
   loginWithGoogle() {
     this.AuthSvc.GoogleAuth();

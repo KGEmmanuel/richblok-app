@@ -86,6 +86,10 @@ export class UtilisateurService {
     }));
   }
 
+  getByEmail(mail: string){
+    return this.afs.collection(this.path).where('email','==',mail);
+  }
+
 
   getDocRef(id: string) {
     return this.afs.collection(this.path).doc(id);
