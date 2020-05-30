@@ -35,7 +35,6 @@ export class RecordSkillsComponent implements OnInit {
       });
     })
 
-
   }
   showForm() {
     this.form = true;

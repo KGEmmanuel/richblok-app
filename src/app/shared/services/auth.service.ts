@@ -27,7 +27,7 @@ export class AuthService {
   ) {
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
-    
+
     firebase.firestore().enablePersistence()
       .catch(err => {
         if (err.code == 'failed-precondition') {
@@ -54,17 +54,7 @@ export class AuthService {
   // Sign up with email/password
   SignUp(email, password) {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-      .then((result) => {
-        /* Call the SendVerificaitonMail() function when new user sign
-        up and returns promise */
-        this.SendVerificationMail();
-        this.SetUserData(result.user);
-        this.ngZone.run(() => {
-          this.router.navigate(['sign-in']);
-        });
-      }).catch((error) => {
-        window.alert(error.message)
-      })
+      
   }
 
   // Send email verfificaiton when new user sign up

@@ -48,8 +48,8 @@ export class PostListComponent implements OnInit {
         this.page.initWithFilter(this.postSvc.path, 'date', this.keys, this.operator, this.values, { reverse: true, prepend: false });
       }
     });
-  }
 
+  }
   setdatas() {
     if (this.displayFor === 'feed') {
       this.keys.push('abonnees');

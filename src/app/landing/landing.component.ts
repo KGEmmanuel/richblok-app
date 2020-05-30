@@ -1,3 +1,5 @@
+import { UtilisateurService } from './../shared/services/utilisateur.service';
+import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase';
 import { Router } from '@angular/router';
@@ -13,8 +15,9 @@ import { Router } from '@angular/router';
 })
 export class LandingComponent implements OnInit {
 
-  constructor(private route: Router) { }
+  constructor(private route: Router, private toastr: ToastrService, private userSvc: UtilisateurService ) { }
 form = false;
+email: string;
   ngOnInit() {
   }
   gotoTop() {
@@ -28,11 +31,47 @@ form = false;
     this.form  = true;
   }
   gotologin() {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!re.test(String(this.email).toLowerCase())) {
+      this.toastr.error('Enter a valid email address', 'Error');
+      return false;
+     }
+     console.log('going to login');
+  if (firebase.auth().currentUser) {
+    this.route.navigate(['/feed']);
+    this.toastr.success('The user is already authenticated', 'success');
+  } else {
+    this.userSvc.getByEmail(this.email).onSnapshot(val=>{
+        if(val){
+          this.toastr.success('The user exist', 'success');
+          this.route.navigate(['/sign-in',{mail:this.email}]);
+        }
+        else{
+          this.toastr.error('The user does not exist create an account', 'Error');
+          this.route.navigate(['/sign-up',{mail:this.email}]);
+        }
+    });
+
+  }
+  }
+  gotoCreate(){
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     console.log('going to login');
     if (firebase.auth().currentUser) {
       this.route.navigate(['/feed']);
+      this.toastr.success('The user is already authenticated', 'success');
     } else {
-      this.route.navigate(['/sign-in']);
+      this.userSvc.getByEmail(this.email).onSnapshot(val=>{
+          if(val){
+            this.toastr.success('The user exist', 'success');
+            this.route.navigate(['/sign-in',{mail:this.email}]);
+          }
+          else{
+            this.toastr.error('The user does not exist create an account', 'Error');
+            this.route.navigate(['/sign-up',{mail:this.email}]);
+          }
+      });
+
     }
-  }
+}
 }

@@ -141,7 +141,7 @@ export class DemonstrateFormComponent implements OnInit {
     if (this.route.snapshot.paramMap.get('id')) {
       this.currentitemId = this.route.snapshot.paramMap.get('id');
       this.currentDemonst.relatedElement = this.currentitemId;
-      alert(this.currentitemId);
+     // alert(this.currentitemId);
     }
     firebase.auth().onAuthStateChanged(val => {
       // // alert(val);

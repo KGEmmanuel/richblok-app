@@ -8,6 +8,8 @@ import { Media } from 'src/app/shared/entites/Media';
 import { finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-record-realisation-form',
@@ -26,8 +28,10 @@ export class RecordRealisationFormComponent implements OnInit {
   image = [];
   files: File[] = [];
   outil: string;
+  realForm: FormGroup;
+submitted = false;
   constructor(private realSvc: PortfolioService, private afStorage: AngularFireStorage, private afAuth: AngularFireAuth,
-              private toastr: ToastrService, private loadsvc: NgxUiLoaderService) {
+              private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
     this.afAuth.authState.subscribe(val => {
       if (val) {
         this.uid = val.uid;
@@ -52,6 +56,7 @@ export class RecordRealisationFormComponent implements OnInit {
         //this.files.push(reader)
       }
     }
+
   }
 
 
@@ -80,7 +85,13 @@ export class RecordRealisationFormComponent implements OnInit {
     if (!this.currentRealisation) {
       this.currentRealisation = new Realisation();
     }
-
+    this.realForm = this.formBuilder.group({
+      nom: ['', Validators.required],
+      typeProj: ['', Validators.required],
+      datedeb: ['', Validators.required],
+      encours: ['', Validators.required],
+      description: ['', Validators.required],
+}, );
   }
 
   checkChanged(event) {
@@ -90,13 +101,20 @@ export class RecordRealisationFormComponent implements OnInit {
     this.currentRealisation.clientref = null;
   }
 
-  save() {
+  get f() { return this.realForm.controls; }
+  save(){
+    this.submitted = true;
+
+    // stop here if form is invalid
+    if (this.realForm.invalid) {
+        return;
+    }
     this.loadsvc.start();
     if (!this.currentRealisation.id) {
       Promise.all(this.uploadallFiles(this.files)).then(v => {
         console.log('Medias is ' + this.currentRealisation.medias)
         this.realSvc.add(this.uid, this.currentRealisation).then(v => {
-          this.loadsvc.stop(); 
+          this.loadsvc.stop();
           this.toastr.success('Realisation successfuly saved', 'Success');
           this.itemSaved.emit(true);
           this.currentRealisation = new Realisation();

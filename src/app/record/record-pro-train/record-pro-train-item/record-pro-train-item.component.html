@@ -3,17 +3,16 @@
         <div class="mr-2">
             <span>
           <span class="font-weight-bold text-dark mb-0" style="font-size: 1.3em;">{{currentItem.libelle}}</span> &nbsp;<i class="feather-edit mr-2" *ngIf="displaymode=='priv'" style="color: rgb(175, 129, 31);" (click)="edit()"></i>&nbsp;
-            <i
-                class="feather-trash mr-2" *ngIf="displaymode=='priv'" style="color: rgb(161, 67, 67);" (click)="delete()"></i>
-                </span>
-                <div>{{currentItem.domaineName}}</div>
-                <div class="text-truncate text-primary">{{currentItem.etablissement}}</div>
-                <div class="small text-gray-500">{{currentItem.datedeb |date:"short"}} - {{currentItem.datefin ? currentItem.datefin :"Present"}} </div>
+            <i class="feather-trash mr-2" *ngIf="displaymode=='priv'" style="color: rgb(161, 67, 67);" (click)="delete()"></i>
+            </span>
+            <div>{{currentItem.domaineName}}</div>
+            <div class="text-truncate text-primary">{{currentItem.etablissement}}</div>
+            <div class="small text-gray-500">{{currentItem.datedeb |date:"short"}} - {{currentItem.datefin ? currentItem.datefin :"Present"}} </div>
         </div>
         <div *ngIf="currentItem.idEtablissement">
             <img class="img-fluid ml-auto mb-auto" [src]="etab.logo" alt="">
         </div>
     </div>
     <p class="mb-0">{{currentItem.description}}</p>
-    <p class="mb-0">Document : <a>Document link</a></p>
+    <p class="mb-0">Training type : <span class="text-primary">{{currentItem.typeFormation}}</span></p>
 </div>

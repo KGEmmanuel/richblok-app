@@ -1,47 +1,54 @@
 <div class="border">
 
-    <form class="px-4 py-3" #xpForm="ngForm" (ngSubmit)="save()">
+    <form class="px-4 py-3" [formGroup]="realForm" (ngSubmit)="save()">
         <div class="form-group">
             <label for="xpDescription">Select a corresponding image</label><br>
             <div class="upload-btn-wrapper " style="cursor: pointer;">
                 <button class="btn btn-outline-primary btn-sm mr-1">Upload an image</button>
-                <input type="file" [(ngModel)]="currentRealisation.image" name="myfile" (change)="onSelectFile($event)" multiple/>
+                <input type="file" [(ngModel)]="currentRealisation.image" (change)="onSelectFile($event)" multiple/>
             </div>
+
         </div>
         <div class=" job-item mb-3 col-lg-3 border rounded align-items-center" *ngFor='let url of urls'>
             <img [src]="url" style="width: 100% !important;">
         </div>
         <div class="form-group">
             <label for="exampleDropdownFormEmail1">Realisation Name</label>
-            <input required type="text" name="name" [(ngModel)]="currentRealisation.nom" class="form-control" id="xpname" placeholder="Enter the name of your realisation">
+            <input required type="text" [(ngModel)]="currentRealisation.nom" class="form-control" id="xpname" placeholder="Enter the name of your realisation" formControlName="nom" [ngClass]="{ 'is-invalid': submitted && f.nom.errors }">
+            <div *ngIf="submitted && f.nom.errors" class="invalid-feedback">
+                <div *ngIf="f.nom.errors.required">Enter your realisation name</div>
+            </div>
         </div>
         <div class="form-group">
             <label for="exampleDropdownFormPassword1">Realisation type</label>
-            <select required type="text" name="company" [(ngModel)]="currentRealisation.typeProj" class="form-control" id="xpcompany">
+            <select required type="text" [(ngModel)]="currentRealisation.typeProj" class="form-control" id="xpcompany" formControlName="typeProj" [ngClass]="{ 'is-invalid': submitted && f.typeProj.errors }">
         <option [value]="'academic'" selected>Academic</option>
         <option [value]="'professional'">Professional</option>
         <option [value]="'freelance'">Freelance</option>
       </select>
+            <div *ngIf="submitted && f.typeProj.errors" class="invalid-feedback">
+                <div *ngIf="f.typeProj.errors.required">Choose a realisation type</div>
+            </div>
         </div>
         <div *ngIf=" currentRealisation.typeProj === 'freelance'">
             <div class="form-group">
                 <label for="exampleDropdownFormEmail1">Client Name</label>
-                <input required type="text" name="clientname" [(ngModel)]="currentRealisation.clientname" class="form-control" id="xpname" placeholder="Enter the name of your client">
+                <input required type="text" [(ngModel)]="currentRealisation.clientname" class="form-control" id="xpname" placeholder="Enter the name of your client">
             </div>
             <div class="form-group">
                 <label for="exampleDropdownFormEmail1">Client contact</label>
-                <input required type="tel" name="clientcontact" [(ngModel)]="currentRealisation.clientcontact" class="form-control" id="xpname" placeholder="Enter the contact of your client">
+                <input required type="tel" [(ngModel)]="currentRealisation.clientcontact" class="form-control" id="xpname" placeholder="Enter the contact of your client">
             </div>
             <div class="form-group">
                 <label for="exampleDropdownFormEmail1">Client reference</label>
-                <input required type="tel" name="clientref" [(ngModel)]="currentRealisation.clientref" class="form-control" id="xpname">
+                <input required type="tel" [(ngModel)]="currentRealisation.clientref" class="form-control" id="xpname">
             </div>
         </div>
         <div class="form-group">
             <label for="exampleDropdownFormEmail1">Tools used</label>
             <div class="row">
                 <div class="col-lg-11">
-                    <input type="tel" name="tools" [(ngModel)]="outil" class="form-control" id="xpname" placeholder="Enter a tool name and click on add to add">
+                    <input type="tel" [(ngModel)]="outil" class="form-control" id="xpname" placeholder="Enter a tool name and click on add to add">
                 </div>
                 <div class="col-lg-1">
                     <button type="button" class="btn btn-outline-primary btn-sm" (click)="addTag()"> Add </button>
@@ -55,11 +62,14 @@
         <div class="form-group row">
             <div class="form-group col-lg-6">
                 <label for="start">From</label>
-                <input required type="date" [(ngModel)]="currentRealisation.datedeb" name="detadeb" class="form-control" id="start">
+                <input required type="date" [(ngModel)]="currentRealisation.datedeb" class="form-control" id="start" formControlName="datedeb" [ngClass]="{ 'is-invalid': submitted && f.datedeb.errors }">
+                <div *ngIf="submitted && f.datedeb.errors" class="invalid-feedback">
+                    <div *ngIf="f.datedeb.errors.required">Choose a date</div>
+                </div>
             </div>
             <div class="form-group col-lg-6" *ngIf="!currentOnIt">
                 <label for="end">To</label>
-                <input required type="date" name="datefin" [(ngModel)]="currentRealisation.datefin" class="form-control" id="end">
+                <input required type="date" [(ngModel)]="currentRealisation.datefin" class="form-control" id="end">
             </div>
         </div>
         <div class="form-check mb-3">
@@ -72,15 +82,21 @@
         </div>
         <div class="form-group">
             <label for="exampleDropdownFormPassword1">Status</label>
-            <select required type="text" name="status" [(ngModel)]="currentRealisation.encours" class="form-control" id="xpcompany">
+            <select required type="text" [(ngModel)]="currentRealisation.encours" class="form-control" id="xpcompany" formControlName="encours" [ngClass]="{ 'is-invalid': submitted && f.encours.errors }">
         <option [value]="'inprogress'" selected>In progress</option>
         <option [value]="'Completed'">Completed</option>
         <option [value]="'freelance'">Canceled</option>
       </select>
+            <div *ngIf="submitted && f.encours.errors" class="invalid-feedback">
+                <div *ngIf="f.encours.errors.required">Choose a status</div>
+            </div>
         </div>
         <div class="form-group">
             <label for="xpDescription">Description</label>
-            <textarea name="description" [(ngModel)]="currentRealisation.description" placeholder="Describe your realisation in few words" class="form-control" id="xpDescription"></textarea>
+            <textarea [(ngModel)]="currentRealisation.description" placeholder="Describe your realisation in few words" class="form-control" id="xpDescription" formControlName="description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+            <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                <div *ngIf="f.description.errors.required">Give a description on your realisation</div>
+            </div>
         </div>
         <div class="row">
             <div class=" job-item mb-3 col-lg-3 border rounded align-items-center" *ngFor='let url of urls'>
@@ -89,14 +105,14 @@
         </div>
         <div class="form-group">
             <label for="xpDescription">Add a corresponding files</label>
+            <br>
             <div class="upload-btn-wrapper " style="cursor: pointer;">
                 <button class="btn btn-outline-primary btn-sm mr-1">Upload a file</button>
-                <input type="file" [(ngModel)]="currentRealisation.medias" name="myfile" (change)="onSelectFile($event)" multiple/>
+                <input type="file" [(ngModel)]="currentRealisation.medias" (change)="onSelectFile($event)" multiple/>
             </div>
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!xpForm.form.valid"> Save </button>
-
+            <button type="submit" class="btn btn-outline-primary btn-sm"> Save </button>
         </div>
     </form>
 </div>

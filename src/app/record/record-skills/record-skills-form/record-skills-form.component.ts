@@ -5,6 +5,8 @@ import { SkillsService } from '../../../shared/services/skills.service';
 import * as firebase from 'firebase';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 @Component({
   selector: 'app-record-skills-form',
   templateUrl: './record-skills-form.component.html',
@@ -18,6 +20,9 @@ export class RecordSkillsFormComponent implements OnInit {
   skillSaved = new EventEmitter<boolean>();
 
   loading = false;
+
+  skillForm: FormGroup;
+submitted = false;
   @Input()
   set currentSkill(sk: Skill) {
     if(!sk){
@@ -33,7 +38,7 @@ export class RecordSkillsFormComponent implements OnInit {
   owner;
   skillpropositions = [];
   constructor(private userSvc: UtilisateurService, private skillSvc: SkillsService,
-              private tostSvc: ToastrService, private loadsvc: NgxUiLoaderService) {
+              private tostSvc: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
 
   }
 
@@ -56,10 +61,22 @@ export class RecordSkillsFormComponent implements OnInit {
         }
       });
     });
+    this.skillForm = this.formBuilder.group({
+      skillName: ['', Validators.required],
+      skillLevel: ['', Validators.required],
+      skillduration: ['', Validators.required],
+
+}, );
   }
   name:any;
+  get f() { return this.skillForm.controls; }
+  save(){
+    this.submitted = true;
 
-  save() {
+    // stop here if form is invalid
+    if (this.skillForm.invalid) {
+        return;
+    }
     this.loadsvc.start();
     this.currentSkill.skillName = this.currentSkill.skillName.toUpperCase();
     this.loading = true;

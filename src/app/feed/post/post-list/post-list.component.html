@@ -3,8 +3,17 @@
         <div *ngFor="let item of page.data | async" style="height: 60%;">
             <app-post-item [currentPost]="item"></app-post-item>
         </div>
-
-        <p *ngIf="page.done | async">All items displayed</p>
+        <div *ngIf="postitems?.length === 0">
+            <span class="d-flex justify-content-center" style="padding-top: 10%;">
+      <img src="../../../../assets/imgs/feed2.png" style="width: 60%;">
+      </span>
+            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+      <span class="d-flex justify-content-center" style="padding-left: 5%;">
+        <h5>No item to display here. Enlarge your RichBlok community to have more rich contents</h5>
+      </span>
+            </span>
+        </div>
+        <p *ngIf="postitems?.length > 0 && page.done | async"><span class="d-flex justify-content-center text-primary">All items displayed</span></p>
         <app-loading-spinner *ngIf="page.loading | async"></app-loading-spinner>
     </div>
 </div>

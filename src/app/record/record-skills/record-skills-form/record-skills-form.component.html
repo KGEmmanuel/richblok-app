@@ -1,15 +1,16 @@
 <div class="border">
-  <form class="px-4 py-3" #skillForm="ngForm" (ngSubmit)="save()">
-    <div class="row">
-      <div class="form-group col-lg-12">
-        <label for="skillname" >Skill Name</label>
-        <input type="text" required name="skillname" [(ngModel)]="currentSkill.skillName" class="form-control" id="skillname"
-          placeholder="Enter the name of your skill">
-      </div>
-      <div class="form-group col-lg-6">
-        <label for="level">Estimate you skill level</label>
-        <select type="text" required name="level" [(ngModel)]="currentSkill.skillLevel" class="form-control"
-          id="level" placeholder="Enter the company where you had you experience">
+    <form class="px-4 py-3" [formGroup]="skillForm" (ngSubmit)="save()">
+        <div class="row">
+            <div class="form-group col-lg-12">
+                <label for="skillname">Skill Name</label>
+                <input type="text" required [(ngModel)]="currentSkill.skillName" class="form-control" id="skillname" placeholder="Enter the name of your skill" formControlName="skillName" [ngClass]="{ 'is-invalid': submitted && f.skillName.errors }">
+                <div *ngIf="submitted && f.skillName.errors" class="invalid-feedback">
+                    <div *ngIf="f.skillName.errors.required">Enter the skill name</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="level">Estimate you skill level</label>
+                <select type="text" required [(ngModel)]="currentSkill.skillLevel" class="form-control" formControlName="skillLevel" [ngClass]="{ 'is-invalid': submitted && f.skillLevel.errors }" id="level" placeholder="Enter the company where you had you experience">
           <option [value]="'Beginner'">Beginner</option>
           <option [value]="'Elementary'">Elementary</option>
           <option [value]="'Pre-intermediate'">Pre-intermediate</option>
@@ -18,15 +19,20 @@
           <option [value]="'Advanced'">Advanced</option>
           <option [value]="'Proficient'">Proficient</option>
         </select>
-      </div>
-      <div class="form-group col-lg-6">
-        <label for="duration">Your Experience of this skill (in months)</label>
-        <input type="number" min="0" required name="duration" [(ngModel)]="currentSkill.skillduration" class="form-control" id="duration"
-          placeholder="Experience of this skill">
+                <div *ngIf="submitted && f.skillLevel.errors" class="invalid-feedback">
+                    <div *ngIf="f.skillLevel.errors.required">Choose a skill level</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="duration">Your Experience of this skill (in months)</label>
+                <input type="number" min="0" required [(ngModel)]="currentSkill.skillduration" class="form-control" id="duration" placeholder="Experience of this skill" formControlName="skillduration" [ngClass]="{ 'is-invalid': submitted && f.skillduration.errors }">
+                <div *ngIf="submitted && f.skillduration.errors" class="invalid-feedback">
+                    <div *ngIf="f.skillduration.errors.required">Give a skill duration in month</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!skillForm.form.valid"> Save </button>
-      </div>
-  </form>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary btn-sm"> Save </button>
+        </div>
+    </form>
 </div>

@@ -39,6 +39,14 @@
                                     <div class="col-md-6" *ngFor="let job of allJobs">
                                         <app-jobs-item [currentJob]="job"></app-jobs-item>
                                     </div>
+                                    <div *ngIf="allJobs.length === 0">
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <img src="../../assets/imgs/jobs.png" style="width: 50%;">
+                          </span>
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <h5>No job to display</h5>
+                          </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -48,7 +56,14 @@
                                     <div class="col-md-6" *ngFor="let job of savedJobs">
                                         <app-jobs-item [currentJob]="job"></app-jobs-item>
                                     </div>
-
+                                    <div *ngIf="savedJobs.length === 0">
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <img src="../../assets/imgs/jobs.png" style="width: 50%;">
+                          </span>
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <h5>No saved job to display. Save a job to have a content here</h5>
+                          </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -132,8 +147,11 @@
                     <h6 class="font-weight-bold text-dark mb-1">Because you viewed</h6>
                     <p class="mb-0 text-muted">Designer at Google?</p>
                 </div>
-                <app-job-aside-item></app-job-aside-item>
+                <app-follow-orgs></app-follow-orgs>
                 <app-connection-aside></app-connection-aside>
+                <app-job-aside></app-job-aside>
+
+
             </aside>
         </div>
     </div>

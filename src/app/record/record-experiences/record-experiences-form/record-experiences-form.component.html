@@ -1,31 +1,44 @@
 <div class="border">
 
-    <form class="px-4 py-3" #xpForm="ngForm" (ngSubmit)="save()">
+    <form class="px-4 py-3" [formGroup]="expForm" (ngSubmit)="save()">
         <div class="form-group">
             <label for="exampleDropdownFormEmail1">Experience Name</label>
-            <input required type="text" name="name" [(ngModel)]="currentExperience.libelle" class="form-control" id="xpname" placeholder="Enter the name of your experience">
+            <input type="text" [(ngModel)]="currentExperience.libelle" class="form-control" placeholder="Enter the name of your experience" formControlName="libelle" [ngClass]="{ 'is-invalid': submitted && f.libelle.errors }">
+            <div *ngIf="submitted && f.libelle.errors" class="invalid-feedback">
+                <div *ngIf="f.libelle.errors.required">Enter the name of your experience</div>
+            </div>
         </div>
         <div class="form-group">
             <label for="exampleDropdownFormPassword1">Company of optension</label>
-            <input required type="text" name="company" [(ngModel)]="currentExperience.entreprise" class="form-control" id="xpcompany" placeholder="Enter the company where you had you experience">
+            <input required type="text" [(ngModel)]="currentExperience.entreprise" class="form-control" placeholder="Enter the company where you had you experience" formControlName="entreprise" [ngClass]="{ 'is-invalid': submitted && f.entreprise.errors }">
+            <div *ngIf="submitted && f.entreprise.errors" class="invalid-feedback">
+                <div *ngIf="f.entreprise.errors.required">Enter your company of obtension</div>
+            </div>
         </div>
         <div class="form-group">
             <label for="exampleDropdownFormPassword1">Experience Type </label>
-            <select required name="xpType" id="xpType" [(ngModel)]="currentExperience.typeExperience" class="form-control">
+            <select required id="xpType" [(ngModel)]="currentExperience.typeExperience" class="form-control" formControlName="typeExperience" [ngClass]="{ 'is-invalid': submitted && f.typeExperience.errors }">
          <option [value]="'Job'"> Job </option>
-         <option [value]="'AcInt'"> Accademic Internship </option>
-         <option [value]="'ProInt'"> Professional Internship </option>
+         <option [value]="'Accademic Internship'"> Accademic Internship </option>
+         <option [value]="'Accademic Internship'"> Professional Internship </option>
          <option [value]="'FreeLance'"> FreeLance </option>
       </select>
+            <div *ngIf="submitted && f.typeExperience.errors" class="invalid-feedback">
+                <div *ngIf="f.typeExperience.errors.required">Choose an experience type</div>
+            </div>
         </div>
         <div class="form-group row">
             <div class="form-group col-lg-6">
                 <label for="start">From</label>
-                <input required type="date" [(ngModel)]="currentExperience.debut" name="detadeb" class="form-control" id="start">
+                <input required type="date" [(ngModel)]="currentExperience.debut" id="start" class="form-control" formControlName="debut" [ngClass]="{ 'is-invalid': submitted && f.debut.errors }">
+                <div *ngIf="submitted && f.debut.errors" class="invalid-feedback">
+                    <div *ngIf="f.debut.errors.required">Enter the starting date</div>
+                </div>
             </div>
             <div class="form-group col-lg-6" *ngIf="!currentOnIt">
                 <label for="end">To</label>
-                <input required type="date" name="datefin" [(ngModel)]="currentExperience.fin" class="form-control" id="end">
+                <input required type="date" [(ngModel)]="currentExperience.fin" class="form-control" id="end" formControlName="fin">
+
             </div>
         </div>
         <div class="form-check mb-3">
@@ -36,16 +49,16 @@
         </label>
 
         </div>
-        <div class="form-group row">
+        <div class="form-group">
             <label for="xpDescription">Description</label>
-            <textarea name="description" [(ngModel)]="currentExperience.description" placeholder="Describe your experience in few words" class="form-control" id="xpDescription"></textarea>
+            <textarea [(ngModel)]="currentExperience.description" placeholder="Describe your experience in few words" class="form-control" formControlName="description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+            <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                <div *ngIf="f.description.errors.required">Enter a description to your experience</div>
+            </div>
         </div>
-        <div class="d-flex justify-content-end">
-            <app-document></app-document>
-        </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!xpForm.form.valid"> Save </button>
 
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary btn-sm"> Save </button>
         </div>
     </form>
 </div>
