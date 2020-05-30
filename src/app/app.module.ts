@@ -1,6 +1,8 @@
 import { HttpClient, HttpHandler, HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { ApiService } from '../app/feed/post/post-form/post-location/api.service';
 import { environment } from '../environments/environment';
@@ -190,6 +192,7 @@ import { UserslistInlineComponent } from './users/userslist-inline/userslist-inl
 import { UserslistInlineItemComponent } from './users/userslist-inline-item/userslist-inline-item.component';
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -367,6 +370,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     UserslistInlineComponent,
     UserslistInlineItemComponent,
     JobProcessComponent,
+    FollowOrgsComponent,
 
   ],
   imports: [
@@ -396,7 +400,9 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
     CountdownModule,
     GooglePlaceModule,
-    PdfViewerModule
+    PdfViewerModule,
+    ReactiveFormsModule
+
   ],
   providers: [
     ApiService,

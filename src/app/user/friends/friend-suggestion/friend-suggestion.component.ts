@@ -18,7 +18,7 @@ export class FriendSuggestionComponent implements OnInit {
   cancel = false;
   follow = false;
   hire = false;
-  users :Observable<Utilisateur[]>;
+  users: Observable<Utilisateur[]>;
   currentUser = new Utilisateur();
   uid;
   constructor(private usvc: UtilisateurService, private afAuth: AngularFireAuth) { }

@@ -9,7 +9,7 @@ import { UtilisateurService } from 'src/app/shared/services/utilisateur.service'
   styleUrls: ['./friends-list.component.scss']
 })
 export class FriendsListComponent implements OnInit {
-  currentUser: Utilisateur;
+  currentUser = new Utilisateur();
   // users: Utilisateur[];
 
   constructor(private userSvc: UtilisateurService) { }
@@ -17,7 +17,7 @@ export class FriendsListComponent implements OnInit {
   ngOnInit() {
     this.userSvc.initDatas();
     // alert(firebase.auth().currentUser.uid);
-    this.userSvc.getDocRef(firebase.auth().currentUser.uid).onSnapshot(val => {
+    this.userSvc.getDocRef(firebase.auth().currentUser?.uid).onSnapshot(val => {
       this.currentUser = val.data() as Utilisateur;
       this.currentUser.id = val.id;
       // console.log(this.currentUser.abonnees);

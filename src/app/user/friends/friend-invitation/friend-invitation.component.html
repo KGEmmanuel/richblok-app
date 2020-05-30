@@ -1,5 +1,13 @@
 <div class="row" *ngIf="currentUser.demandesabonnees">
-  <div  class="col-md-4">
-    <app-friend-invitation-item *ngFor="let item of currentUser.demandesabonnees" [iduser]="item"></app-friend-invitation-item>
-  </div>
+    <div class="col-md-4">
+        <app-friend-invitation-item *ngFor="let item of currentUser.demandesabonnees" [iduser]="item"></app-friend-invitation-item>
+    </div>
+</div>
+<div *ngIf="!currentUser.demandesabonnees || currentUser?.demandesabonnees?.length === 0">
+    <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<img src="../../../../assets/imgs/friends.png" style="width: 40%;">
+</span>
+    <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<h5>No invitation, Navigate to the suggestions list to send invitations</h5>
+</span>
 </div>

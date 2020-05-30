@@ -55,7 +55,6 @@ export class SignupComponent implements OnInit {
     // tslint:disable-next-line: no-unused-expression
     this.AuthSvc.SignUp(this.email, this.password).then;
   }
-
   loginWithGoogle() {
     this.AuthSvc.GoogleAuth();
   }

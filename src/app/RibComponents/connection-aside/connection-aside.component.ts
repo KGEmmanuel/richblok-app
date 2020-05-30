@@ -13,19 +13,20 @@ export class ConnectionAsideComponent implements OnInit {
 
   users : Observable<Utilisateur[]>
   uid;
+  numUsers : number;
   constructor(private userSvc: UtilisateurService, private afAuth: AngularFireAuth) { }
 
   ngOnInit() {
 
-    this.afAuth.auth.onAuthStateChanged(v=>{ 
+    this.afAuth.auth.onAuthStateChanged(v=>{
       // alert('tes test detjhsdf')
       if(v){
         this.uid = v.uid;
         this.users = this.userSvc.mightKnowUser(this.uid);
       }
-      
+
     });
-   
+
   }
 
 }

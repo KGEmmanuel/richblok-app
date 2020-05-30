@@ -2,4 +2,12 @@
     <div class="border job-item  col-lg-6" *ngFor="let item of jobapplications">
         <app-jobs-applied-item [currentApplication]="item"></app-jobs-applied-item>
     </div>
+    <div *ngIf="jobapplications.length === 0">
+        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<img src="../../../assets/imgs/jobs.png" style="width: 40%;">
+</span>
+        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<h5>No applied job to display. Apply for a job to have a content here</h5>
+</span>
+    </div>
 </div>

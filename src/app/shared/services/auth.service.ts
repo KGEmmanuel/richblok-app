@@ -27,7 +27,7 @@ export class AuthService {
   ) {
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
-    
+
     firebase.firestore().enablePersistence()
       .catch(err => {
         if (err.code == 'failed-precondition') {
