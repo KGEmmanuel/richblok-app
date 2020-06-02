@@ -13,10 +13,10 @@
                             <span class="col-lg-6">
                 <h1 style="color: white;">RichBlok !!!</h1>
               </span>
-                            <span class="col-lg-6 d-flex justify-content-end">
+                            <!--  <span class="col-lg-6 d-flex justify-content-end">
                 <a class="btn btn-theme btn-sm" (click)="gotologin()" data-text="Connect"> <span>C</span><span>o</span><span>n</span><span>n</span><span>e</span><span>c</span><span>t</span>
                             </a>
-                            </span>
+                            </span>-->
                         </nav>
                     </div>
                 </div>
@@ -49,9 +49,6 @@
                         <a *ngIf="!form" class="btn btn-theme wow fadeInUp" (click)="access()" data-wow-duration="3s" data-wow-delay="0.5s" data-text="Get started"> <span>G</span><span>e</span><span>t</span>&nbsp;<span>S</span><span>t</span>
                             <span> </span><span>a</span> <span> </span><span>r</span><span>t</span><span>e</span><span>d</span>
                         </a>
-                        <a *ngIf="!form" class="btn btn-dark wow fadeInUp" data-wow-duration="3s" data-wow-delay="0.5s" data-text="Learn More" href="about.richblok.com"> <span>L</span><span>e</span><span>a</span><span>r</span><span>n</span>
-                            <span> </span><span>M</span><span>o</span><span>r</span><span>e</span>
-                        </a>
                         <div class="sm-mt-2" *ngIf="form">
                             <div class="subscribe-form sm-mt-2">
                                 <form id="mc-form" class="group">
@@ -60,6 +57,10 @@
                                 </form>
                             </div>
                         </div>
+                        <a class="btn btn-dark wow fadeInUp" data-wow-duration="3s" data-wow-delay="0.5s" data-text="Learn More" routerLink="/register"> <span>L</span><span>e</span><span>a</span><span>r</span><span>n</span>
+                            <span> </span><span>M</span><span>o</span><span>r</span><span>e</span>
+                        </a>
+
                     </div>
                 </div>
             </div>
@@ -454,7 +455,25 @@
     <!--footer start-->
 
     <footer class="footer pos-r grey-bg bg-contain bg-pos-lt" data-bg-img="../../assets/landing/images/bg/03.png">
-        <div class="primary-footer">
+        <div class="subscribe-box">
+            <div class="container">
+                <div class="row subscribe-inner align-items-center">
+                    <div class="col-md-6 col-sm-12">
+                        <h4>New on RichBlok?</h4>
+                        <p class="lead mb-0">Enter your email address to request access</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12 sm-mt-2">
+                        <div class="subscribe-form sm-mt-2">
+                            <form id="mc-form" class="group">
+                                <input type="email" value="" name="EMAIL" class="email" id="mc-email" placeholder="Email Address" required="" [(ngModel)]="email">
+                                <input class="btn btn-theme" type="submit" name="subscribe" value="Request access" (click)="gotologin()">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="primary-footer" style="margin: 5%;">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 col-md-6">

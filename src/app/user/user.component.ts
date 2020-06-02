@@ -6,6 +6,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { UserService } from '../shared/services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user',
@@ -18,16 +19,19 @@ export class UserComponent implements OnInit {
   visiteduser: Utilisateur;
   views = 0;
   constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
-    private afs: AngularFirestore, private userSvc: UtilisateurService, private route: ActivatedRoute) {
+    private afs: AngularFirestore, private userSvc: UtilisateurService, private route: ActivatedRoute,
+    private title: Title, private meta : Meta) {
 
   }
 
   ngOnInit() {
+    this.title.setTitle('RichBlok | Profile');
+    this.meta.updateTag({ name: 'description', content: 'Get access to your RichBlok profile' });
     this.route.params.subscribe(routeParams => {
       const id = routeParams.id;
       this.userSvc.get(id).subscribe(v => {
         this.currentUser = v;
-        
+
         this.afAuth.authState.subscribe(user => {
           if (user) {
             if(!this.currentUser.visiteurs){
@@ -46,7 +50,7 @@ export class UserComponent implements OnInit {
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.userSvc.get(user.uid).subscribe(v => {
-         
+
           this.currentUser = v;
           this.views = this.currentUser.visiteurs ? this.currentUser.visiteurs.length : 0;
         });

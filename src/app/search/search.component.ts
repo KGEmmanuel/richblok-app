@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-search',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SearchComponent implements OnInit {
 
-  constructor() { }
+  constructor(private title: Title, private meta: Meta) { }
 
   ngOnInit(): void {
+    this.title.setTitle('RichBlok | Search');
+    this.meta.updateTag({ name: 'description', content: 'Search result on jobs, skills, connections, experiences, evaluations, trainings, certifications' });
   }
 
 }

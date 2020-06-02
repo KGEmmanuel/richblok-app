@@ -1,3 +1,4 @@
+import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { OffreEmploiService } from '../shared/services/offre-emploi.service';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -23,9 +24,12 @@ export class JobsComponent implements OnInit {
   tags: Array<string>;
   currentuser: Utilisateur;
 
-  constructor(private jobSvc: OffreEmploiService, private afAuth: AngularFireAuth, private skillSvc: SkillsService, private userSvc: UtilisateurService) { }
+  constructor(private jobSvc: OffreEmploiService, private afAuth: AngularFireAuth, private skillSvc: SkillsService,
+              private userSvc: UtilisateurService, private title: Title, private meta: Meta) { }
 
   ngOnInit() {
+    this.title.setTitle('RichBlok | Jobs');
+    this.meta.updateTag({ name: 'description', content: 'Have access to your desired job and apply for the job' });
     this.jobSvc.offresByTag(this.tags).onSnapshot( jobs=> {
       this.allJobs = [];
       console.log(jobs);
@@ -52,7 +56,7 @@ export class JobsComponent implements OnInit {
         })
       }
     })
-    
+
 
   }
 

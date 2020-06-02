@@ -1,3 +1,4 @@
+import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit, NgZone } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
@@ -20,8 +21,11 @@ export class SignupComponent implements OnInit {
   repeatFieldTextType: boolean;
 
   user: Utilisateur;
-  constructor(private AuthSvc: AuthService, private toastr: ToastrService, private userSvc: UtilisateurService, private loadingSvc: NgxUiLoaderService,public ngZone: NgZone, private router: Router, private route: ActivatedRoute) { }
+  constructor(private AuthSvc: AuthService, private toastr: ToastrService, private userSvc: UtilisateurService, private loadingSvc: NgxUiLoaderService,public ngZone: NgZone,
+              private router: Router, private route: ActivatedRoute, private title: Title, private meta: Meta) { }
   ngOnInit() {
+    this.title.setTitle('RichBlok | SignUp');
+    this.meta.updateTag({ name: 'description', content: 'Create your account and have access to our services; evaluations, job offers, demonstrations, records, chats' });
     this.step = 1;
     this.user = new Utilisateur();
     if (this.route.snapshot.paramMap.get('mail')) {
