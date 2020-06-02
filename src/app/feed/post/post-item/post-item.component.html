@@ -24,7 +24,7 @@
     <div class="accordian" *ngIf="currentPost?.medias.length>0">
         <ul>
             <li *ngFor="let med of currentPost?.medias">
-                <img data-toggle="modal" data-target="#imageModal" [src]="med.src" />
+                <img data-toggle="modal" data-target="#imageModal" [src]="med.src" style="width: 100% !important;" />
             </li>
         </ul>
     </div>

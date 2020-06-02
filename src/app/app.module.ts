@@ -193,6 +193,7 @@ import { UserslistInlineItemComponent } from './users/userslist-inline-item/user
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
+import { SearchComponent } from './search/search.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -371,6 +372,7 @@ import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.com
     UserslistInlineItemComponent,
     JobProcessComponent,
     FollowOrgsComponent,
+    SearchComponent,
 
   ],
   imports: [

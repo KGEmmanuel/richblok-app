@@ -39,6 +39,7 @@ import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonst
 import { OrganisationViewComponent } from './organisation-view/organisation-view.component';
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
+import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -79,7 +80,8 @@ const routes: Routes = [
   { path: 'demo', component: DemonstrateFormComponent},
   { path: 'landing', component: LandingComponent},
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
-  { path: 'create-challenge', component: EvaluateFormComponent}
+  { path: 'create-challenge', component: EvaluateFormComponent},
+  { path: 'search', component: SearchComponent}
 
 
 ];
