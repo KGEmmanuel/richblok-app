@@ -39,29 +39,30 @@ import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonst
 import { OrganisationViewComponent } from './organisation-view/organisation-view.component';
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
+import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
-  { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard] },
-  { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard] },
-  { path: 'feed', component: FeedComponent, canActivate: [AuthGuard] },
-  { path: 'profile/:id', component: UserComponent},
+  { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Create Account'} },
+  { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Register'} },
+  { path: 'feed', component: FeedComponent, canActivate: [AuthGuard], data: {title: 'Feed'} },
+  { path: 'profile/:id', component: UserComponent, data: {title: 'Profile'}},
   { path: 'profile/:id', component: UserViewComponent},
   { path: 'organisation/:id', component: OrganisationProfileComponent},
-  { path: 'messages', component: ChatComponent},
-  { path: 'notifications', component: NotificationsComponent},
-  { path: 'jobs', component: JobsComponent},
+  { path: 'messages', component: ChatComponent, data: {title: 'Chat'}},
+  { path: 'notifications', component: NotificationsComponent, data: {title: 'Notifications'}},
+  { path: 'jobs', component: JobsComponent, data: {title: 'Jobs'}},
   { path: 'organisation', component: OrganisationProfileComponent},
-  { path: 'record', component: RecordComponent},
-  { path: 'friends', component: FriendsComponent},
-  { path: 'settings', component: UserSettingsComponent},
-  { path: 'cv', component: CvComponent},
-  { path: 'landing', component: LandingComponent},
+  { path: 'record', component: RecordComponent, data: {title: 'Records'}},
+  { path: 'friends', component: FriendsComponent, data: {title: 'Connections'}},
+  { path: 'settings', component: UserSettingsComponent, data: {title: 'Settings'}},
+  { path: 'cv', component: CvComponent, data: {title: 'CV'}},
+  { path: 'landing', component: LandingComponent, data: {title: 'Landing'}},
   { path: 'forgot-password', component: ResetComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'verify-email-address', component: VerifyEmailComponent, canActivate: [SecureInnerPagesGuard] },
-  { path: 'demonstrate', component: DemonstrateComponent},
-  { path: 'evaluate', component: EvaluateComponent},
-  { path: 'participate', component: ParticipateToChallengeComponent },
+  { path: 'demonstrate', component: DemonstrateComponent, data: {title: 'Demonstrate'}},
+  { path: 'evaluate', component: EvaluateComponent, data: {title: 'Evaluate'}},
+  { path: 'participate', component: ParticipateToChallengeComponent, data: {title: 'Participate'}},
   { path: 'create-organisation', component: CreateOrganisationComponent},
   { path: 'organisation-settings', component: OrganisationSettingsComponent},
   { path: 'terms', component: TermsComponent},
@@ -79,9 +80,8 @@ const routes: Routes = [
   { path: 'demo', component: DemonstrateFormComponent},
   { path: 'landing', component: LandingComponent},
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
-  { path: 'create-challenge', component: EvaluateFormComponent}
-
-
+  { path: 'create-challenge', component: EvaluateFormComponent},
+  { path: 'search', component: SearchComponent}
 ];
 
 @NgModule({

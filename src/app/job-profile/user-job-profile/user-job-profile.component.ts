@@ -1,3 +1,4 @@
+import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/compiler/src/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -46,10 +47,11 @@ export class UserJobProfileComponent implements OnInit {
   constructor(private route: ActivatedRoute, private jobSvc: OffreEmploiService, private orgSvc: OrganisationService,private loadingSvc: NgxUiLoaderService,
     private userSvc: UtilisateurService, private skilSvc: SkillsService, private trainSvc: FormationService,
     private expSvc: ExperienceService, private JobApplicationSvc: JobApplicationService, private toastrSvc: ToastrService,
-    private afAuth: AngularFireAuth, private router: Router) { }
+    private afAuth: AngularFireAuth, private router: Router, private title: Title, private meta: Meta) { }
 
   ngOnInit() {
-
+    this.title.setTitle('RichBlok | Job-profile');
+    this.meta.updateTag({ name: 'description', content: 'Have detailed details on the job before you apply' });
     this.route.params.subscribe(params => {
       const id = params['id'];
       this.jobSvc.getDocRef(id).onSnapshot(obj => {

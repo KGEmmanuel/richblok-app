@@ -1,3 +1,4 @@
+import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -23,10 +24,13 @@ export class CreateOrganisationComponent implements OnInit {
     this.Form = true;
 
   }
-  constructor(private organisationSvc: OrganisationService,private toastr: ToastrService, private router: Router, private route: ActivatedRoute) {
+  constructor(private organisationSvc: OrganisationService,private toastr: ToastrService, private router: Router,
+              private route: ActivatedRoute, private title:Title, private meta: Meta) {
   }
 
   ngOnInit() {
+    this.title.setTitle('RichBlok | Create-organisation');
+    this.meta.updateTag({ name: 'description', content: 'Create your organisation on RichBlok to hire talents fast and free with background checks' });
     this.step = 1;
   }
   next(){

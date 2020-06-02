@@ -1,3 +1,4 @@
+import { Meta, Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
@@ -58,7 +59,7 @@ export class CvComponent implements OnInit {
     private skSvc: SkillsService, private lngsvc: LanguageService, private frmtionSvc: FormationService,
      private expSvc: ExperienceService,private langSvc: LanguageService,
      private afAuth: AngularFireAuth, private realSvc: PortfolioService,
-     private loadSvc: NgxUiLoaderService, private toast: ToastrService) {
+     private loadSvc: NgxUiLoaderService, private toast: ToastrService, private title: Title, private meta: Meta) {
       this.LangLevels = lngsvc.LanguagesLevels;
   }
 
@@ -66,7 +67,8 @@ export class CvComponent implements OnInit {
 
 
   ngOnInit() {
-
+    this.title.setTitle('RichBlok | CV');
+    this.meta.updateTag({ name: 'description', content: 'Generate your CV and send them to recruiters' });
     firebase.auth().onAuthStateChanged(val => {
       if (val) {
         this.uid = val.uid;
