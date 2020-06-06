@@ -32,8 +32,11 @@ export class PostFormComponent implements OnInit {
     private afs: AngularFirestore, private afStorage: AngularFireStorage, private userSvc: UserService, private router: Router, private postSvc: PostService,
     private loadsvc: NgxUiLoaderService) {
   }
-
+  removeItem(i){
+    this.urls.splice(i, 1);
+  }
   onSelectFile(event) {
+    this.loadsvc.start();
     if (event.target.files && event.target.files[0]) {
       var filesAmount = event.target.files.length;
       // this.files.push(event.target.files);
@@ -48,7 +51,9 @@ export class PostFormComponent implements OnInit {
         this.files.push(event.target.files[i]);
         reader.readAsDataURL(event.target.files[i]);
       }
+
     }
+    this.loadsvc.stop();
   }
   addLocation() {
     this.location = !this.location;
@@ -150,6 +155,10 @@ export class PostFormComponent implements OnInit {
 
   async savePost() {
     // alert('saving post');
+    if(!this.currentPost.description || !this.currentPost.location){
+      this.toassvc.error('You must write something and give your actual location before posting', 'Error')
+      return;
+    }
     this.loadsvc.start();
     this.currentPost.abonnees = this.currentUser.abonnees;
     if(!this.currentUser.abonnees){

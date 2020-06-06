@@ -10,6 +10,7 @@ import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-job-step1',
   templateUrl: './job-step1.component.html',
@@ -21,13 +22,14 @@ export class JobStep1Component implements OnInit {
   offres: OffresEmploi;
   mode: string;
   numberSkills: number;
-
+  jobForm: FormGroup;
+  submitted = false;
   numberdiploma: number;
   diplome: EmploiFormation;
   organisations : Array<Entreprise>;
   uid: string;
-  constructor(private toastr: ToastrService, private orgSvc: OrganisationService, private offreSvc: OffreEmploiService, 
-    private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService) { }
+  constructor(private toastr: ToastrService, private orgSvc: OrganisationService, private offreSvc: OffreEmploiService,
+    private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.numberSkills = 0;
@@ -66,6 +68,16 @@ export class JobStep1Component implements OnInit {
        }
 
     })
+    this.jobForm = this.formBuilder.group({
+      ownerOrg: ['', Validators.required],
+      libelle: ['', Validators.required],
+      jobType: ['', Validators.required],
+      fonction: ['', Validators.required],
+      datedeb: ['', Validators.required],
+      datefin: ['', Validators.required],
+      description: ['', Validators.required],
+      statut: ['', Validators.required],
+}, );
   }
 
   addSkill() {
@@ -81,7 +93,7 @@ export class JobStep1Component implements OnInit {
   deleteDiploma(i: number): void {
     this.offres.competencessup.splice(i, 1);
   }
-
+  get f() { return this.jobForm.controls; }
   pushSkill() {
     if (!this.offres.competencessup) {
       this.offres.competencessup = [];
@@ -119,18 +131,28 @@ export class JobStep1Component implements OnInit {
     this.offres.adressurl = event.url;
     this.offres.completeAddress = event.adr_address;
   }
-  
+
   onLocationSelected(event) {
     console.log('select', event);
 
   }
 
   save(){
+    this.submitted = true;
+
+    // stop here if form is invalid
+    if (this.jobForm.invalid) {
+        return;
+    }
+    if(this.numberSkills<1 || this.numberdiploma<1){
+      this.toastr.error('You must enter atleat one skill and one diploma','Error');
+      return;
+    }
     this.loadingSvc.start();
     this.offres.ownerUser  = this.uid;
     if(this.offres.id){
       this.offreSvc.update(this.offres).then(val=>{
-        this.toastr.success("Job Offert saved");
+        this.toastr.success('Job Offer saved', 'Success');
         this.router.navigate(['jobs']);
       }).catch(err=>{
         this.toastr.error(err.message);
@@ -140,16 +162,16 @@ export class JobStep1Component implements OnInit {
     }
     else{
       this.offreSvc.save(this.offres).then(val=>{
-        this.toastr.success("Job Offert saved");
+        this.toastr.success('Job Offer saved', 'Success');
         this.router.navigate(['jobs']);
-        
+
       }).catch(err=>{
         this.toastr.error(err.message);
       }).finally(()=>{
         this.loadingSvc.stop()
       })
     }
-    
+
 
   }
 

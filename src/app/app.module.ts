@@ -194,6 +194,7 @@ import { JobProcessComponent } from './job-profile/job-process/job-process.compo
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
 import { SearchComponent } from './search/search.component';
+import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -373,6 +374,7 @@ import { SearchComponent } from './search/search.component';
     JobProcessComponent,
     FollowOrgsComponent,
     SearchComponent,
+    NotfoundComponent,
 
   ],
   imports: [

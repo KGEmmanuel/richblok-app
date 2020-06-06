@@ -14,19 +14,22 @@
                 <div class="status-indicator bg-success"></div>
             </div>
             <div class="w-100">
-                <textarea placeholder=" {{currentUser?.nom}} {{currentUser?.prenom}} write your thoughts..." [(ngModel)]="currentPost.description" class="form-control border-0 p-0 shadow-none" rows="1"></textarea>
+                <textarea placeholder=" {{currentUser?.nom}} {{currentUser?.prenom}} write your thoughts..." [(ngModel)]="currentPost.description" class="form-control border-0 p-0 shadow-none" style="width: 100% !important;"></textarea>
             </div>
         </div>
     </div>
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
         <div class="p-3 w-100">
+            <h6>{{urls.length}} file<span *ngIf="urls.length>1">s</span> selected</h6>
+
             <div class="row">
-                <div class=" job-item mb-3 col-lg-3 border rounded align-items-center" *ngFor='let url of urls'>
-                    <img [src]="url" style="width: 100% !important;">
+                <div class=" job-item col-lg-3 align-items-center" *ngFor='let url of urls, let i= index'>
+                    <img [src]="url" style="width: 100% !important; margin-top: 5%;">
+                    <i class="feather-trash" style="position: absolute; color: rgb(230, 78, 78); margin-left: -1%;" (click)="removeItem(i)"></i>
                 </div>
             </div>
             <div class="upload-btn-wrapper d-flex justify-content-end">
-                <button class="btn btn-outline-primary btn-sm mr-1">Upload an image</button>
+                <button class="btn btn-outline-primary btn-sm mr-1" style="cursor: pointer;">Upload an image</button>
                 <input type="file" name="myfile" (change)="onSelectFile($event)" multiple/>
             </div>
 
@@ -50,5 +53,5 @@
 
 </div>
 <div class="col-lg-12" style="padding-bottom:4%;" *ngIf="location">
-    <app-post-location></app-post-location>
+    <input placeholder="Type your location" name="location" [(ngModel)]="currentPost.location" class="form-control">
 </div>
