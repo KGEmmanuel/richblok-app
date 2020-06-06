@@ -180,7 +180,7 @@ export class UserJobProfileComponent implements OnInit {
       }
     }
     this.JobApplicationSvc.findByfilters(['userRef', 'jobref'], ["==", "=="], [this.currentUser.id, this.currentJob.id]).snapshotChanges().subscribe(val => {
-      if (val) {
+      if (val.length >0) {
         this.dispApply = false;
       }
     })
@@ -203,8 +203,4 @@ export class UserJobProfileComponent implements OnInit {
    // alert('Test');
     this.router.navigate(['post-jobs',{id:this.currentJob.id}]);
   }
-
-
-
-
 }

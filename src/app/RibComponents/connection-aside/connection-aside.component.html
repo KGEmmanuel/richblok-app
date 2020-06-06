@@ -5,16 +5,14 @@
     <div class="box-body p-3" *ngIf="users">
         <app-connection-aside-item *ngFor="let item of users | async" [currentUser]="item"></app-connection-aside-item>
     </div>
-    <div class="box-body p-3" *ngIf="!users">
-        <div>
-            <span class="d-flex justify-content-center" style="padding-top: 10%;">
-<img src="../../../../assets/imgs/feed2.png" style="width: 60%;">
+    <div *ngIf="(users | async)?.length === 0">
+        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<img src="../../../../assets/imgs/friends.png" style="width: 60%;">
 </span>
-            <span class="d-flex justify-content-center" style="padding-top: 5%;">
-<span class="d-flex justify-content-center" style="padding-left: 5%;">
-  <h5>No item to display here</h5>
+        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+          <span class="d-flex justify-content-center">
+<h5>No suggestion yet</h5>
 </span>
-            </span>
-        </div>
+        </span>
     </div>
 </div>

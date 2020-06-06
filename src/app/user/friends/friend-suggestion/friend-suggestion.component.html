@@ -3,7 +3,7 @@
         <app-friend-suggestion-item [iduser]="item.id"></app-friend-suggestion-item>
     </div>
 </div>
-<div *ngIf="!users">
+<div *ngIf="(users | async)?.length === 0">
     <span class="d-flex justify-content-center" style="padding-top: 5%;">
 <img src="../../../../assets/imgs/friends.png" style="width: 40%;">
 </span>

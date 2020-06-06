@@ -40,9 +40,11 @@ import { OrganisationViewComponent } from './organisation-view/organisation-view
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { SearchComponent } from './search/search.component';
+import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
+
   { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Create Account'} },
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Register'} },
   { path: 'feed', component: FeedComponent, canActivate: [AuthGuard], data: {title: 'Feed'} },
@@ -81,11 +83,16 @@ const routes: Routes = [
   { path: 'landing', component: LandingComponent},
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
   { path: 'create-challenge', component: EvaluateFormComponent},
-  { path: 'search', component: SearchComponent}
+  { path: 'search', component: SearchComponent},
+  { path: '404', component: NotfoundComponent },
+  { path: '**', component: NotfoundComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,
+    {
+      useHash: false
+    })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

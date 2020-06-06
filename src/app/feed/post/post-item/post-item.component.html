@@ -20,15 +20,31 @@
 <div class="p-3 border-bottom osahan-post-body">
     <h4>{{currentPost.titre}}</h4>
     <p> {{currentPost?.description}} </p>
-    <!--<img *ngIf="currentPost?.medias" [src]="currentPost?.medias[0]?.src" style="width: 100%;" class="img-fluid">-->
-    <div class="accordian" *ngIf="currentPost?.medias.length>0">
+    <!--<img *ngIf="currentPost?.medias" [src]="currentPost?.medias[0]?.src" style="width: 100%;" class="img-fluid">
+    <div *ngIf="currentPost?.medias.length>0">
         <ul>
-            <li *ngFor="let med of currentPost?.medias">
+            <li >
                 <img data-toggle="modal" data-target="#imageModal" [src]="med.src" style="width: 100% !important;" />
             </li>
         </ul>
+    </div>-->
+    <div class="slider" *ngIf="currentPost?.medias.length>0" style="margin-top: 4%;">
+        <div>
+            <div class="slides">
+                <div id="slide-{{i+1}}" *ngFor="let med of currentPost?.medias, let i = index">
+                    <img [src]="med.src" style="width: 100% !important; border-radius: 10px;" />
+                    <h2 *ngIf="currentPost.medias.length>1" style="position: absolute; margin-top: 40%; margin-left: 40%; color: rgb(10, 110, 105);">{{i+1}} / {{currentPost?.medias.length}}</h2>
+                </div>
+            </div>
+        </div>
+        <!--<div style="margin-top: 2%;">
+            <a href="#slide-{{i+1}}" rel="no-refresh" *ngFor="let med of currentPost?.medias, let i = index">
+                <button class="btn btn-primary" style="border-radius: 30%;" *ngIf="currentPost.medias.length>1" >
+             <h6 *ngIf="currentPost.medias.length>1"> {{i+1}} </h6>
+            </button>&nbsp;
+            </a>
+        </div>-->
     </div>
-
 </div>
 <div class="p-3 border-bottom osahan-post-footer">
     <div class="row">

@@ -12,7 +12,7 @@
                             <a class="mr-2 font-weight-bold" *ngIf="org" [routerLink]="['/organisation/'+org.id]">
                 {{org.nom}}
               </a>
-                            <i class="feather-map-pin"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted {{currentJob?.dateCreation?.toDate() | date}}
+                            <i class="feather-map-pin" *ngIf="currentJob?.completeAddress != null"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted on{{currentJob?.dateCreation?.toDate() | date}}
                     </div>
                     <div class="profile-right ml-auto">
                         <button *ngIf="dispSav" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save &nbsp; </button>
@@ -130,7 +130,6 @@
                         </div>
                     </div>
                 </div>
-                <app-premium></app-premium>
                 <app-rib-solutions></app-rib-solutions>
 
             </aside>
@@ -138,8 +137,7 @@
                 <button type="button" class="btn btn-lg btn-block btn-danger mb-3"> <i class="feather-bell"></i> Set alert for
           jobs </button>
                 <app-similar-jobs [joboffer]="currentJob"></app-similar-jobs>
-                <app-viewed-profile></app-viewed-profile>
-
+                <app-job-aside></app-job-aside>
             </aside>
         </div>
     </div>
@@ -163,13 +161,13 @@
                 </span>
                 <hr>
 
-                <div class="border network-item rounded mb-3">
-                    <div class="row" *ngIf="step===1">
+                <div class=" network-item  mb-3">
+                    <div *ngIf="step===1">
                         <div class="col-lg-12">
                             <textarea type="text" class="form-control" id="motivation" placeholder="Type your motivation about this job" [(ngModel)]="currentApplication.motivation"></textarea>
                         </div>
-                        <div style="float: right; margin-top: 10px;">
-                            <button class="btn btn-primary" (click)="next()">Next</button>
+                        <div style=" margin-top: 10px;" class="d-flex justify-content-end col-lg-12">
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
                         </div>
                     </div>
                     <div class="row" *ngIf="step===2">
@@ -187,11 +185,14 @@
                             <div class="custom-control custom-checkbox mb-3" *ngFor="let sk of usersSkils let i = index">
                                 <input type="checkbox" [checked]="currentApplication.skillsRef.includes(sk.id)" class="custom-control-input" [id]="'sk'+i" (change)="changed($event)" [value]="sk.id">
                                 <label class="custom-control-label" [for]="'sk'+i">{{sk.skillName}}({{sk.skillStringValue}})</label>
+
                             </div>
+                            <span *ngIf="usersTraining.length <1">You have no skills registered on RichBlok.  Navigate to records so as to register some</span>
+
                         </div>
-                        <div style="float: right; margin-top: 10px;">
-                            <button class="btn btn-danger" (click)="prev()">Previous</button>
-                            <button class="btn btn-primary" (click)="next()">Next</button>
+                        <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
                         </div>
                     </div>
                     <div class="row" *ngIf="step===3">
@@ -201,6 +202,7 @@
                 <ul>
                   <li *ngFor="let trai of currentJob?.formations">{{trai.nomDiplome}} in {{trai.domaine}}</li>
                 </ul>
+
               </span>
                         </div>
                         <div class="col-lg-6">
@@ -209,10 +211,12 @@
                                 <input type="checkbox" class="custom-control-input" [checked]="currentApplication.trainings.includes(dip.id)" [id]="'train'+i" (change)="trainchanged($event)" [value]="dip.id">
                                 <label class="custom-control-label" [for]="'train'+i">{{dip.libelle}} in {{dip.domaineName}}</label>
                             </div>
+                            <span *ngIf="usersTraining.length <1">You have no diploma registered on RichBlok.  Navigate to records so as to register some</span>
+
                         </div>
-                        <div style="float: right; margin-top: 10px;">
-                            <button class="btn btn-danger" (click)="prev()">Previous</button>
-                            <button class="btn btn-primary" (click)="next()">Next</button>
+                        <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
                         </div>
                     </div>
                     <div class="row" *ngIf="step===4">
@@ -222,7 +226,8 @@
                 <ul>
                   <li *ngFor="let ex of currentJob?.experiences">{{ex.poste}} in {{ex.domaine}}</li>
                 </ul>
-              </span>
+                            </span>
+
                         </div>
                         <div class="col-lg-6">
                             <h6 style="color: grey;">Your Experiences</h6>
@@ -230,10 +235,11 @@
                                 <input type="checkbox" class="custom-control-input" [id]="'train'+i" (change)="expchanged($event)" [value]="exp.id" [checked]="currentApplication.exp.includes(exp.id)">
                                 <label class="custom-control-label" [for]="'train'+i">{{exp.libelle}}</label>
                             </div>
+                            <span *ngIf="userExperiences.length <1">You have no experience registered on RichBlok.  Navigate to records so as to register some</span>
                         </div>
-                        <div style="float: right; margin-top: 10px;">
-                            <button class="btn btn-danger" (click)="prev()">Previous</button>
-                            <button class="btn btn-primary" (click)="apply()">Apply</button>
+                        <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="save()">Send application</button>
                         </div>
                     </div>
 

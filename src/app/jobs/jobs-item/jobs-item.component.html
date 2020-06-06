@@ -5,7 +5,8 @@
             <div class="text-truncate text-primary" *ngIf="org"><a [routerLink]="['/organisation/'+org.id]">{{org.nom}}</a></div>
             <div class="text-truncate text-primary" *ngIf="user && !org"><a [routerLink]="['/profile/'+ user.id]">{{user.nom}} {{user.prenom}}</a></div>
             <div class="small text-gray-500 text-truncate"><i class="feather-map-pin"></i>&nbsp;
-                <span [innerHTML]=" currentJob.completeAddress"></span>
+                <span *ngIf="!currentJob.completeAddress">N/A</span>
+                <span [innerHTML]="currentJob.completeAddress"></span>
             </div>
         </div>
         <img *ngIf="org" class="img-fluid ml-auto" [src]="org.logo" alt="">
