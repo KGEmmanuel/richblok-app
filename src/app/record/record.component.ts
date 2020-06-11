@@ -4,6 +4,10 @@ import { FormationService } from '../shared/services/formation.service';
 import { LanguageService } from '../shared/services/language.service';
 import { SkillsService } from '../shared/services/skills.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+<<<<<<< HEAD
+=======
+import { Meta, Title } from '@angular/platform-browser';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
 @Component({
   selector: 'app-record',
@@ -18,11 +22,22 @@ export class RecordComponent implements OnInit {
   nbreLng = 0;
   nbreExp = 0;
   uid;
+<<<<<<< HEAD
   constructor(private afAuth: AngularFireAuth, private expSvc: ExperienceService, private formSvc: FormationService, private lgSvc: LanguageService, private skilSvc: SkillsService) {
+=======
+  constructor(private afAuth: AngularFireAuth, private expSvc: ExperienceService, private formSvc: FormationService, private lgSvc: LanguageService, private skilSvc: SkillsService,
+    private title: Title,
+    private meta: Meta) {
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
   }
 
   ngOnInit() {
+<<<<<<< HEAD
+=======
+    this.title.setTitle('RichBlok | Records');
+    this.meta.updateTag({ name: 'description', content: 'Make a record or your skills, experiences, trainings and realisations' });
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     this.afAuth.authState.subscribe(v => {
       if (v) {
         this.uid = v.uid;

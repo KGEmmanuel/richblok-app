@@ -26,5 +26,11 @@ export class DemonstrateService {
     return this.db.collection(this.basepath).doc(user).collection(this.path).add(Object.assign({}, data));
   }
 
+<<<<<<< HEAD
+=======
+  get(user:string){
+    return this.db.collection(this.basepath).doc(user).collection(this.path);
+  }
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
 }

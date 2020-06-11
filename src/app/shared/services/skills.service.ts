@@ -34,8 +34,19 @@ export class SkillsService {
     return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath);
   }
 
+<<<<<<< HEAD
   delete(user: string, sk : string) {
     return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk).delete();
   }
 
+=======
+  delete(user, sk) {
+    return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk).delete();
+  }
+
+  getSkill(user, sk){
+    return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk);
+  }
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 }

@@ -17,6 +17,10 @@ export class RecordSkillsComponent implements OnInit {
   // associatedUser: string;
   userSkills = new Array<Skill>();
   uid;
+<<<<<<< HEAD
+=======
+  currentSkil : Skill;
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   constructor(private skilSvc: SkillsService, private afAuth: AngularFireAuth) {
 
   }
@@ -34,7 +38,10 @@ export class RecordSkillsComponent implements OnInit {
       });
     })
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   }
   showForm() {
     this.form = true;
@@ -42,4 +49,11 @@ export class RecordSkillsComponent implements OnInit {
   hideForm() {
     this.form = false;
   }
+<<<<<<< HEAD
+=======
+  edit(event){
+    this.currentSkil = event;
+    this.showForm();
+  }
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 }

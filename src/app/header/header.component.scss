@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [tooltip]:before {
     bottom: 25%;
     font-family: arial;
@@ -61,4 +62,69 @@
     display: block;
     padding: 0.25rem 1.5rem;
     color: #212529;
+=======
+[tooltip]:before {
+    bottom: 25%;
+    font-family: arial;
+    font-weight: 600;
+    border-radius: 2px;
+    background: #363636;
+    color: #fff;
+    content: attr(tooltip);
+    font-size: 12px;
+    visibility: hidden;
+    opacity: 0;
+    padding: 5px 7px;
+    position: absolute;
+    top: 100%;
+    white-space: nowrap;
+}
+
+[tooltip]:hover:before,
+[tooltip]:hover:after {
+    visibility: visible;
+    opacity: 1;
+}
+
+.item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    margin-left: -3%;
+    clear: both;
+    font-weight: 400;
+    color: #f8f9fa;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.item:hover,
+.item:focus {
+    color: #f8f9fa;
+    text-decoration: none;
+    background-color: rgba(0, 0, 0, 0.904);
+}
+
+.item.active,
+.item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #047b80;
+}
+
+.item.disabled,
+.item:disabled {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: transparent;
+}
+
+.item-text {
+    display: block;
+    padding: 0.25rem 1.5rem;
+    color: #212529;
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 }

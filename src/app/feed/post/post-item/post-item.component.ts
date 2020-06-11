@@ -15,7 +15,11 @@ export class PostItemComponent implements OnInit {
   detail = false;
   commentcount = 0;
 
+<<<<<<< HEAD
   ownedUser: Utilisateur;
+=======
+  ownedUser  = new Utilisateur();
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   @Input()
   currentPost: Post;
   @Input()
@@ -39,7 +43,12 @@ export class PostItemComponent implements OnInit {
     });
 
     if (this.currentPost) {
+<<<<<<< HEAD
       this.userSvc.getDocRef(this.currentPost.owner).onSnapshot(val => {
+=======
+      if(this.currentPost?.owner)
+      this.userSvc.getDocRef(this.currentPost?.owner).onSnapshot(val => {
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
         this.ownedUser = val.data() as Utilisateur;
         this.ownedUser.id = val.id;
       });

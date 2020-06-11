@@ -8,6 +8,11 @@ import { Media } from 'src/app/shared/entites/Media';
 import { finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+<<<<<<< HEAD
+=======
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
 @Component({
   selector: 'app-record-realisation-form',
@@ -26,8 +31,15 @@ export class RecordRealisationFormComponent implements OnInit {
   image = [];
   files: File[] = [];
   outil: string;
+<<<<<<< HEAD
   constructor(private realSvc: PortfolioService, private afStorage: AngularFireStorage, private afAuth: AngularFireAuth,
               private toastr: ToastrService, private loadsvc: NgxUiLoaderService) {
+=======
+  realForm: FormGroup;
+submitted = false;
+  constructor(private realSvc: PortfolioService, private afStorage: AngularFireStorage, private afAuth: AngularFireAuth,
+              private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     this.afAuth.authState.subscribe(val => {
       if (val) {
         this.uid = val.uid;
@@ -52,6 +64,10 @@ export class RecordRealisationFormComponent implements OnInit {
         //this.files.push(reader)
       }
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   }
 
 
@@ -80,7 +96,17 @@ export class RecordRealisationFormComponent implements OnInit {
     if (!this.currentRealisation) {
       this.currentRealisation = new Realisation();
     }
+<<<<<<< HEAD
 
+=======
+    this.realForm = this.formBuilder.group({
+      nom: ['', Validators.required],
+      typeProj: ['', Validators.required],
+      datedeb: ['', Validators.required],
+      encours: ['', Validators.required],
+      description: ['', Validators.required],
+}, );
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   }
 
   checkChanged(event) {
@@ -90,7 +116,18 @@ export class RecordRealisationFormComponent implements OnInit {
     this.currentRealisation.clientref = null;
   }
 
+<<<<<<< HEAD
   save() {
+=======
+  get f() { return this.realForm.controls; }
+  save(){
+    this.submitted = true;
+
+    // stop here if form is invalid
+    if (this.realForm.invalid) {
+        return;
+    }
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     this.loadsvc.start();
     if (!this.currentRealisation.id) {
       Promise.all(this.uploadallFiles(this.files)).then(v => {

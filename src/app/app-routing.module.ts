@@ -36,6 +36,7 @@ import { JobStep3Component } from './jobs/jobs-post/job-step3/job-step3.componen
 import { JobStep4Component } from './jobs/jobs-post/job-step4/job-step4.component';
 import { JobStep5Component } from './jobs/jobs-post/job-step5/job-step5.component';
 import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonstrate-form.component';
+<<<<<<< HEAD
 import { PricingComponent } from './RibComponents/pricing/pricing.component';
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 
@@ -60,12 +61,48 @@ const routes: Routes = [
   { path: 'demonstrate', component: DemonstrateComponent},
   { path: 'evaluate', component: EvaluateComponent},
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
+=======
+import { OrganisationViewComponent } from './organisation-view/organisation-view.component';
+import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
+import { JobProcessComponent } from './job-profile/job-process/job-process.component';
+import { SearchComponent } from './search/search.component';
+import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: '/landing', pathMatch: 'full' },
+
+  { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Create Account'} },
+  { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Register'} },
+  { path: 'feed', component: FeedComponent, canActivate: [AuthGuard], data: {title: 'Feed'} },
+  { path: 'profile/:id', component: UserComponent, data: {title: 'Profile'}},
+  { path: 'profile/:id', component: UserViewComponent},
+  { path: 'organisation/:id', component: OrganisationProfileComponent},
+  { path: 'messages', component: ChatComponent, data: {title: 'Chat'}},
+  { path: 'notifications', component: NotificationsComponent, data: {title: 'Notifications'}},
+  { path: 'jobs', component: JobsComponent, data: {title: 'Jobs'}},
+  { path: 'organisation', component: OrganisationProfileComponent},
+  { path: 'record', component: RecordComponent, data: {title: 'Records'}},
+  { path: 'friends', component: FriendsComponent, data: {title: 'Connections'}},
+  { path: 'settings', component: UserSettingsComponent, data: {title: 'Settings'}},
+  { path: 'cv', component: CvComponent, data: {title: 'CV'}},
+  { path: 'landing', component: LandingComponent, data: {title: 'Landing'}},
+  { path: 'forgot-password', component: ResetComponent, canActivate: [SecureInnerPagesGuard] },
+  { path: 'verify-email-address', component: VerifyEmailComponent, canActivate: [SecureInnerPagesGuard] },
+  { path: 'demonstrate', component: DemonstrateComponent, data: {title: 'Demonstrate'}},
+  { path: 'evaluate', component: EvaluateComponent, data: {title: 'Evaluate'}},
+  { path: 'participate', component: ParticipateToChallengeComponent, data: {title: 'Participate'}},
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   { path: 'create-organisation', component: CreateOrganisationComponent},
   { path: 'organisation-settings', component: OrganisationSettingsComponent},
   { path: 'terms', component: TermsComponent},
   { path: 'policy', component: PolicyComponent},
   { path: 'contact', component: ContactComponent},
+<<<<<<< HEAD
   { path: 'job-profile', component: UserJobProfileComponent},
+=======
+  { path: 'job-profile/:id', component: UserJobProfileComponent},
+  { path: 'job-process/:id', component: JobProcessComponent},
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   { path: 'post-jobs', component: JobsPostComponent},
   { path: 'post-job-step-one', component: JobStep1Component},
   { path: 'post-job-step-two', component: JobStep2Component},
@@ -75,6 +112,7 @@ const routes: Routes = [
   { path: 'demo/:type/:id', component: DemonstrateFormComponent},
   { path: 'demo', component: DemonstrateFormComponent},
   { path: 'landing', component: LandingComponent},
+<<<<<<< HEAD
   { path: 'pricing', component: PricingComponent},
   { path: 'create-challenge', component: EvaluateFormComponent}
 
@@ -83,6 +121,20 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
+=======
+  { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent },
+  { path: 'create-challenge', component: EvaluateFormComponent},
+  { path: 'search', component: SearchComponent},
+  { path: '404', component: NotfoundComponent },
+  { path: '**', component: NotfoundComponent }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes,
+    {
+      useHash: false
+    })],
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

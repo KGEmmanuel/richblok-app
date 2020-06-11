@@ -1,4 +1,5 @@
 <div class="box shadow-sm border rounded bg-white mb-3">
+<<<<<<< HEAD
   <div class="box-title border-bottom p-3">
     <h6 class="row">
       <span class="col-lg-6">
@@ -10,12 +11,26 @@
         </span>
       </span>
       <span class="ml-auto col-lg-6 d-flex justify-content-end">
+=======
+    <div class="box-title border-bottom p-3">
+        <h6 class="row">
+            <span class="col-lg-6">
+        <span *ngIf="!form">
+          Skills
+        </span>
+            <span *ngIf="form">
+          Add a skill
+        </span>
+            </span>
+            <span class="ml-auto col-lg-6 d-flex justify-content-end">
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
         <button type="button" class="btn btn-light btn-sm" *ngIf="!form" (click)="showForm()"><i
             class="feather-plus"></i></button>
         <button type="button" class="btn btn-light btn-sm" *ngIf="form" (click)="hideForm()"><i
             class="feather-x"></i></button>
 
       </span>
+<<<<<<< HEAD
     </h6>
   </div>
   <app-record-skills-form *ngIf="form" (skillSaved)="hideForm()"></app-record-skills-form>
@@ -27,4 +42,24 @@
     </div>
 
   </div>
+=======
+        </h6>
+    </div>
+    <app-record-skills-form *ngIf="form" (skillSaved)="hideForm()" [currentSkill]="currentSkil"></app-record-skills-form>
+    <div class="box-body " *ngIf="!form">
+        <div class="row">
+            <div class="col-lg-6" *ngFor="let skil of userSkills">
+                <app-record-skills-item [currentSkill]="skil" [userid]="uid" (itemEdited)="edit($event)"></app-record-skills-item>
+            </div>
+        </div>
+        <div *ngIf="userSkills.length === 0">
+            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<img src="../../../assets/imgs/real.png" style="width: 40%;">
+</span>
+            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<h5>No skill recorded. Click on the top right button to record one</h5>
+</span>
+        </div>
+    </div>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 </div>

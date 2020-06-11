@@ -3,6 +3,7 @@
 a {
     cursor: pointer!important;
 }
+<<<<<<< HEAD
 .modal-dialog{
   background-color:#2c2d2e;
 }
@@ -17,3 +18,40 @@ a {
   -webkit-box-orient: vertical;
 }
 
+=======
+
+.modal-dialog {
+    background-color: #2c2d2e;
+}
+
+.modal-content {
+    background-color: #2c2d2e;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin: 0 0 100px;
+    /* bottom = footer height */
+}
+
+#bottom-footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 100px;
+    width: 100%;
+}
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe

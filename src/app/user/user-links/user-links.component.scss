@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 a{
   cursor: pointer;
 }
@@ -9,3 +10,16 @@ a{
   -webkit-box-orient: vertical;
 }
 
+=======
+a{
+  cursor: pointer;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+  -webkit-box-orient: vertical;
+}
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe

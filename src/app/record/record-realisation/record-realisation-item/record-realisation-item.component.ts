@@ -22,12 +22,21 @@ export class RecordRealisationItemComponent implements OnInit {
   currentRealisation: Realisation;
   @Input()
   uid;
+<<<<<<< HEAD
+=======
+  @Input()
+  displaymode = 'priv';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
   @Output()
   selectForEdit = new EventEmitter<Realisation>();
 
+<<<<<<< HEAD
   @Input()
   displaymode = 'priv';
+=======
+  
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   constructor(private realSvc: PortfolioService,private expSvc: ExperienceService,
               private toastSvc: ToastrService, private entSvc: OrganisationService,
               private afStorage: AngularFireStorage, private afAuth: AngularFireAuth) { }

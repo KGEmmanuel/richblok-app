@@ -9,7 +9,11 @@ import { UtilisateurService } from 'src/app/shared/services/utilisateur.service'
   styleUrls: ['./friend-invitation.component.scss']
 })
 export class FriendInvitationComponent implements OnInit {
+<<<<<<< HEAD
   currentUser: Utilisateur;
+=======
+  currentUser = new Utilisateur();
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   constructor(private userSvc: UtilisateurService) { }
   ngOnInit() {
     firebase.auth().onAuthStateChanged(v=>{

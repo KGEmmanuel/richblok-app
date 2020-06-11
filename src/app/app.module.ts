@@ -1,6 +1,11 @@
 import { HttpClient, HttpHandler, HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+<<<<<<< HEAD
+=======
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { ApiService } from '../app/feed/post/post-form/post-location/api.service';
 import { environment } from '../environments/environment';
@@ -157,7 +162,11 @@ import { IdentifiedUsersComponent } from './feed/post/post-form/post-identify/id
 import { IdentifiedUsersItemComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-item/identified-users-item.component';
 import { IdentifiedUsersListComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-list/identified-users-list.component';
 import { PostIdentifyComponent } from './feed/post/post-form/post-identify/post-identify.component';
+<<<<<<< HEAD
 import {NgbModule, NgbDropdown} from '@ng-bootstrap/ng-bootstrap';
+=======
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { IncitationItemComponent } from './incitations/incitation-item/incitation-item.component';
 import { TagsComponent } from './RibComponents/tags/tags.component';
@@ -171,6 +180,7 @@ import { FriendInvitationItemComponent } from './user/friends/friend-invitation/
 import { InitchatComponent } from './RibComponents/initchat/initchat.component';
 import { PostShareFormComponent } from './feed/post/post-share/post-share-form/post-share-form.component';
 import { PostShareItemComponent } from './feed/post/post-share/post-share-item/post-share-item.component';
+<<<<<<< HEAD
 import { DocumentComponent } from './RibComponents/document/document.component';
 import { RealisationComponent } from './realisation/realisation.component';
 import { RecordRealisationComponent } from './record/record-realisation/record-realisation.component';
@@ -181,6 +191,30 @@ import { RecordRealisationDetailsComponent } from './record/record-realisation/r
 import {NgxUiLoaderModule, NgxUiLoaderRouterModule} from 'ngx-ui-loader';
 import { CountdownModule } from 'ngx-countdown';
 
+=======
+import { JobsItemComponent } from './jobs/jobs-item/jobs-item.component';
+import { JobsCreatedComponent } from './jobs/jobs-created/jobs-created.component';
+import { JobsSavedComponent } from './jobs/jobs-saved/jobs-saved.component';
+import { JobsAppliedComponent } from './jobs/jobs-applied/jobs-applied.component';
+import { CountdownModule } from 'ngx-countdown';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import {NgxUiLoaderModule, NgxUiLoaderRouterModule} from 'ngx-ui-loader';
+import { JobsAppliedItemComponent } from './jobs/jobs-applied/jobs-applied-item/jobs-applied-item.component';
+import { JobsAppliedDetailsComponent } from './jobs/jobs-applied/jobs-applied-details/jobs-applied-details.component'
+import { RecordRealisationComponent } from './record/record-realisation/record-realisation.component';
+import { RecordRealisationDetailsComponent } from './record/record-realisation/record-realisation-item/record-realisation-details/record-realisation-details.component';
+import { RecordRealisationFormComponent } from './record/record-realisation/record-realisation-form/record-realisation-form.component';
+import { RecordRealisationItemComponent } from './record/record-realisation/record-realisation-item/record-realisation-item.component';
+import { DocumentComponent } from './document/document.component';
+import { RealisationComponent } from './realisation/realisation.component';
+import { UserslistInlineComponent } from './users/userslist-inline/userslist-inline.component';
+import { UserslistInlineItemComponent } from './users/userslist-inline-item/userslist-inline-item.component';
+import { JobProcessComponent } from './job-profile/job-process/job-process.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
+import { SearchComponent } from './search/search.component';
+import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 @NgModule({
   declarations: [
     AppComponent,
@@ -336,12 +370,41 @@ import { CountdownModule } from 'ngx-countdown';
     InitchatComponent,
     PostShareFormComponent,
     PostShareItemComponent,
+<<<<<<< HEAD
     DocumentComponent,
     RealisationComponent,
     RecordRealisationComponent,
     RecordRealisationFormComponent,
     RecordRealisationItemComponent,
     RecordRealisationDetailsComponent
+=======
+    JobsItemComponent,
+    JobsCreatedComponent,
+    JobsSavedComponent,
+    JobsAppliedComponent,
+    JobsAppliedItemComponent,
+    JobsAppliedDetailsComponent,
+    RecordRealisationComponent,
+    RecordRealisationDetailsComponent,
+    RecordRealisationFormComponent,
+    RecordRealisationItemComponent,
+    ParticipateToChallengeComponent,
+    RecordExperiencesFormComponent,
+    CvComponent,
+    DocumentComponent,
+    OrganisationAboutComponent,
+    OrganisationProfileComponent,
+    OrganisationSettingsComponent,
+    RealisationComponent,
+    RecordRealisationItemComponent,
+    UserslistInlineComponent,
+    UserslistInlineItemComponent,
+    JobProcessComponent,
+    FollowOrgsComponent,
+    SearchComponent,
+    NotfoundComponent,
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   ],
   imports: [
     BrowserModule,
@@ -357,7 +420,11 @@ import { CountdownModule } from 'ngx-countdown';
     GooglePlaceModule,
     HttpClientModule,
     AgmCoreModule.forRoot(),
+<<<<<<< HEAD
     CountdownModule,
+=======
+    NgMultiSelectDropDownModule.forRoot(),
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     // SignaturePadModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCD7cXCYuY2__P5Hlfvx28L-UiqO06uGmY',
@@ -366,9 +433,18 @@ import { CountdownModule } from 'ngx-countdown';
     MatGoogleMapsAutocompleteModule,
     NgbModule,
     HttpClientModule,
+<<<<<<< HEAD
     NgChatModule,
     NgxUiLoaderModule,
     NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
+=======
+    NgxUiLoaderModule,
+    NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
+    CountdownModule,
+    GooglePlaceModule,
+    PdfViewerModule,
+    ReactiveFormsModule
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
   ],
   providers: [
@@ -376,5 +452,12 @@ import { CountdownModule } from 'ngx-countdown';
     PostService,
   ],
   bootstrap: [AppComponent]
+<<<<<<< HEAD
 })
 export class AppModule { }
+=======
+
+})
+export class AppModule { }
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe

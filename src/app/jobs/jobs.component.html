@@ -13,13 +13,19 @@
                             <input type="text" class="form-control" placeholder="Search jobs" aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button">
+<<<<<<< HEAD
                        <i class="feather-search"></i>
                        </button>
+=======
+                           <i class="feather-search"></i>
+                        </button>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                             </div>
                         </div>
                     </form>
                     <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
                         <li class="nav-item">
+<<<<<<< HEAD
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Category</a>
                         </li>
                         <li class="nav-item">
@@ -30,10 +36,23 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="type-tab" data-toggle="tab" href="#type" role="tab" aria-controls="type" aria-selected="false">Type</a>
+=======
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">All</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Saved Jobs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Applied for</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="type-tab" data-toggle="tab" href="#type" role="tab" aria-controls="type" aria-selected="false">Published</a>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+<<<<<<< HEAD
                             <div class="p-3 job-tags">
                                 <button type="button" class="btn btn-outline-secondary btn-sm mr-1">All</button>
                                 <button type="button" class="btn btn-outline-secondary btn-sm mr-1">Sales</button>
@@ -257,6 +276,20 @@
                                                 </div>
                                             </div>
                                         </a>
+=======
+                            <div class="p-3 border-top">
+                                <div class="row">
+                                    <div class="col-md-6" *ngFor="let job of allJobs">
+                                        <app-jobs-item [currentJob]="job"></app-jobs-item>
+                                    </div>
+                                    <div *ngIf="allJobs?.length === 0">
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <img src="../../assets/imgs/jobs.png" style="width: 50%;">
+                          </span>
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <h5>No job to display</h5>
+                          </span>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                     </div>
                                 </div>
                             </div>
@@ -264,6 +297,7 @@
                         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                             <div class="p-3 w-100">
                                 <div class="row">
+<<<<<<< HEAD
                                     <div class="col-md-6">
                                         <div class="border shadow-sm border rounded bg-white job-item-2 p-3 mb-3">
                                             <div class="media">
@@ -449,12 +483,25 @@
                                                 </div>
                                             </div>
                                         </div>
+=======
+                                    <div class="col-md-6" *ngFor="let job of savedJobs">
+                                        <app-jobs-item [currentJob]="job"></app-jobs-item>
+                                    </div>
+                                    <div *ngIf="savedJobs?.length === 0">
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <img src="../../assets/imgs/jobs.png" style="width: 50%;">
+                          </span>
+                                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                          <h5>No saved job to display. Save a job to have a content here</h5>
+                          </span>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                             <div class="p-3 w-100">
+<<<<<<< HEAD
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card overflow-hidden">
@@ -479,10 +526,14 @@
                                         </div>
                                     </div>
                                 </div>
+=======
+                                <app-jobs-applied></app-jobs-applied>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                             </div>
                         </div>
                         <div class="tab-pane fade" id="type" role="tabpanel" aria-labelledby="type-tab">
                             <div class="p-3 w-100">
+<<<<<<< HEAD
                                 <div class="row">
                                     <div class="col-md-6">
                                         <a href="profile.html">
@@ -738,6 +789,9 @@
                                         </a>
                                     </div>
                                 </div>
+=======
+                                <app-jobs-created></app-jobs-created>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                             </div>
                         </div>
                     </div>
@@ -755,7 +809,11 @@
                                 <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">C# Developer</a></h6>
                                 <a class="d-inline-block small pt-1" href="job-profile">
                                     <span class="text-warning">
+<<<<<<< HEAD
                        <span class="feather-star"></span>
+=======
+                              <span class="feather-star"></span>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                     <span class="feather-star"></span>
                                     <span class="feather-star"></span>
                                     <span class="feather-star text-gray-500"></span>
@@ -781,10 +839,18 @@
                         </div>
                         <div class="media-body">
                             <div class="mb-3">
+<<<<<<< HEAD
                                 <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">Junior UX Designer</a></h6>
                                 <a class="d-inline-block small pt-1" href="job-profile">
                                     <span class="text-warning">
                        <span class="feather-star"></span>
+=======
+                                <h6 class="font-weight-bold mb-0"><a class="text-dark" href="job-profile">Junior UX Designer</a>
+                                </h6>
+                                <a class="d-inline-block small pt-1" href="job-profile">
+                                    <span class="text-warning">
+                              <span class="feather-star"></span>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                     <span class="feather-star"></span>
                                     <span class="feather-star"></span>
                                     <span class="feather-star"></span>
@@ -809,8 +875,16 @@
                     <h6 class="font-weight-bold text-dark mb-1">Because you viewed</h6>
                     <p class="mb-0 text-muted">Designer at Google?</p>
                 </div>
+<<<<<<< HEAD
                 <app-job-aside-item></app-job-aside-item>
                 <app-connection-aside></app-connection-aside>
+=======
+                <app-follow-orgs></app-follow-orgs>
+                <app-connection-aside></app-connection-aside>
+                <app-job-aside></app-job-aside>
+
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
             </aside>
         </div>
     </div>
@@ -818,4 +892,8 @@
 
 <footer>
     <app-footer></app-footer>
+<<<<<<< HEAD
 </footer>
+=======
+</footer>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe

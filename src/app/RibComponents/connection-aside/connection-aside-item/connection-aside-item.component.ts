@@ -14,7 +14,11 @@ export class ConnectionAsideItemComponent implements OnInit {
   currentUser: Utilisateur;
   uid: string;
   constructor(private userSvc:UtilisateurService, private afAuth: AngularFireAuth, private tostSvc: ToastrService) {
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
    }
 
   ngOnInit() {
@@ -29,7 +33,11 @@ export class ConnectionAsideItemComponent implements OnInit {
       this.userSvc.askconnection(this.uid, this.currentUser.id).then(v=>{
         this.tostSvc.success('connection request successfuly sent to'+this.currentUser.nom);
       }).catch(err=>{
+<<<<<<< HEAD
         this.tostSvc.success('Ooops something goes wrong : '+err.message);
+=======
+        this.tostSvc.success('Ooops something went wrong : '+err.message);
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
       })
   }
 

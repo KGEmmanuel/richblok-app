@@ -1,4 +1,5 @@
 <div class="box shadow-sm border rounded bg-white mb-3">
+<<<<<<< HEAD
   <div class="box-title border-bottom p-3">
      <h6 class="m-0">About</h6>
   </div>
@@ -51,3 +52,57 @@
      </table>
   </div>
 </div>
+=======
+    <div class="box-title border-bottom p-3">
+        <h6 class="m-0">About</h6>
+    </div>
+    <div class="box-body p-3">
+        <p class="mb-0">{{currentorg.description}}
+        </p>
+    </div>
+</div>
+<div class="box shadow-sm border rounded bg-white mb-3">
+    <div class="box-title border-bottom p-3">
+        <h6 class="m-0">Overview</h6>
+    </div>
+    <div class="box-body">
+        <table class="table table-borderless mb-0">
+            <tbody>
+                <tr class="border-bottom">
+                    <th class="p-3">Website</th>
+                    <td class="p-3"><a href="https://{{currentorg.siteweb}}">{{currentorg.siteweb}} </a></td>
+                </tr>
+                <tr class="border-bottom">
+                    <th class="p-3">Industry</th>
+                    <td class="p-3">{{currentorg.domaine}}</td>
+                </tr>
+                <tr class="border-bottom">
+                    <th class="p-3">Company size</th>
+                    <td class="p-3">{{currentorg.taille}}employees <i data-toggle="tooltip" data-placement="top" title="{{currentorg.slogan}}
+                 " class="feather-info text-info"></i> </td>
+                </tr>
+                <tr class="border-bottom">
+                    <th class="p-3">Headquarters</th>
+                    <td class="p-3">{{currentorg.pays}}, {{currentorg.ville}}</td>
+                </tr>
+                <tr class="border-bottom">
+                    <th class="p-3">Telephone</th>
+                    <td class="p-3">{{currentorg.telephones}}</td>
+                </tr>
+                <tr class="border-bottom">
+                    <th class="p-3">Type</th>
+                    <td class="p-3">{{currentorg.typeEntreprise}}</td>
+                </tr>
+                <tr class="border-bottom">
+                    <th class="p-3">Founded</th>
+                    <td class="p-3">{{currentorg.dateCreation | date: 'medium'}}</td>
+                </tr>
+                <tr>
+                    <th class="p-3">Specialties</th>
+                    <td class="p-3">search, ads, mobile, android, online video, apps, machine learning, virtual reality, cloud, hardware, artificial intelligence, youtube, and software</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe

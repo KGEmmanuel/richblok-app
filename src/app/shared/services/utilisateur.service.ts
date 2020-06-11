@@ -86,6 +86,13 @@ export class UtilisateurService {
     }));
   }
 
+<<<<<<< HEAD
+=======
+  getByEmail(mail: string){
+    return this.afs.collection(this.path).where('email','==',mail);
+  }
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
   getDocRef(id: string) {
     return this.afs.collection(this.path).doc(id);
@@ -361,6 +368,15 @@ export class UtilisateurService {
       });
   }
 
+<<<<<<< HEAD
+=======
+  saveJob(uid,jobId){
+    return this.afs.collection(this.path).doc(uid).update({
+      savedJobs: firebase.firestore.FieldValue.arrayUnion(jobId)
+      }); 
+  }
+
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   confirmconnection(of:string, by: string){
     return this.afs.collection(this.path).doc(by).update({
       demandesabonnees: firebase.firestore.FieldValue.arrayRemove(of)

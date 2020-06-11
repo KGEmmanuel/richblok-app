@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .upload-btn-wrapper {
     position: relative;
     overflow: hidden;
@@ -30,3 +31,37 @@ button {
 .span {
     font-size: 1.1em;
 }
+=======
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+}
+
+button {
+    cursor: pointer;
+}
+
+.text-link:hover {
+    color: grey;
+}
+
+.vertical {
+    border-left: 2px solid white;
+    height: 200px;
+    position: absolute;
+    left: 50%;
+}
+
+.span {
+    font-size: 1.1em;
+}
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe

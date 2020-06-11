@@ -6,6 +6,11 @@ import { Router } from '@angular/router';
 import * as firebase from 'firebase/app';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+<<<<<<< HEAD
+=======
+import { TagsService } from './tags.service';
+import { tag } from '@turf/turf';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +25,20 @@ export class AuthService {
     public afs: AngularFirestore,   // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
+<<<<<<< HEAD
     public ngZone: NgZone // NgZone service to remove outside scope warning
   ) {
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
     
+=======
+    public ngZone: NgZone, // NgZone service to remove outside scope warning
+    public tagSvc:  TagsService
+  ) {
+    /* Saving user data in localstorage when
+    logged in and setting up null when logged out */
+/*
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     firebase.firestore().enablePersistence()
       .catch(err => {
         if (err.code == 'failed-precondition') {
@@ -32,7 +46,11 @@ export class AuthService {
         } else if (err.code == 'unimplemented') {
           // browser does not support all of the features required to enable persistence
         }
+<<<<<<< HEAD
       });
+=======
+      });*/
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   }
 
   // Sign in with email/password
@@ -51,6 +69,7 @@ export class AuthService {
   // Sign up with email/password
   SignUp(email, password) {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
+<<<<<<< HEAD
       .then((result) => {
         /* Call the SendVerificaitonMail() function when new user sign
         up and returns promise */
@@ -62,6 +81,9 @@ export class AuthService {
       }).catch((error) => {
         window.alert(error.message)
       })
+=======
+      
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   }
 
   // Send email verfificaiton when new user sign up
@@ -116,7 +138,12 @@ export class AuthService {
       email: user.email,
       nom: user.displayName,
       imageprofil: user.photoURL,
+<<<<<<< HEAD
       emailVerified: user.emailVerified
+=======
+      emailVerified: user.emailVerified,
+      tags: this.tagSvc.buildTags([user.displayName])
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     }
     return userRef.set(userData, {
       merge: true

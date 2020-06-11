@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { Meta, Title } from '@angular/platform-browser';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
@@ -58,7 +62,11 @@ export class CvComponent implements OnInit {
     private skSvc: SkillsService, private lngsvc: LanguageService, private frmtionSvc: FormationService,
      private expSvc: ExperienceService,private langSvc: LanguageService,
      private afAuth: AngularFireAuth, private realSvc: PortfolioService,
+<<<<<<< HEAD
      private loadSvc: NgxUiLoaderService, private toast: ToastrService) {
+=======
+     private loadSvc: NgxUiLoaderService, private toast: ToastrService, private title: Title, private meta: Meta) {
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
       this.LangLevels = lngsvc.LanguagesLevels;
   }
 
@@ -66,7 +74,12 @@ export class CvComponent implements OnInit {
 
 
   ngOnInit() {
+<<<<<<< HEAD
 
+=======
+    this.title.setTitle('RichBlok | CV');
+    this.meta.updateTag({ name: 'description', content: 'Generate your CV and send them to recruiters' });
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     firebase.auth().onAuthStateChanged(val => {
       if (val) {
         this.uid = val.uid;
@@ -135,7 +148,10 @@ export class CvComponent implements OnInit {
 
 
 public downloadPDF():void {
+<<<<<<< HEAD
   this.loadSvc.start();
+=======
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   let DATA = this.pdfTable.nativeElement;
   let doc = new jsPDF('p','pt', 'a4');
 
@@ -151,13 +167,22 @@ public downloadPDF():void {
   function (dispose) {
     doc.save('CV.pdf');
     });
+<<<<<<< HEAD
 this.loadSvc.stop();
 
 }
 /*public openPDF():void {
+=======
+}
+public openPDF():void {
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   let DATA = this.pdfTable.nativeElement;
   let doc = new jsPDF('p','pt', 'a4');
   doc.fromHTML(DATA.innerHTML,15,15);
   doc.output('dataurlnewwindow');
+<<<<<<< HEAD
 }*/
+=======
+}
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 }

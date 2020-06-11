@@ -3,6 +3,14 @@ import * as firebase from 'firebase/app';
 import { Post } from '../../../shared/entites/Post';
 import { PaginationService } from '../../../shared/services/pagination.service';
 import { PostService } from '../../../shared/services/post.service';
+<<<<<<< HEAD
+=======
+import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
+import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
+import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
+import { Observable } from 'rxjs';
+import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
 @Component({
   selector: 'app-post-list',
@@ -13,6 +21,10 @@ import { PostService } from '../../../shared/services/post.service';
 export class PostListComponent implements OnInit {
 
   _displayfor = 'feed';
+<<<<<<< HEAD
+=======
+  allJobs: Array<OffresEmploi>;
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
   @Input()
   type;
@@ -33,8 +45,15 @@ export class PostListComponent implements OnInit {
   keys: string[] = [];
   operator: firebase.firestore.WhereFilterOp[] = [];
   values: object[] = [];
+<<<<<<< HEAD
 
   constructor(public page: PaginationService, private postSvc: PostService) {
+=======
+  tags: Array<string>;
+  users: Observable<Utilisateur[]>;
+
+  constructor(private usvc: UtilisateurService,public page: PaginationService, private postSvc: PostService, private jobSvc: OffreEmploiService,) {
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 
   }
 
@@ -48,8 +67,21 @@ export class PostListComponent implements OnInit {
         this.page.initWithFilter(this.postSvc.path, 'date', this.keys, this.operator, this.values, { reverse: true, prepend: false });
       }
     });
+<<<<<<< HEAD
   }
 
+=======
+    this.jobSvc.offresByTag(this.tags).onSnapshot( jobs=> {
+      this.allJobs = [];
+      console.log(jobs);
+        jobs.forEach(j=>{
+          const job = j.data() as OffresEmploi;
+          job.id = j.id;
+          this.allJobs.push(job);
+        });
+    });
+  }
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   setdatas() {
     if (this.displayFor === 'feed') {
       this.keys.push('abonnees');

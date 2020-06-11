@@ -30,10 +30,17 @@
                   <div class="row">
                       <div class="col-md-12">
                           <div class="main-timeline4">
+<<<<<<< HEAD
                               <div class="timeline">
                                   <span class="timeline-icon"></span>
                                   <span  class="year" style="cursor: pointer;" routerLink="/post-job-step-one">Step 1 </span>
                                   <div class="timeline-content">
+=======
+                              <div class="timeline" *ngIf="currentJob.currentStep>=1" >
+                                  <span class="timeline-icon"></span>
+                                  <span  class="year" style="cursor: pointer;" (click)="navStep1()">Step 1 </span>
+                                  <div class="timeline-content" style="cursor: pointer;" (click)="navStep1()">
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                       <h3 class="title">Job offer</h3>
                                       <p class="description">
 
@@ -41,10 +48,19 @@
 
                                       </p>
                                       <br>
+<<<<<<< HEAD
                                       <p class="description">This step must be completed before going to the next step</p>
                                   </div>
                               </div>
                               <div class="timeline">
+=======
+                                      <p class="description" *ngIf="currentJob.currentStep==1">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==1" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=2">
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                   <span class="timeline-icon"></span>
                                   <span  class="year" style="cursor: pointer;" routerLink="/post-job-step-two">Step 2</span>
                                   <div class="timeline-content">
@@ -53,11 +69,20 @@
                                         In this step our AI will authomatically sort the top  between the applicants and propose them to you. You will be able to prepare the pre-interview, check their background and send some to the pre-interviews
                                       </p>
                                       <br>
+<<<<<<< HEAD
                                       <p class="description">This step must be completed before going to the next step</p>
 
                                   </div>
                               </div>
                               <div class="timeline">
+=======
+                                      <p class="description" *ngIf="currentJob.currentStep==2">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==2" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=3">
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                   <span class="timeline-icon"></span>
                                   <span  class="year"  style="cursor: pointer;" routerLink="/post-job-step-three">Step 3</span>
                                   <div class="timeline-content">
@@ -66,11 +91,20 @@
                                        You are on the right way. This step requires you to do the scoring of the pre-interviews for each participant, formulate the salary package and invitation to the final interviews
                                       </p>
                                       <br>
+<<<<<<< HEAD
                                       <p class="description">This step must be completed before going to the next step</p>
 
                                   </div>
                               </div>
                               <div class="timeline">
+=======
+                                      <p class="description" *ngIf="currentJob.currentStep==3">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==3" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=4">
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                   <span class="timeline-icon"></span>
                                   <span  class="year"  style="cursor: pointer;" routerLink="/post-job-step-four"> Step 4</span>
                                   <div class="timeline-content">
@@ -80,11 +114,20 @@
                                       </p>
                                       <br>
                                       <br>
+<<<<<<< HEAD
                                       <p class="description">This step must be completed before going to the next step</p>
 
                                   </div>
                               </div>
                               <div class="timeline">
+=======
+                                      <p class="description" *ngIf="currentJob.currentStep==4">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==4" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=5">
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                                 <span class="timeline-icon"></span>
                                 <span  class="year"  style="cursor: pointer;" routerLink="/post-job-step-five">Step 5</span>
                                 <div class="timeline-content">
@@ -93,6 +136,10 @@
                                         Final Step. Here you just have to send the certified recruitment notes and smart contract to the selected candidates
                                     </p>
                                 </div>
+<<<<<<< HEAD
+=======
+                                <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==5" (click)="nextStep()"> close The recruitement</button>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
                             </div>
                           </div>
                       </div>

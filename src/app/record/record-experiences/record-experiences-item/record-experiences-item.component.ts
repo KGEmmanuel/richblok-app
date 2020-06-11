@@ -25,7 +25,10 @@ export class RecordExperiencesItemComponent implements OnInit {
   @Input()
   displaymode = 'priv';
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
   constructor(private expSvc: ExperienceService, private toastSvc: ToastrService, private entSvc: OrganisationService) { }
 
   ngOnInit() {

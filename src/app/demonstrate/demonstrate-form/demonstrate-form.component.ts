@@ -141,7 +141,11 @@ export class DemonstrateFormComponent implements OnInit {
     if (this.route.snapshot.paramMap.get('id')) {
       this.currentitemId = this.route.snapshot.paramMap.get('id');
       this.currentDemonst.relatedElement = this.currentitemId;
+<<<<<<< HEAD
       alert(this.currentitemId);
+=======
+     // alert(this.currentitemId);
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     }
     firebase.auth().onAuthStateChanged(val => {
       // // alert(val);
@@ -239,6 +243,11 @@ export class DemonstrateFormComponent implements OnInit {
     Promise.all(this.uploadpromise).then(alls => {
       this.demoSvc.add(this.uid, this.currentDemonst).then(val => {
         this.post.abonnees = this.user.abonnees;
+<<<<<<< HEAD
+=======
+        this.post.typePost = 'Demonstration';
+        this.post.refSrc = val.id;
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
         this.postSvc.savePost(this.post).then(v => {
           this.tostSvc.success('Richblok has successfuly create publication of your demonstration', 'Success');
         });

@@ -34,10 +34,17 @@
     "firebase": "^7.9.1",
     "geolib": "^3.2.1",
     "google-maps-ng2": "^1.0.10",
+<<<<<<< HEAD
     "html2canvas": "^1.0.0-rc.5",
     "jspdf": "^1.5.3",
     "ng-bootstrap-modal": "^1.1.19",
     "ng-chat": "^3.0.0",
+=======
+    "jspdf": "^1.5.3",
+    "ng-bootstrap-modal": "^1.1.19",
+    "ng-multiselect-dropdown": "^0.2.10",
+    "ng2-pdf-viewer": "^6.3.0",
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
     "ngx-countdown": "^9.0.1",
     "ngx-google-places-autocomplete": "^2.0.4",
     "ngx-skeleton-loader": "^1.2.6",

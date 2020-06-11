@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="scrollbar" id="style" style="max-height: 400px;">
   <div class="force-overflow">
     <div class="box shadow-sm border rounded bg-white mb-3">
@@ -10,4 +11,28 @@
       </div>
     </div>
   </div>
+=======
+<div class="scrollbar" id="style" style="max-height: 400px; width: 100%;">
+    <div class="force-overflow">
+        <div class="box shadow-sm border rounded bg-white mb-3">
+            <div class="box-title border-bottom p-3">
+                <h6 class="m-0">Demonstrations
+                </h6>
+            </div>
+            <div class="box-body p-3">
+                <app-incitation-item *ngFor="let item of incitations" [currentIncitation]="item"></app-incitation-item>
+                <div *ngIf="!incitations || incitations?.length === 0">
+                    <span class="d-flex justify-content-center" style="padding-top: 10%;">
+    <img src="../../../../assets/imgs/feed2.png" style="width: 60%;">
+    </span>
+                    <span class="d-flex justify-content-center" style="padding-top: 5%;">
+    <span class="d-flex justify-content-center" style="padding-left: 5%;">
+      <h6>Nothing to display here. Add some skills to be able to demonstrate them</h6>
+    </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+>>>>>>> b5446b2a5deb6a99c0106b8227a23d0ad7d05dbe
 </div>
