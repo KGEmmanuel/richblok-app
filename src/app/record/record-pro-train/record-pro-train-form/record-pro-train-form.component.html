@@ -1,0 +1,56 @@
+<div class="border">
+    <form class="px-4 py-3" #trainform="ngForm" (ngSubmit)="save()">
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label for="diploma">Training Diploma</label>
+                <input required [(ngModel)]="currentTraining.libelle" type="text" name="name" class="form-control" id="diploma" placeholder="Enter the name of your training">
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="domain">Training Domain</label>
+                <input required type="text" [(ngModel)]="currentTraining.domaineName" name="domain" class="form-control" id="domain" placeholder="Enter the domain of your training">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label for="trainingcenter">Training center</label>
+                <input required type="text" name="company" [(ngModel)]="currentTraining.etablissement" class="form-control" id="trainingcenter" placeholder="Enter the name of your training center">
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="trainingtype">Training Type</label>
+                <select required name="trainingtype" [(ngModel)]="currentTraining.typeFormation" class="form-control" id="trainingtype">
+          <option [value]="'ACC'">Accademic</option>
+          <option [value]="'PRO'">Professionnal</option>
+        </select>
+
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="form-group col-lg-6">
+                <label for="from">From</label>
+                <input required type="date" name="detadeb" [(ngModel)]="currentTraining.datedeb" class="form-control" id="from">
+            </div>
+            <div class="form-group col-lg-6" *ngIf="onIt">
+                <label for="to">To</label>
+                <input required type="date" name="datefin" [(ngModel)]="currentTraining.datefin" class="form-control" id="to">
+            </div>
+        </div>
+        <div class="form-check mb-3">
+
+            <input required type="checkbox" class="form-check-input" id="dropdownCheck" (change)="setonit($event)">
+            <label class="form-check-label" for="dropdownCheck">
+        Currently on it?
+      </label>
+
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea required type="date" name="detadeb" [(ngModel)]="currentTraining.description" placeholder="Describe your training in few words" class="form-control" id="description"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!trainform.form.valid"> Save </button>
+
+        </div>
+    </form>
+</div>

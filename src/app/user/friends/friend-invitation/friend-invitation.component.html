@@ -1,0 +1,5 @@
+<div class="row" *ngIf="currentUser.demandesabonnees">
+  <div  class="col-md-4">
+    <app-friend-invitation-item *ngFor="let item of currentUser.demandesabonnees" [iduser]="item"></app-friend-invitation-item>
+  </div>
+</div>

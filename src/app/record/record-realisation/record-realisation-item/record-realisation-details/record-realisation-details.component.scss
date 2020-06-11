@@ -1,0 +1,132 @@
+h1 span {
+    color: #037a8f;
+}
+
+.device {
+    margin: 0;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.device.tablet .device-hardware {
+    background-image: url(https://cdn.pbhs-sites.com/wp-content/plugins/pbhs-portfolio/_media/images/tablet-lg.webp);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    display: block;
+    position: relative;
+    padding-bottom: 91.3%;
+}
+
+.device.tablet .device-screen {
+    top: 9.5%;
+    bottom: 35.5%;
+    left: 12.5%;
+    right: 11.5%;
+    border-radius: 1px;
+    background-size: 122% auto;
+    background-position-x: 50%;
+    background-position-y: 0%;
+    position: absolute;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    display: block;
+    -webkit-transition: background-position .4s;
+    -moz-transition: background-position .4s;
+    -o-transition: background-position .4s;
+    transition: background-position .4s;
+    background-color: #565656;
+    overflow: hidden;
+}
+
+.device.tablet .hover-trigger:hover .device-screen {
+    background-position-y: 50%;
+}
+
+.device .hover-name {
+    background-color: #037a8f;
+    color: #efefef;
+    position: absolute;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 100%;
+    padding: 12px 6px;
+    top: -50px;
+    text-transform: uppercase;
+    text-align: center;
+    display: block;
+    left: 0;
+    right: 0;
+    width: 100%;
+    -webkit-transition: top .4s;
+    -moz-transition: top .4s;
+    -o-transition: top .4s;
+    transition: top .4s;
+    font-family: montserrat, Helvetica, Arial, sans-serif;
+}
+
+.device.tablet .hover-trigger:hover .hover-name {
+    top: -1px;
+}
+
+.device .hover-icon {
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    top: 30%;
+    color: rgba(255, 255, 255, .8);
+    background-color: rgba(11, 75, 80, 0.3);
+    width: 70px;
+    text-align: center;
+    line-height: 70px;
+    font-size: 30px;
+    height: 70px;
+    border-radius: 100%;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    -o-transition: all .5s;
+    transition: all .5s;
+    opacity: 0;
+    -webkit-transform: scale(1.5);
+    -moz-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+.device.tablet.device-list .hover-trigger:hover .hover-icon {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+}
+
+@media (max-width: 991px) {
+    .device {
+        width: 45%;
+    }
+    .flex-order-tablet_0 {
+        order: 0;
+        -ms-flex-order: 0;
+        -webkit-order: 0;
+        -moz-box-ordinal-group: 0;
+        -ms-box-ordinal-group: 0;
+        -webkit-box-ordinal-group: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .device {
+        width: 95%;
+    }
+}
+
+.modal-dialog {
+    background-color: #2c2d2e;
+}
+
+.modal-content {
+    background-color: #2c2d2e;
+}

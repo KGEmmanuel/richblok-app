@@ -1,0 +1,207 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark osahan-nav-top p-0">
+    <div class="container">
+        <a class="navbar-brand mr-2" routerLink="/landing"><img src="../../assets/../../assets/img/log.png" alt="">
+        </a>
+        <form class="d-none d-sm-inline-block form-inline mr-auto my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+                <input type="text" class="form-control shadow-none border-0" placeholder="Search people, jobs & more..." aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn" type="button">
+            <i class="feather-search"></i>
+          </button>
+                </div>
+            </div>
+        </form>
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="feather-search mr-2"></i>
+                </a>
+                <!-- Dropdown - Messages -->
+                <div class="dropdown-menu dropdown-menu-right p-3 shadow-sm animated--grow-in" aria-labelledby="searchDropdown">
+                    <form class="form-inline mr-auto w-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search people, jobs and more..." aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn" type="button">
+                  <i class="feather-search"></i>
+                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="feed()"><i class="feather-home mr-2"></i><span
+            class="d-none d-lg-inline">Home</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="record()"><i class="feather-edit mr-2"></i><span
+            class="d-none d-lg-inline">Records</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="demonstrate()"><i class="feather-speaker mr-2"></i><span
+            class="d-none d-lg-inline">Demonstrate</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="evaluate()"><i class="feather-award mr-2"></i><span
+            class="d-none d-lg-inline">Evalaute</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="jobs()"><i class="feather-briefcase mr-2"></i><span
+            class="d-none d-lg-inline">Jobs</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer;" (click)="friends()"><i class="feather-users mr-2"></i><span
+            class="d-none d-lg-inline">Connection</span></a>
+            </li>
+
+            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown" ngbDropdown>
+                <a class="nav-link dropdown-toggle" role="button" ngbDropdownToggle id="message">
+                    <i class="feather-message-square"></i>
+                    <!-- Counter - Alerts -->
+                    <span class="badge badge-danger badge-counter">8</span>
+                </a>
+                <!-- Dropdown - Alerts -->
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-sm" ngbDropdownMenu aria-labelledby="message">
+                    <h6 class="dropdown-header">
+                        Message Center
+                    </h6>
+                    <a class="dropdown-item d-flex align-items-center" style="cursor: pointer;" (click)="messages()">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="../../assets/img/p1.png" alt="">
+                            <div class="status-indicator bg-success"></div>
+                        </div>
+                        <div class="font-weight-bold overflow-hidden">
+                            <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.
+                            </div>
+                            <div class="small text-gray-500">Emily Fowler · 58m</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="messages">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="../../assets/img/p2.png" alt="">
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?
+                            </div>
+                            <div class="small text-gray-500">Jae Chun · 1d</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="messages">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="../../assets/img/p3.png" alt="">
+                            <div class="status-indicator bg-warning"></div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="text-truncate">Last month's report looks great, I am very happy with the progress so far, keep up the good work!</div>
+                            <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="messages">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="../../assets/img/p4.png" alt="">
+                            <div class="status-indicator bg-success"></div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="text-truncate">Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</div>
+                            <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item text-center small text-gray-500" href="messages">Read More Messages</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown" ngbDropdown>
+                <a class="nav-link dropdown-toggle" ngbDropdownToggle id="message">
+                    <i class="feather-bell"></i>
+                    <!-- Counter - Alerts -->
+                    <span class="badge badge-info badge-counter">6</span>
+                </a>
+                <!-- Dropdown - Alerts -->
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-sm" ngbDropdownMenu aria-labelledby="message">
+                    <h6 class="dropdown-header">
+                        Notifications
+                    </h6>
+                    <a class="dropdown-item d-flex align-items-center" style="cursor: pointer;" (click)="notifications()">
+                        <div class="mr-3">
+                            <div class="icon-circle bg-primary">
+                                <i class="feather-download-cloud text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-500">December 12, 2019</div>
+                            <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="notifications">
+                        <div class="mr-3">
+                            <div class="icon-circle bg-success">
+                                <i class="feather-edit text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-500">December 7, 2019</div>
+                            $290.29 has been deposited into your account!
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="notifications">
+                        <div class="mr-3">
+                            <div class="icon-circle bg-warning">
+                                <i class="feather-folder text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-500">December 2, 2019</div>
+                            Spending Alert: We've noticed unusually high spending for your account.
+                        </div>
+                    </a>
+                    <a class="dropdown-item text-center small text-gray-500" href="notifications">Show All Alerts</a>
+                </div>
+            </li>
+            <!-- Nav Item - User Information -->
+            <li class="nav-item ml-1 osahan-profile-dropdown">
+                <div ngbDropdown class="d-inline-block" display="dynamic">
+                    <a class="nav-link pr-0" role="button" ngbDropdownToggle id="dropdownBasic1">
+                        <img class="img-profile rounded-circle" [src]="currentUser?.imageprofil">
+                    </a>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <div class="p-3 d-flex align-items-center">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" [src]="currentUser?.imageprofil" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold">
+                                <div class="text-truncate"> {{currentUser?.nom}} {{currentUser?.prenom}} </div>
+                                <div class="small text-gray-500">{{currentUser?.poste}} at {{currentUser?.lieu}}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item profile" href="profile"><i class="feather-user mr-1"></i> My Profile</a>
+                        <a class="dropdown-item" href="settings"><i class="feather-edit-2 mr-1"></i> Edit Profile</a>
+                        <a class="dropdown-item" href="post-jobs"><i class="feather-archive mr-1"></i> Post a job</a>
+                        <a class="dropdown-item" href="create-organisation"><i class="feather-plus-square mr-1"></i> Create
+              organisation</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="user-jobs"><i class="feather-inbox mr-1"></i> My Jobs</a>
+
+                        <span class="item" (click)="showOrgs()"><i class="feather-layers mr-1"></i> My Organisations</span>
+                        <div *ngIf="organisations" style="margin: 4%;">
+                            <a class="dropdown-item profile">My Account</a>
+                            <a class="dropdown-item">Edit Profile</a>
+                            <a class="dropdown-item">Post a job</a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="pricing"><i class="feather-gift mr-1"></i> Pricing</a>
+                        <a class="dropdown-item" href="settings"><i class="feather-settings mr-1"></i> Settings</a>
+                        <a class="dropdown-item" (click)="logout()"><i class="feather-log-out mr-1"></i> Logout</a>
+                    </div>
+                </div>
+
+
+            </li>
+        </ul>
+    </div>
+
+</nav>

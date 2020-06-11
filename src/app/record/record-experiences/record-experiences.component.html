@@ -1,0 +1,35 @@
+<div class="box shadow-sm border rounded bg-white mb-3">
+  <div class="box-title border-bottom p-3">
+    <h6 class="row">
+      <span class="col-lg-6">
+        <span *ngIf="!form">
+          Experiences
+        </span>
+        <span *ngIf="form">
+          Add an experience
+        </span>
+      </span>
+      <span class="ml-auto col-lg-6 d-flex justify-content-end">
+        <button type="button" class="btn btn-light btn-sm" *ngIf="!form" (click)="showForm()"><i
+            class="feather-plus"></i></button>
+        <button type="button" class="btn btn-light btn-sm" *ngIf="form" (click)="hideForm()"><i
+            class="feather-x"></i></button>
+
+      </span>
+    </h6>
+    <div style="padding-top: 2% !important;">
+      <app-record-experiences-form *ngIf="form" [currentExperience]="currentExperience" (itemSaved)="hideForm()">
+      </app-record-experiences-form>
+
+    </div>
+  </div>
+  <div *ngIf="!form">
+    <div id="style" class="scrollbar">
+      <div class="force-overflow">
+        <app-record-experiences-item *ngFor="let item of experiences" [currentExperience]="item"
+          (selectForEdit)="edit($event)"></app-record-experiences-item>
+      </div>
+    </div>
+  </div>
+
+</div>

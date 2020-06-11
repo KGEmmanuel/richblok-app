@@ -1,0 +1,5 @@
+<div class="row">
+  <div class="col-md-4"  *ngFor="let item of users | async">
+  <app-friend-suggestion-item [iduser]="item.id"></app-friend-suggestion-item>
+</div>
+</div>

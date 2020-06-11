@@ -1,0 +1,12 @@
+<app-post-comments-form [currentUser]="currentUser" [postItem]="postItem">
+</app-post-comments-form>
+<div class="scrollbar" id="style" appScrollable (scrollPosition)="scrollHandler($event)">
+    <div class="force-overflow">
+        <div *ngFor="let item of page.data | async">
+            <app-post-comments-item [currentComment]="item"></app-post-comments-item>
+        </div>
+
+        <p *ngIf="page.done | async">All items displayed</p>
+        <app-loading-spinner *ngIf="page.loading | async"></app-loading-spinner>
+    </div>
+</div>

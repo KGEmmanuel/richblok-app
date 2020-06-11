@@ -1,0 +1,52 @@
+<div class="border">
+  <form class="px-4 py-3" #lanform="ngForm" (ngSubmit)="save()">
+    <div class="form-group">
+      <label for="lgName">Language Name</label>
+      <input type="text" required [(ngModel)]="currentLang.libele" name="name" class="form-control" id="lgName" placeholder="Enter the Language name">
+   </div>
+    <div class="row">
+      <div class="form-group col-lg-4">
+        <label for="spLvl">Speaking level</label>
+        <select required [(ngModel)]="currentLang.niveauParle" type="text" name="spLvl" class="form-control" id="spLvl" placeholder="Enter the company where you had you experience">
+          <option [value]="'Beginner'">Beginner</option>
+          <option [value]="'Elementary'">Elementary</option>
+          <option [value]="'Pre-intermediate'">Pre-intermediate</option>
+          <option [value]="'Intermediate'">Intermediate</option>
+          <option [value]="'Upper-intermediate'">Upper-intermediate</option>
+          <option [value]="'Advanced'">Advanced</option>
+          <option [value]="'Proficient'">Proficient</option>
+        </select>
+     </div>
+     <div class="form-group col-lg-4">
+      <label for="reLvl">Reading level</label>
+      <select required [(ngModel)]="currentLang.niveauLu" type="text" name="reLvl" class="form-control" id="reLvl" placeholder="Enter the company where you had you experience">
+        <option [value]="'Beginner'">Beginner</option>
+          <option [value]="'Elementary'">Elementary</option>
+          <option [value]="'Pre-intermediate'">Pre-intermediate</option>
+          <option [value]="'Intermediate'">Intermediate</option>
+          <option [value]="'Upper-intermediate'">Upper-intermediate</option>
+          <option [value]="'Advanced'">Advanced</option>
+          <option [value]="'Proficient'">Proficient</option>
+      </select>
+   </div>
+     <div class="form-group col-lg-4">
+        <label for="wLvl">Writing level</label>
+        <select required [(ngModel)]="currentLang.niveauEcrit" type="text" name="wLvl" class="form-control" id="wLvl" placeholder="Enter the company where you had you experience">
+          <option [value]="'Beginner'">Beginner</option>
+          <option [value]="'Elementary'">Elementary</option>
+          <option [value]="'Pre-intermediate'">Pre-intermediate</option>
+          <option [value]="'Intermediate'">Intermediate</option>
+          <option [value]="'Upper-intermediate'">Upper-intermediate</option>
+          <option [value]="'Advanced'">Advanced</option>
+          <option [value]="'Proficient'">Proficient</option>
+        </select>
+     </div>
+    </div>
+
+
+ <div class="d-flex justify-content-end">
+  <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="lanform.form.invalid"> Save </button>
+
+ </div>
+  </form>
+</div>

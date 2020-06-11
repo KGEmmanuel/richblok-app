@@ -1,0 +1,102 @@
+<div class="border">
+
+    <form class="px-4 py-3" #xpForm="ngForm" (ngSubmit)="save()">
+        <div class="form-group">
+            <label for="xpDescription">Select a corresponding image</label><br>
+            <div class="upload-btn-wrapper " style="cursor: pointer;">
+                <button class="btn btn-outline-primary btn-sm mr-1">Upload an image</button>
+                <input type="file" [(ngModel)]="currentRealisation.image" name="myfile" (change)="onSelectFile($event)" multiple/>
+            </div>
+        </div>
+        <div class=" job-item mb-3 col-lg-3 border rounded align-items-center" *ngFor='let url of urls'>
+            <img [src]="url" style="width: 100% !important;">
+        </div>
+        <div class="form-group">
+            <label for="exampleDropdownFormEmail1">Realisation Name</label>
+            <input required type="text" name="name" [(ngModel)]="currentRealisation.nom" class="form-control" id="xpname" placeholder="Enter the name of your realisation">
+        </div>
+        <div class="form-group">
+            <label for="exampleDropdownFormPassword1">Realisation type</label>
+            <select required type="text" name="company" [(ngModel)]="currentRealisation.typeProj" class="form-control" id="xpcompany">
+        <option [value]="'academic'" selected>Academic</option>
+        <option [value]="'professional'">Professional</option>
+        <option [value]="'freelance'">Freelance</option>
+      </select>
+        </div>
+        <div *ngIf=" currentRealisation.typeProj === 'freelance'">
+            <div class="form-group">
+                <label for="exampleDropdownFormEmail1">Client Name</label>
+                <input required type="text" name="clientname" [(ngModel)]="currentRealisation.clientname" class="form-control" id="xpname" placeholder="Enter the name of your client">
+            </div>
+            <div class="form-group">
+                <label for="exampleDropdownFormEmail1">Client contact</label>
+                <input required type="tel" name="clientcontact" [(ngModel)]="currentRealisation.clientcontact" class="form-control" id="xpname" placeholder="Enter the contact of your client">
+            </div>
+            <div class="form-group">
+                <label for="exampleDropdownFormEmail1">Client reference</label>
+                <input required type="tel" name="clientref" [(ngModel)]="currentRealisation.clientref" class="form-control" id="xpname">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="exampleDropdownFormEmail1">Tools used</label>
+            <div class="row">
+                <div class="col-lg-11">
+                    <input type="tel" name="tools" [(ngModel)]="outil" class="form-control" id="xpname" placeholder="Enter a tool name and click on add to add">
+                </div>
+                <div class="col-lg-1">
+                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="addTag()"> Add </button>
+                </div>
+            </div>
+        </div>
+        <div *ngFor="let item of currentRealisation.outilsutilises let i = index;" style=" display: inline-block;">
+            <span class="badge badge-dark" style="margin-bottom: 2% !important; color: grey; font-size: 1em;">{{item}}<i
+          class="feather-x" (click)="deleteTag(i)" style="cursor: pointer;"></i></span> &nbsp;
+        </div>
+        <div class="form-group row">
+            <div class="form-group col-lg-6">
+                <label for="start">From</label>
+                <input required type="date" [(ngModel)]="currentRealisation.datedeb" name="detadeb" class="form-control" id="start">
+            </div>
+            <div class="form-group col-lg-6" *ngIf="!currentOnIt">
+                <label for="end">To</label>
+                <input required type="date" name="datefin" [(ngModel)]="currentRealisation.datefin" class="form-control" id="end">
+            </div>
+        </div>
+        <div class="form-check mb-3">
+
+            <input type="checkbox" class="form-check-input" id="dropdownCheck" (change)="checkChanged($event)">
+            <label class="form-check-label" for="dropdownCheck">
+        Currently on it?
+      </label>
+
+        </div>
+        <div class="form-group">
+            <label for="exampleDropdownFormPassword1">Status</label>
+            <select required type="text" name="status" [(ngModel)]="currentRealisation.encours" class="form-control" id="xpcompany">
+        <option [value]="'inprogress'" selected>In progress</option>
+        <option [value]="'Completed'">Completed</option>
+        <option [value]="'freelance'">Canceled</option>
+      </select>
+        </div>
+        <div class="form-group">
+            <label for="xpDescription">Description</label>
+            <textarea name="description" [(ngModel)]="currentRealisation.description" placeholder="Describe your realisation in few words" class="form-control" id="xpDescription"></textarea>
+        </div>
+        <div class="row">
+            <div class=" job-item mb-3 col-lg-3 border rounded align-items-center" *ngFor='let url of urls'>
+                <img [src]="url" style="width: 100% !important;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="xpDescription">Add a corresponding files</label>
+            <div class="upload-btn-wrapper " style="cursor: pointer;">
+                <button class="btn btn-outline-primary btn-sm mr-1">Upload a file</button>
+                <input type="file" [(ngModel)]="currentRealisation.medias" name="myfile" (change)="onSelectFile($event)" multiple/>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!xpForm.form.valid"> Save </button>
+
+        </div>
+    </form>
+</div>

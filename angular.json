@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "RiBblack": {
+    "Rib": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,20 +17,31 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/RiBblack",
+            "aot": true,
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": false,
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/assets/vendor/slick/slick.min.css",
+              "src/assets/vendor/slick/slick-theme.min.css",
+              "src/assets/vendor/icons/feather.css",
+              "src/assets/vendor/bootstrap/css/bootstrap.min.css",
+              "src/assets/css/style.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/vendor/jquery/jquery.min.js",
+              "src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
+              "src/assets/vendor/slick/slick.min.js",
+              "src/assets/js/osahan.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -57,8 +68,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -67,18 +77,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "RiBblack:build"
+            "browserTarget": "Rib:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "RiBblack:build:production"
+              "browserTarget": "Rib:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "RiBblack:build"
+            "browserTarget": "Rib:build"
           }
         },
         "test": {
@@ -91,11 +101,37 @@
             "assets": [
               "src/favicon.ico",
               "src/assets"
+
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/assets/vendor/slick/slick.min.css",
+              "src/assets/vendor/slick/slick-theme.min.css",
+              "src/assets/vendor/icons/feather.css",
+              "src/assets/vendor/bootstrap/css/bootstrap.min.css",
+              "src/assets/css/style.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/vendor/jquery/jquery.min.js",
+              "src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
+              "src/assets/vendor/slick/slick.min.js",
+              "src/assets/js/osahan.js",
+              "src/assets/landing/js/theme.js",
+              "src/assets/landing/js/owl-carousel/owl.carousel.min.js",
+              "src/assets/landing/js/magnific-popup/jquery.magnific-popup.min.js",
+              "src/assets/landing/js/counter/counter.js",
+              "src/assets/landing/js/countdown/jquery.countdown.min.js",
+              "src/assets/landing/js/canvas.js",
+              "src/assets/landing/js/confetti.js",
+              "src/assets/landing/js/snap.svg.js",
+              "src/assets/landing/js/step.js",
+              "src/assets/landing/js/contact-form/contact-form.js",
+              "src/assets/landing/js/wow.min.js",
+              "src/assets/landing/js/color-customize/color-customizer.js",
+              "src/assets/landing/js/theme-script.js"
+
+            ]
           }
         },
         "lint": {
@@ -107,7 +143,7 @@
               "e2e/tsconfig.json"
             ],
             "exclude": [
-              "**/node_modules/**"
+              "/node_modules/"
             ]
           }
         },
@@ -115,15 +151,19 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "RiBblack:serve"
+            "devServerTarget": "Rib:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "RiBblack:serve:production"
+              "devServerTarget": "Rib:serve:production"
             }
           }
         }
       }
-    }},
-  "defaultProject": "RiBblack"
+    }
+  },
+  "defaultProject": "Rib",
+  "cli": {
+    "analytics": "f2bbbfc8-2143-44de-8ef7-7d803718bdaa"
+  }
 }
