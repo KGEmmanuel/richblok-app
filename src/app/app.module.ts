@@ -59,10 +59,6 @@ import { ViewedProfileItemComponent } from './RibComponents/viewed-profile/viewe
 import { JobsComponent } from './jobs/jobs.component';
 import { FooterComponent } from './footer/footer.component';
 import { ChatComponent } from './chat/chat.component';
-import { ChatContentComponent } from './chat/chat-content/chat-content.component';
-import { ChatUsersComponent } from './chat/chat-users/chat-users.component';
-import { ChatUsersItemComponent } from './chat/chat-users/chat-users-item/chat-users-item.component';
-import { ChatContentItemComponent } from './chat/chat-content/chat-content-item/chat-content-item.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { NotificationsItemsComponent } from './notifications/notifications-items/notifications-items.component';
 import { PostItemDetailComponent } from './feed/post/post-item/post-item-detail/post-item-detail.component';
@@ -195,6 +191,13 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
 import { SearchComponent } from './search/search.component';
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
+import { VideosComponent } from './RibComponents/videos/videos.component';
+import { ChatContentComponent } from './chat/chat-content/chat-content.component';
+import { ChatImgComponent } from './chat/chat-img/chat-img.component';
+import { ChatListComponent } from './chat/chat-list/chat-list.component';
+import { ChatroomComponent } from './chat/chatroom/chatroom.component';
+import { InitiatechatComponent } from './chat/initiatechat/initiatechat.component';
+import { MessageItemComponent } from './chat/message-item/message-item.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -244,10 +247,6 @@ import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
     JobsComponent,
     FooterComponent,
     ChatComponent,
-    ChatContentComponent,
-    ChatUsersComponent,
-    ChatUsersItemComponent,
-    ChatContentItemComponent,
     NotificationsComponent,
     NotificationsItemsComponent,
     PostItemDetailComponent,
@@ -375,6 +374,13 @@ import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
     FollowOrgsComponent,
     SearchComponent,
     NotfoundComponent,
+    VideosComponent,
+    ChatContentComponent,
+    ChatImgComponent,
+    ChatListComponent,
+    ChatroomComponent,
+    InitiatechatComponent,
+    MessageItemComponent,
 
   ],
   imports: [

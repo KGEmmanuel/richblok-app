@@ -38,5 +38,6 @@ export class OffresEmploi extends IBaseEntity{
   currentStep = 1;
   preinterviewOMarks = 0;
   preinterviewPercentageMaks = 0;
-
+  questions = new Array<string>();
+  reponses = new Array<string>();
 }

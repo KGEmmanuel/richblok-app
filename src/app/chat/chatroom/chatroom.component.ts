@@ -1,24 +1,18 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
-import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
-import { ChatRoom } from 'src/app/shared/entites/ChatRoom';
-import { ChatService } from 'src/app/shared/services/chat.service';
-import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ChatRoom } from '../../shared/entites/ChatRoom';
+import { ChatService } from '../../shared/services/chat.service';
+import { Utilisateur } from '../../shared/entites/Utilisateur';
+import { UtilisateurService } from '../../shared/services/utilisateur.service';
 import * as firebase from 'firebase';
-
 @Component({
-  selector: 'app-chat-users-item',
-  templateUrl: './chat-users-item.component.html',
-  styleUrls: ['./chat-users-item.component.scss']
+  selector: 'app-chatroom',
+  templateUrl: './chatroom.component.html',
+  styleUrls: ['./chatroom.component.scss']
 })
-export class ChatUsersItemComponent implements OnInit {
-
+export class ChatroomComponent implements OnInit {
   otheruser: Utilisateur;
   @Output()
   selRoom: EventEmitter<string> = new EventEmitter<string>();
-  @Output()
-  selUsername: EventEmitter<string> = new EventEmitter<string>();
-  @Output()
-  selPhoto: EventEmitter<string> = new EventEmitter<string>();
   @Input()
   active: boolean;
   @Input()
@@ -45,8 +39,6 @@ export class ChatUsersItemComponent implements OnInit {
 
   select() {
     this.selRoom.emit(this.chatRoom.chatroomId);
-    this.selUsername.emit(this.otheruser.nom + '  ' + this.otheruser.prenom);
-    this.selPhoto.emit(this.otheruser.imageprofil);
   }
 
   chatclass() {

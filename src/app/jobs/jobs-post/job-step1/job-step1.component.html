@@ -18,18 +18,57 @@
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <div class="bg-white p-5 shadow-sm box border rounded">
+                    <div *ngIf="step === 1">
+                        <h5 class="col-lg-12">Which information do you want to get from the applicant?</h5>
+
+                        <small style="color: gray;">Ask him some questions</small>
+                        <hr>
+                        <form>
+
+                            <div class="form-group">
+                                <label class="mb-1">Question {{offres.questions.length+1}}</label>
+                                <div class="row">
+                                    <div class="col-lg-10">
+                                        <div class="position-relative icon-form-control">
+                                            <i class="feather-clock position-absolute"></i>
+                                            <input [(ngModel)]="question" type="text" name="question" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-outline-primary btn-block text-uppercase" type="submit" (click)="addQuestion()"> Add</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                        <div>
+                            <hr>
+                            <span *ngFor="let question of offres.questions; let i = index">
+                              <div  class="col-lg-12">
+                                <span>{{i+1}}. {{question}} <i class="fa fa-trash" style="color: red;" (click)="delQuestion(i)"></i></span>
+                        </div>
+                        </span>
+                        <br>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-primary text-uppercase" type="submit" (click)="suivant()"> Next</button>
+                    </div>
+                </div>
+                <div *ngIf="step === 2">
+
+
                     <form [formGroup]="jobForm" (ngSubmit)="save()">
                         <div class="form-group">
                             <label class="mb-1">Requesting Organisation </label>
                             <div class="position-relative icon-form-control">
                                 <i class="feather-pocket position-absolute"></i>
                                 <select [disabled]="offres.currentStep > 1" [(ngModel)]="offres.ownerOrg" class="form-control" formControlName="ownerOrg" [ngClass]="{ 'is-invalid': submitted && f.ownerOrg.errors }">
-                           <option *ngFor="let item of organisations" [value]="item.id">{{item.nom}}</option>
-                        </select>
-
+                    <option *ngFor="let item of organisations" [value]="item.id">{{item.nom}}</option>
+                  </select>
                             </div>
                             <div *ngIf="submitted && f.ownerOrg.errors" class="invalid-feedback">
-                                <div *ngIf="f.ownerOrg.errors.required">Choose the organisation for which you are posting the job</div>
+                                <div *ngIf="f.ownerOrg.errors.required">Choose the organisation for which you are posting the job
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -60,15 +99,15 @@
                                 <div class="form-group">
 
                                     <label class="form-label">
-                                Job type
-                             </label>
+                      Job type
+                    </label>
                                     <select [disabled]="offres.currentStep > 1" [(ngModel)]="offres.jobType" formControlName="jobType" [ngClass]="{ 'is-invalid': submitted && f.jobType.errors }" class="form-control custom-select" required="" data-msg="Please select job type" data-error-class="u-has-error"
                                         data-success-class="u-has-success">
-               <option value="Full Time" selected="selected">Full time</option>
-               <option value="FreeLance">FreeLance</option>
-               <option value="Part time">Part time</option>
+                      <option value="Full Time" selected="selected">Full time</option>
+                      <option value="FreeLance">FreeLance</option>
+                      <option value="Part time">Part time</option>
 
-            </select>
+                    </select>
                                     <div *ngIf="submitted && f.jobType.errors" class="invalid-feedback">
                                         <div *ngIf="f.jobType.errors.required">Choose the job type</div>
                                     </div>
@@ -120,7 +159,8 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="mb-1">Required Skills. You added {{numberSkills}} skill<span *ngIf="numberSkills>1">s</span></label>
+                                        <label class="mb-1">Required Skills. You added {{numberSkills}} skill<span
+                          *ngIf="numberSkills>1">s</span></label>
                                         <div class="flex-shrink-1">
                                             <button type="button" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#skillmodal">Add skills</button>
                                         </div>
@@ -155,86 +195,93 @@
                                         <label class="mb-1">Status </label>
                                         <div class="position-relative icon-form-control">
                                             <select [disabled]="offres.currentStep > 1" [(ngModel)]="offres.statut" formControlName="statut" [ngClass]="{ 'is-invalid': submitted && f.statut.errors }" class="form-control">
-                           <option  [value]="'UP'" title="only visible by your org">Unpublished</option>
-                           <option  [value]="'PU'" title="visible by candidates, and can postulate">Published</option>
-                           <option  [value]="'CL'" title="The recruitment is done">Closed</option>
-                           <option  [value]="'EN'" title="Candidates can't postulate anymore">Ended</option>
-                           <option  [value]="'SU'" title="suspended, can be republished or not">Suspended</option>
+                          <option [value]="'UP'" title="only visible by your org">Unpublished</option>
+                          <option [value]="'PU'" title="visible by candidates, and can postulate">Published</option>
+                          <option [value]="'CL'" title="The recruitment is done">Closed</option>
+                          <option [value]="'EN'" title="Candidates can't postulate anymore">Ended</option>
+                          <option [value]="'SU'" title="suspended, can be republished or not">Suspended</option>
                         </select>
                                         </div>
                                         <div *ngIf="submitted && f.statut.errors" class="invalid-feedback">
                                             <div *ngIf="f.statut.errors.required">Choose a status</div>
                                         </div>
                                     </div>
-
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn btn-outline-danger text-uppercase" type="submit" (click)="precedent()"> Previous</button>
+                                    </div>
+                                    <br>
                                     <button *ngIf="offres.currentStep == 1" class="btn btn-primary btn-block text-uppercase" type="submit"> Post the job offer </button>
 
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="skillmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <span class="row">
-               <span class="col-lg-6">
-                  <a>
-                     <h6>Add skills</h6>
-                  </a>
-               </span>
-                                        <span class="col-lg-6 d-flex justify-content-end">
-                  <i class="feather-x" data-dismiss="modal"></i>
-               </span>
-                                        </span>
-                                        <hr>
-                                        <form #xpForm="ngForm" (ngSubmit)="addSkill()">
-                                            <span style="margin-top: -4% !important;">
-                  <div class="form-group">
-                     <label class="mb-1">Skill name</label>
-                     <div class="icon-form-control">
-                        <input required type="text" name="skill" class="form-control" [(ngModel)]="skill.skillName"
-                           placeholder="Enter the skill name">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <label class="mb-1">Months of experience</label>
-                     <div class="icon-form-control">
-                        <input required type="number" min="0" name="experience" class="form-control"
-                           [(ngModel)]="skill.duration" placeholder="">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <label class="mb-1">Skill level</label>
-                     <div class="icon-form-control">
-                        <select type="text" required name="skilllevel" placeholder="select a skill level"
-                           class="form-control" [(ngModel)]="skill.skillMinvValText">
-                           <option [value]="'Beginner'">Beginner</option>
-                           <option [value]="'Intermediate'">Intermediate</option>
-                           <option [value]="'Expert'">Expert</option>
-                        </select>
-                     </div>
-                  </div>
-               </span>
-                                            <div class="d-flex justify-content-end">
-                                                <div>
-                                                    <button type="submit" [disabled]="!xpForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
+
+
+
+                    </form>
+                </div>
+
+                <div class="modal fade" id="skillmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <span class="row">
+                    <span class="col-lg-6">
+                      <a>
+                        <h6>Add skills</h6>
+                      </a>
+                    </span>
+                                <span class="col-lg-6 d-flex justify-content-end">
+                      <i class="feather-x" data-dismiss="modal"></i>
+                    </span>
+                                </span>
+                                <hr>
+                                <form #xpForm="ngForm" (ngSubmit)="addSkill()">
+                                    <span style="margin-top: -4% !important;">
+                      <div class="form-group">
+                        <label class="mb-1">Skill name</label>
+                        <div class="icon-form-control">
+                          <input required type="text" name="skill" class="form-control" [(ngModel)]="skill.skillName"
+                            placeholder="Enter the skill name">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="mb-1">Months of experience</label>
+                        <div class="icon-form-control">
+                          <input required type="number" min="0" name="experience" class="form-control"
+                            [(ngModel)]="skill.duration" placeholder="">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="mb-1">Skill level</label>
+                        <div class="icon-form-control">
+                          <select type="text" required name="skilllevel" placeholder="select a skill level"
+                            class="form-control" [(ngModel)]="skill.skillMinvValText">
+                            <option [value]="'Beginner'">Beginner</option>
+                            <option [value]="'Intermediate'">Intermediate</option>
+                            <option [value]="'Expert'">Expert</option>
+                          </select>
+                        </div>
+                      </div>
+                    </span>
+                                    <div class="d-flex justify-content-end">
+                                        <div>
+                                            <button type="submit" [disabled]="!xpForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="row">
+                                    <div class="col-lg-6" *ngFor="let item of offres.competencessup let i=index;">
+                                        <div class="border job-item mb-3">
+                                            <div class="d-flex align-items-center p-3 job-item-header">
+                                                <div class="overflow-hidden mr-2">
+                                                    <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.skillName}}</h6>
+                                                    <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
+                                                    <div class="small text-gray-500">{{item.skillMinvValText}}</div>
                                                 </div>
-                                            </div>
-                                        </form>
-                                        <div class="row">
-                                            <div class="col-lg-6" *ngFor="let item of offres.competencessup let i=index;">
-                                                <div class="border job-item mb-3">
-                                                    <div class="d-flex align-items-center p-3 job-item-header">
-                                                        <div class="overflow-hidden mr-2">
-                                                            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.skillName}}</h6>
-                                                            <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
-                                                            <div class="small text-gray-500">{{item.skillMinvValText}}</div>
-                                                        </div>
-                                                        <div class="img-fluid ml-auto">
-                                                            <i class="feather-trash" style="color:red;" (click)="deleteSkill(i)"></i>
-                                                        </div>
-                                                    </div>
+                                                <div class="img-fluid ml-auto">
+                                                    <i class="feather-trash" style="color:red;" (click)="deleteSkill(i)"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -242,66 +289,66 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
 
-                        <div class="modal fade" id="diplomamodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <span class="row">
-               <span class="col-lg-6">
-                  <a>
-                     <h6>Add Diploma</h6>
-                  </a>
-               </span>
-                                        <span class="col-lg-6 d-flex justify-content-end">
-                  <i class="feather-x" data-dismiss="modal"></i>
-               </span>
-                                        </span>
-                                        <hr>
-                                        <form #dipForm="ngForm" (ngSubmit)="addDiploma()">
-                                            <span style="margin-top: -4% !important;">
-                  <div class="form-group">
-                     <label class="mb-1">Diploma name</label>
-                     <div class="icon-form-control">
-                        <input required type="text" name="diplomaname" class="form-control"
-                           [(ngModel)]="diplome.nomDiplome" placeholder="Enter the diploma name">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <label class="mb-1">In</label>
-                     <div class="icon-form-control">
-                        <input required type="text" name="diplomain" class="form-control" [(ngModel)]="diplome.domaine"
-                           placeholder="Enter the diploma domain">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <label class="mb-1">Months of obtension</label>
-                     <div class="icon-form-control">
-                        <input required type="number" min="0" name="experience" class="form-control"
-                           [(ngModel)]="diplome.duration" placeholder="Diploma obtained since how many months?">
-                     </div>
-                  </div>
-               </span>
-                                            <div class="d-flex justify-content-end">
-                                                <div>
-                                                    <button type="submit" [disabled]="!dipForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
+                <div class="modal fade" id="diplomamodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <span class="row">
+                    <span class="col-lg-6">
+                      <a>
+                        <h6>Add Diploma</h6>
+                      </a>
+                    </span>
+                                <span class="col-lg-6 d-flex justify-content-end">
+                      <i class="feather-x" data-dismiss="modal"></i>
+                    </span>
+                                </span>
+                                <hr>
+                                <form #dipForm="ngForm" (ngSubmit)="addDiploma()">
+                                    <span style="margin-top: -4% !important;">
+                      <div class="form-group">
+                        <label class="mb-1">Diploma name</label>
+                        <div class="icon-form-control">
+                          <input required type="text" name="diplomaname" class="form-control"
+                            [(ngModel)]="diplome.nomDiplome" placeholder="Enter the diploma name">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="mb-1">In</label>
+                        <div class="icon-form-control">
+                          <input required type="text" name="diplomain" class="form-control"
+                            [(ngModel)]="diplome.domaine" placeholder="Enter the diploma domain">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="mb-1">Months of obtension</label>
+                        <div class="icon-form-control">
+                          <input required type="number" min="0" name="experience" class="form-control"
+                            [(ngModel)]="diplome.duration" placeholder="Diploma obtained since how many months?">
+                        </div>
+                      </div>
+                    </span>
+                                    <div class="d-flex justify-content-end">
+                                        <div>
+                                            <button type="submit" [disabled]="!dipForm.form.valid" class="btn btn-outline-primary btn-sm mr-1">Add</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div *ngFor="let item of offres.formations let i=index;">
+                                    <div class="col-lg-6">
+                                        <div class="border job-item mb-3">
+                                            <div class="d-flex align-items-center p-3 job-item-header">
+                                                <div class="overflow-hidden mr-2">
+                                                    <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.nomDiplome}}</h6>
+                                                    <div class="small text-gray-500">{{item.domaine}}</div>
+                                                    <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
                                                 </div>
-                                            </div>
-                                        </form>
-                                        <div *ngFor="let item of offres.formations let i=index;">
-                                            <div class="col-lg-6">
-                                                <div class="border job-item mb-3">
-                                                    <div class="d-flex align-items-center p-3 job-item-header">
-                                                        <div class="overflow-hidden mr-2">
-                                                            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{item.nomDiplome}}</h6>
-                                                            <div class="small text-gray-500">{{item.domaine}}</div>
-                                                            <div class="text-truncate text-primary">{{item.duration}} month(s)</div>
-                                                        </div>
-                                                        <div class="img-fluid ml-auto">
-                                                            <i class="feather-trash" style="color:red;" (click)="deleteDiploma(i)"></i>
-                                                        </div>
-                                                    </div>
+                                                <div class="img-fluid ml-auto">
+                                                    <i class="feather-trash" style="color:red;" (click)="deleteDiploma(i)"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -309,3 +356,5 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>

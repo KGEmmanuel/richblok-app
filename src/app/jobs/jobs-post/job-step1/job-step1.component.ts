@@ -17,7 +17,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./job-step1.component.scss']
 })
 export class JobStep1Component implements OnInit {
-
+  question : string;
+  type;
   skill: JobSkill;
   offres: OffresEmploi;
   mode: string;
@@ -28,10 +29,12 @@ export class JobStep1Component implements OnInit {
   diplome: EmploiFormation;
   organisations : Array<Entreprise>;
   uid: string;
+  step = 1;
   constructor(private toastr: ToastrService, private orgSvc: OrganisationService, private offreSvc: OffreEmploiService,
     private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.step = 1;
     this.numberSkills = 0;
     this.numberdiploma = 0;
     this.skill = new JobSkill();
@@ -79,6 +82,27 @@ export class JobStep1Component implements OnInit {
       statut: ['', Validators.required],
 }, );
   }
+addQuestion(){
+  if(!this.question){
+    this.toastr.error('You must enter a question before adding', 'Error');
+    return;
+  }
+  this.offres.questions.push(this.question);
+  this.question = '';
+}
+delQuestion(i){
+  this.offres.questions.splice(i, 1);
+}
+ suivant(){
+
+   this.step += 1;
+   if(this.step ===2){
+    this.toastr.success('','You prepared ' +this.offres.questions.length + ' questions  for the applicant')
+  }
+ }
+ precedent(){
+  this.step -= 1;
+}
 
   addSkill() {
     this.pushSkill();

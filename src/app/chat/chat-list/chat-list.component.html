@@ -1,0 +1,1 @@
+<app-chatroom *ngFor="let item of chatrooms" [chatRoom]="item" [active]="currentChat===item.chatroomId" (selRoom)="onSelect($event)"></app-chatroom>

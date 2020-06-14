@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
-import { ChatService } from 'src/app/shared/services/chat.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { ChatRoom } from '../../shared/entites/ChatRoom';
+import { Message } from 'src/app/shared/entites/Message';
+import { ChatService } from '../../shared//services/chat.service';
 
 @Component({
   selector: 'app-chat-content',
@@ -20,16 +21,9 @@ export class ChatContentComponent implements OnInit {
   }
   messages: Array<Message>;
 
-  @Output()
-  selUsername: EventEmitter<string> = new EventEmitter<string>();
-  @Output()
-  selPhoto: EventEmitter<string> = new EventEmitter<string>();
-  userPhoto: string;
-  userName: string;
+
 
   constructor(private chatSvc: ChatService) { }
-
-
 
   loadmessages() {
     if (!this.chatroom) {
@@ -48,18 +42,5 @@ export class ChatContentComponent implements OnInit {
   ngOnInit() {
 
   }
-  onUsernameSel(name: string){
-    this.userName = name;
-  }
 
-  onPhotoSel(photo){
-    this.userPhoto = photo;
-  }
-  onnameSel(name: string){
-    this.selUsername.emit(name);
-  }
-
-  onSel(photo){
-    this.selPhoto.emit(photo);
-  }
 }
