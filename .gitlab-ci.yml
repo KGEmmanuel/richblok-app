@@ -11,7 +11,7 @@ cache:
 deploy-prod:
   stage: deploy
   only:
-    - master
+    - develop
   script:
     - yarn
     - yarn  build
