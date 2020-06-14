@@ -1,0 +1,24 @@
+<div class="d-flex align-items-center osahan-post-header" *ngIf="received">
+    <!-- <div class="dropdown-list-image mr-3 mb-auto"><img class="rounded-circle" src="img/p1.png" alt=""></div>-->
+    <div class="mr-1">
+        <div class="text-truncate h6 mb-3">Carl Jenkins
+        </div>
+        <p>{{message.message}}
+        </p>
+    </div>
+    <span class="ml-auto mb-auto">
+     <div class="text-right text-muted pt-1 small">  {{message.sentDate.toDate() | date :'mediumTime'}}    |    {{message.sentDate.toDate() | date :'longDate'}}</div>
+  </span>
+</div>
+<div class="d-flex align-items-center osahan-post-header" *ngIf="!received">
+    <!-- <div class="dropdown-list-image mr-3 mb-auto"><img class="rounded-circle" src="img/p1.png" alt=""></div>-->
+    <div class="mr-1">
+        <div class="text-truncate h6 mb-3">Carl Jenkins
+        </div>
+        <p>{{message.message}}
+        </p>
+    </div>
+    <span class="ml-auto mb-auto">
+      <div class="text-right text-muted pt-1 small">  {{message.sentDate.toDate() | date :'mediumTime'}}    |    {{message.sentDate.toDate() | date :'longDate'}}</div>
+   </span>
+</div>

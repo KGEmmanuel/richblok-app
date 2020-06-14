@@ -149,7 +149,22 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <span class="row">
+                <div *ngIf="step===1">
+                    <div *ngFor="let question of currentJob.questions; let i = index">
+                        {{i}}. {{question}}
+                        <div class="form-group">
+                            <label class="mb-1">Answer to question {{i}}</label>
+                            <div class="position-relative icon-form-control">
+                                <i class="feather-map-pin position-absolute"></i>
+                                <input type="text" class="form-control" placeholder="Type your answer here">
+                            </div>
+                        </div>
+                    </div>
+                    <div style=" margin-top: 10px;" class="d-flex justify-content-end col-lg-12">
+                        <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                    </div>
+                </div>
+                <span class="row" *ngIf="step===2 || step === 3 || step === 4 || step ===5">
           <span class="col-lg-10">
             <h6>Job description</h6>
             <span><small style="color: grey;">You have to check the items that will constitute your CV to
@@ -162,7 +177,7 @@
                 <hr>
 
                 <div class=" network-item  mb-3">
-                    <div *ngIf="step===1">
+                    <div *ngIf="step===2">
                         <div class="col-lg-12">
                             <textarea type="text" class="form-control" id="motivation" placeholder="Type your motivation about this job" [(ngModel)]="currentApplication.motivation"></textarea>
                         </div>
@@ -170,7 +185,7 @@
                             <button class="btn btn-outline-primary" (click)="next()">Next</button>
                         </div>
                     </div>
-                    <div class="row" *ngIf="step===2">
+                    <div class="row" *ngIf="step===3">
                         <div class="col-lg-6">
                             <span>
                 <h6 style="color: grey;">Required skills</h6>
@@ -195,7 +210,7 @@
                             <button class="btn btn-outline-primary" (click)="next()">Next</button>
                         </div>
                     </div>
-                    <div class="row" *ngIf="step===3">
+                    <div class="row" *ngIf="step===4">
                         <div class="col-lg-6">
                             <span>
                 <h6 style="color: grey;">Required Diploma</h6>
@@ -219,7 +234,7 @@
                             <button class="btn btn-outline-primary" (click)="next()">Next</button>
                         </div>
                     </div>
-                    <div class="row" *ngIf="step===4">
+                    <div class="row" *ngIf="step===5">
                         <div class="col-lg-6">
                             <span>
                 <h6 style="color: grey;">Required Experiences</h6>
