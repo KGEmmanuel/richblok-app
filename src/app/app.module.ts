@@ -39,8 +39,8 @@ import { OrganisationComponent } from './organisation/organisation.component';
 import { OrganisationProfileComponent } from './organisation/organisation-profile/organisation-profile.component';
 import { OrganisationsListComponent } from './organisation/organisations-list/organisations-list.component';
 import { ToastrModule } from 'ngx-toastr';
-import { AngularFireModule } from "@angular/fire";
-import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { UserCardComponent } from './user/user-card/user-card.component';
@@ -177,7 +177,7 @@ import { CountdownModule } from 'ngx-countdown';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import {NgxUiLoaderModule, NgxUiLoaderRouterModule} from 'ngx-ui-loader';
 import { JobsAppliedItemComponent } from './jobs/jobs-applied/jobs-applied-item/jobs-applied-item.component';
-import { JobsAppliedDetailsComponent } from './jobs/jobs-applied/jobs-applied-details/jobs-applied-details.component'
+import { JobsAppliedDetailsComponent } from './jobs/jobs-applied/jobs-applied-details/jobs-applied-details.component';
 import { RecordRealisationComponent } from './record/record-realisation/record-realisation.component';
 import { RecordRealisationDetailsComponent } from './record/record-realisation/record-realisation-item/record-realisation-details/record-realisation-details.component';
 import { RecordRealisationFormComponent } from './record/record-realisation/record-realisation-form/record-realisation-form.component';
@@ -385,13 +385,9 @@ import { RecordDocumentFormComponent } from './record-documents/record-document-
     ChatroomComponent,
     InitiatechatComponent,
     MessageItemComponent,
-<<<<<<< HEAD
-    RecordDocumentsComponent,
-    RecordDocumentItemComponent,
     RecordDocumentFormComponent,
-=======
->>>>>>> fbce0da057a8d0d518201e5eff189799e3303aac
-
+    RecordDocumentItemComponent,
+    RecordDocumentsComponent
   ],
   imports: [
     BrowserModule,
