@@ -385,9 +385,12 @@ import { RecordDocumentFormComponent } from './record-documents/record-document-
     ChatroomComponent,
     InitiatechatComponent,
     MessageItemComponent,
+<<<<<<< HEAD
     RecordDocumentsComponent,
     RecordDocumentItemComponent,
     RecordDocumentFormComponent,
+=======
+>>>>>>> fbce0da057a8d0d518201e5eff189799e3303aac
 
   ],
   imports: [
