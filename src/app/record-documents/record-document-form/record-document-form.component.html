@@ -69,6 +69,11 @@
                 <div *ngIf="f.documentDescription.errors.required">Enter a description to this document</div>
             </div>
         </div>
+        <div class="upload-btn-wrapper d-flex justify-content-end">
+            <button class="btn btn-outline-primary btn-sm mr-1" style="cursor: pointer;">Upload a file</button>
+            <input type="file" name="myfile" multiple/>
+        </div>
+
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-outline-primary btn-sm"> Save </button>
         </div>
