@@ -11,7 +11,6 @@ import { UserService } from '../../shared/services/user.service';
   styleUrls: ['./user-card.component.scss']
 })
 export class UserCardComponent implements OnInit {
-
   currentUser: Utilisateur;
   views = 0;
   constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
@@ -20,7 +19,7 @@ export class UserCardComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    // tslint:disable-next-line: max-line-length
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.userSvc.get(user.uid).subscribe(v => {

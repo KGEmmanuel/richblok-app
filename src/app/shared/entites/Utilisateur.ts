@@ -11,13 +11,12 @@ export class Utilisateur  extends IBaseEntity {
   lieuNaissance?: Date;
   telephone?: string;
   ville?: string;
-  dateCreation?: Date;
+  dateCreation?;
   typeCompte?: string;
   entreprises?: Array<string>;
   firstconexion? = true;
-  imageprofil?: string = 'https?://firebasestorage.googleapis.com/v0/' +
-    'b/richblock-aebe5.appspot.com/o/profiles%2FdefaultProfile.png?alt=' +
-    'media&token=b29b8cae-f74e-42df-8874-e50223b735c8';
+  // tslint:disable-next-line: max-line-length
+  imageprofil?: string = 'https://firebasestorage.googleapis.com/v0/b/richblock-aebe5.appspot.com/o/backgroundimage%2Fprofil.svg.png?alt=media&token=630dae2c-f13e-409f-9659-1ac9ed161ea0';
   imagecouv?: string = 'https?://firebasestorage.googleapis.com/v0/b/' +
     'richblock-aebe5.appspot.com/o/cover%2Ffbcover.jpg?alt=media&token=' +
     '10c4b199-0214-4ddd-a862-76094565bc02';

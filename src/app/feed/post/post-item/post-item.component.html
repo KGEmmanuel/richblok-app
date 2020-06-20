@@ -5,7 +5,7 @@
             <div class="status-indicator bg-success"></div>
         </div>
         <div class="font-weight-bold">
-            <div class="text-truncate pop" data-container="body" data-toggle="popover" data-placement="right" data-content="" data-original-title="" title="" style="cursor: pointer;" [routerLink]="['/profile/'+ ownedUser.id]">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
+            <div class="text-truncate pop" style="cursor: pointer;" [ngbPopover]="popContent" [routerLink]="['/profile/'+ ownedUser.id]">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
             <div class="small" style="color: grey;">{{ownedUser?.poste}} at {{ownedUser?.lieu}}</div>
             <div class="small" style="color: grey;"><i class="feather-map-pin" *ngIf="currentPost?.location != null"></i> {{currentPost?.location}}</div>
         </div>
@@ -112,3 +112,30 @@
         </div>
     </div>
 </div>
+<ng-template #popContent class="popover">
+    <div class="border network-item rounded mb-3 bg-white">
+        <div class="p-3 d-flex align-items-center network-item-header border-bottom">
+            <div class="dropdown-list-image mr-3">
+                <img class="rounded-circle" src="{{ownedUser.imageprofil}}" alt="">
+            </div>
+            <a>
+                <div class="font-weight-bold">
+                    <h6 class="font-weight-bold text-dark mb-0 " title="{{ownedUser.nom}} {{ownedUser.prenom}}">
+                        {{ownedUser.nom}} {{ownedUser.prenom}}
+                    </h6>
+                    <div class="small text-black-50 " title="{{ownedUser.poste}} at {{ownedUser.lieu}}">{{ownedUser.poste}} at {{ownedUser.lieu}}</div>
+                </div>
+
+            </a>
+        </div>
+        <div class="network-item-footer py-3 d-flex text-center ">
+            <div class="col-6 pl-3 pr-1">
+                <app-initchat></app-initchat>
+            </div>
+            <div class="col-6 pr-3 pl-1">
+                <button type="button" class="btn btn-outline-danger btn-sm btn-block"> <i class="feather-user-minus"></i>
+          Disconnect</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

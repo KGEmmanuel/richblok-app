@@ -5,6 +5,7 @@ import { UtilisateurService } from '../../../shared/services/utilisateur.service
 import * as firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { PostService } from '../../../shared/services/post.service';
+import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-post-item',
@@ -25,7 +26,12 @@ export class PostItemComponent implements OnInit {
 
 
 
-  constructor(private userSvc: UtilisateurService, private afAuth: AngularFireAuth, private postSvc: PostService) { }
+  constructor(private userSvc: UtilisateurService, private afAuth: AngularFireAuth, private postSvc: PostService, config: NgbPopoverConfig) {
+    config.placement = 'right';
+    config.triggers = 'hover';
+    config.autoClose = 'outside';
+    config.closeDelay = 1000000;
+   }
 
   ngOnInit() {
 

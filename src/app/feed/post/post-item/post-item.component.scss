@@ -324,3 +324,12 @@ img {
 .slider>a:focus {
     background: #000;
 }
+
+:host>>>.popover {
+    background-color: #009688;
+    color: #fff;
+}
+
+:host>>>.popover>.arrow:after {
+    border-top-color: #009688;
+}

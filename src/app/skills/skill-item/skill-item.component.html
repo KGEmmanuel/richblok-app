@@ -1,7 +1,28 @@
-<div class="d-flex align-items-center osahan-post-header p-3 border-bottom people-list">
-  <div class="font-weight-bold">
-     <div class="text-truncate">{{currentSkill.skillName}}</div>
-     <div class="small text-muted">{{currentSkill.skillStringValue}}({{currentSkill.skillduration}} months)
-     </div>
-  </div>
+<div class="border-bottom">
+    <div class="d-flex align-items-center osahan-post-header p-3  people-list">
+        <div class="overflow-hidden mr-2">
+            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{currentSkill.skillName}}</h6>
+            <div class="small text-gray-500"> {{currentSkill.skillLevel}}({{currentSkill.skillduration}} months)</div>
+        </div>
+    </div>
+    <div class="col-lg-12" style="padding-bottom:2% !important;" *ngIf="currentSkill.skillLevel != null || currentSkill.skillLevel != undefined">
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Beginner'">
+            <div class="progress-bar bg-danger" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">20%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Elementary'">
+            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">40%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Intermediate'">
+            <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Upper-intermediate'">
+            <div class="progress-bar" role="progressbar" style="width: 70%; background-color: rgb(59, 59, 219);" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Advanced'">
+            <div class="progress-bar" role="progressbar" style="width: 90%; background-color: rgb(202, 42, 235);" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Expert'">
+            <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+        </div>
+    </div>
 </div>

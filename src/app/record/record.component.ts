@@ -18,6 +18,7 @@ export class RecordComponent implements OnInit {
   nbreSkill = 0;
   nbreLng = 0;
   nbreExp = 0;
+  nbreDoc = 0;
   uid;
   constructor(private afAuth: AngularFireAuth, private expSvc: ExperienceService, private formSvc: FormationService, private lgSvc: LanguageService, private skilSvc: SkillsService,
     private title: Title,

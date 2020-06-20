@@ -198,6 +198,10 @@ import { ChatListComponent } from './chat/chat-list/chat-list.component';
 import { ChatroomComponent } from './chat/chatroom/chatroom.component';
 import { InitiatechatComponent } from './chat/initiatechat/initiatechat.component';
 import { MessageItemComponent } from './chat/message-item/message-item.component';
+import { NgCircleProgressModule } from 'ng-circle-progress';
+import { RecordDocumentsComponent } from './record-documents/record-documents.component';
+import { RecordDocumentItemComponent } from './record-documents/record-document-item/record-document-item.component';
+import { RecordDocumentFormComponent } from './record-documents/record-document-form/record-document-form.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -381,6 +385,9 @@ import { MessageItemComponent } from './chat/message-item/message-item.component
     ChatroomComponent,
     InitiatechatComponent,
     MessageItemComponent,
+    RecordDocumentsComponent,
+    RecordDocumentItemComponent,
+    RecordDocumentFormComponent,
 
   ],
   imports: [
@@ -411,7 +418,10 @@ import { MessageItemComponent } from './chat/message-item/message-item.component
     CountdownModule,
     GooglePlaceModule,
     PdfViewerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgCircleProgressModule.forRoot({
+    }),
+
 
   ],
   providers: [

@@ -1,0 +1,76 @@
+<div class="border">
+    <form class="px-4 py-3" [formGroup]="docForm" (ngSubmit)="save()">
+        <div class="row">
+            <div class="form-group col-lg-12">
+                <label for="skillname">Document Name</label>
+                <input type="text" required [(ngModel)]="currentDoc.documentName" class="form-control" id="documentName" placeholder="Enter the name of your document" formControlName="documentName" [ngClass]="{ 'is-invalid': submitted && f.documentName.errors }">
+                <div *ngIf="submitted && f.documentName.errors" class="invalid-feedback">
+                    <div *ngIf="f.documentName.errors.required">Enter the document name</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="level">Document type</label>
+                <select type="text" required [(ngModel)]="currentDoc.documenttype" class="form-control" formControlName="documenttype" [ngClass]="{ 'is-invalid': submitted && f.documenttype.errors }" id="documenttype" placeholder="Choose the document type">
+        <option [value]="'Experience'">Experience</option>
+        <option [value]="'Train'">Train</option>
+      </select>
+                <div *ngIf="submitted && f.documenttype.errors" class="invalid-feedback">
+                    <div *ngIf="f.documenttype.errors.required">Choose a document type</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6" *ngIf="currentDoc.documenttype === 'Experience'">
+                <label for="duration">Related Experience</label>
+                <select type="text" min="0" required [(ngModel)]="currentDoc.documentRelatedElmt" class="form-control" id="documentRelatedElmt" placeholder="Select the related experience" formControlName="documentRelatedElmt" [ngClass]="{ 'is-invalid': submitted && f.documentRelatedElmt.errors }">
+                <option *ngFor="let experience of experiences">{{experience.libelle}}</option>
+              </select>
+                <div *ngIf="submitted && f.documentRelatedElmt.errors" class="invalid-feedback">
+                    <div *ngIf="f.documentRelatedElmt.errors.required">Choose a related experience</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6" *ngIf="currentDoc.documenttype === 'Train'">
+                <label for="duration">Related Train</label>
+                <select type="text" min="0" required [(ngModel)]="currentDoc.documentRelatedElmt" class="form-control" id="documentRelatedElmt" placeholder="Experience of this skill" formControlName="documentRelatedElmt" [ngClass]="{ 'is-invalid': submitted && f.documentRelatedElmt.errors }">
+              <option *ngFor="let training of allTrainings">{{training.libelle}}</option>
+            </select>
+                <div *ngIf="submitted && f.documentRelatedElmt.errors" class="invalid-feedback">
+                    <div *ngIf="f.documentRelatedElmt.errors.required">Choose a related train</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label for="duration">Document visibility</label>
+                <select type="text" min="0" required [(ngModel)]="currentDoc.visib" class="form-control" id="visib" placeholder="Experience of this skill" formControlName="visib" [ngClass]="{ 'is-invalid': submitted && f.visib.errors }">
+
+          <option [value]="'Me'" >Me</option>
+              <option [value]="'Connections'" selected>Connections</option>
+          <option [value]="'Public'">Public</option>
+        </select>
+                <div *ngIf="submitted && f.visib.errors" class="invalid-feedback">
+                    <div *ngIf="f.visib.errors.required">Choose a visibility</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="duration">Sign Level</label>
+                <select type="text" min="0" required [(ngModel)]="currentDoc.signLevel" class="form-control" id="signLevel" placeholder="Experience of this skill" formControlName="signLevel" [ngClass]="{ 'is-invalid': submitted && f.signLevel.errors }">
+            <option [value]="'NONE'" selected>NONE (juste save it)</option>
+            <option [value]="'ORGSIGN'">ORGSIGN (cetification an signature by related companies)</option>
+        <option [value]="'PUBSIGN'">PUBSIGN(public certification, include orgsign)</option>
+      </select>
+                <div *ngIf="submitted && f.signLevel.errors" class="invalid-feedback">
+                    <div *ngIf="f.signLevel.errors.required">Choose a sign level</div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea required type="date" [(ngModel)]="currentDoc.documentDescription" placeholder="Describe your document in few words" class="form-control" id="documentDescription" formControlName="documentDescription" [ngClass]="{ 'is-invalid': submitted && f.documentDescription.errors }"></textarea>
+            <div *ngIf="submitted && f.documentDescription.errors" class="invalid-feedback">
+                <div *ngIf="f.documentDescription.errors.required">Enter a description to this document</div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary btn-sm"> Save </button>
+        </div>
+    </form>
+</div>

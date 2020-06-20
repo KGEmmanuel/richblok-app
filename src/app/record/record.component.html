@@ -28,8 +28,9 @@
                         <li class="nav-item">
                             <a class="nav-link" id="skills-tab" data-toggle="tab" href="#skills" role="tab" aria-controls="profile" aria-selected="false">Skills</a>
                         </li>
-
-
+                        <li class="nav-item">
+                            <a class="nav-link" id="doc-tab" data-toggle="tab" href="#doc" role="tab" aria-controls="type" aria-selected="false">Documents</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" id="lang-tab" data-toggle="tab" href="#lang" role="tab" aria-controls="type" aria-selected="false">Languages</a>
                         </li>
@@ -46,6 +47,9 @@
                         </div>
                         <div class="tab-pane fade" id="realisation" role="tabpanel" aria-labelledby="realisation-tab">
                             <app-record-realisation></app-record-realisation>
+                        </div>
+                        <div class="tab-pane fade" id="doc" role="tabpanel" aria-labelledby="doc-tab">
+                            <app-record-documents></app-record-documents>
                         </div>
                         <div class="tab-pane fade" id="lang" role="tabpanel" aria-labelledby="lang-tab">
                             <app-record-languages></app-record-languages>
@@ -70,6 +74,9 @@
                         </a>
                         <a href="#">
                             <li class="list-group-item pl-3 pr-3 d-flex align-items-center text-dark"><i class="feather-user-check mr-2 text-dark"></i> Professional tranings <span class="ml-auto font-weight-bold">{{nbreProTrain}}</span></li>
+                        </a>
+                        <a href="#">
+                            <li class="list-group-item pl-3 pr-3 d-flex align-items-center text-dark"><i class="feather-clipboard mr-2 text-dark"></i> Documents <span class="ml-auto font-weight-bold">{{nbreDoc}}</span></li>
                         </a>
                         <a href="#">
                             <li class="list-group-item pl-3 pr-3 d-flex align-items-center text-dark"><i class="feather-clipboard mr-2 text-dark"></i> Languages <span class="ml-auto font-weight-bold">{{nbreLng}}</span></li>

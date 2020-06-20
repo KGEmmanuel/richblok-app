@@ -1,17 +1,34 @@
-
-  <div class="border job-item mb-3">
+<div class="border job-item mb-3">
     <div class="d-flex align-items-center p-3 job-item-header">
-       <div class="overflow-hidden mr-2">
-          <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{currentSkill.skillName}}</h6>
-          <div class="small text-gray-500"> {{currentSkill.skillStringValue}}({{currentSkill.skillduration}} months)</div>
-       </div>
-
-       <div class="img-fluid ml-auto">
-        <i class="feather-edit mr-2" (click)="edit()" style="color: rgb(175, 129, 31);"></i>  <i class="feather-trash mr-2"  style="color: rgb(161, 67, 67);" (click)="delete()"></i>
-         </div>
-
+        <div class="overflow-hidden mr-2">
+            <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{currentSkill.skillName}}</h6>
+            <div class="small text-gray-500"> {{currentSkill.skillLevel}}({{currentSkill.skillduration}} months)</div>
+        </div>
+        <div class="img-fluid ml-auto">
+            <i class="feather-edit mr-2" (click)="edit()" style="color: rgb(175, 129, 31);"></i> <i class="feather-trash mr-2" style="color: rgb(161, 67, 67);" (click)="delete()"></i>
+        </div>
     </div>
-    <div class="d-flex align-items-center p-3 border-top border-bottom job-item-body">
+    <div class="col-lg-12" style="padding-bottom:2% !important;" *ngIf="currentSkill.skillLevel != null || currentSkill.skillLevel != undefined">
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Beginner'">
+            <div class="progress-bar bg-danger" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">20%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Elementary'">
+            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">40%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Intermediate'">
+            <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Upper-intermediate'">
+            <div class="progress-bar" role="progressbar" style="width: 70%; background-color: rgb(59, 59, 219);" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Advanced'">
+            <div class="progress-bar" role="progressbar" style="width: 90%; background-color: rgb(202, 42, 235);" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
+        </div>
+        <div class="progress" *ngIf="currentSkill.skillLevel === 'Expert'">
+            <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+        </div>
+    </div>
+    <!--<div class="d-flex align-items-center p-3 border-top border-bottom job-item-body">
        <div class="overlap-rounded-circle">
           <img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="Sophia Lee" src="../../../../assets/img/p9.png" alt="">
           <img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="John Doe" src="../../../../assets/img/p10.png" alt="">
@@ -19,5 +36,5 @@
           <img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="Robert Cook" src="../../../../assets/img/p12.png" alt="">
        </div>
        <span class="font-weight-bold text-primary">You and 4 connections have the same skill</span>
-    </div>
- </div>
+    </div>-->
+</div>

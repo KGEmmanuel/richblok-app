@@ -11,13 +11,12 @@
             <div class="form-group col-lg-6">
                 <label for="level">Estimate you skill level</label>
                 <select type="text" required [(ngModel)]="currentSkill.skillLevel" class="form-control" formControlName="skillLevel" [ngClass]="{ 'is-invalid': submitted && f.skillLevel.errors }" id="level" placeholder="Enter the company where you had you experience">
-          <option [value]="'Beginner'">Beginner</option>
-          <option [value]="'Elementary'">Elementary</option>
-          <option [value]="'Pre-intermediate'">Pre-intermediate</option>
-          <option [value]="'Intermediate'">Intermediate</option>
-          <option [value]="'Upper-intermediate'">Upper-intermediate</option>
-          <option [value]="'Advanced'">Advanced</option>
-          <option [value]="'Proficient'">Proficient</option>
+          <option [value]="'Beginner'">Beginner</option><!--20%-->
+          <option [value]="'Elementary'">Elementary</option><!--40%-->
+          <option [value]="'Intermediate'">Intermediate</option><!--50%-->
+          <option [value]="'Upper-intermediate'">Upper-intermediate</option><!--70%-->
+          <option [value]="'Advanced'">Advanced</option><!--90%-->
+          <option [value]="'Expert'">Expert</option><!--100%-->
         </select>
                 <div *ngIf="submitted && f.skillLevel.errors" class="invalid-feedback">
                     <div *ngIf="f.skillLevel.errors.required">Choose a skill level</div>

@@ -48,7 +48,7 @@ const routes: Routes = [
   { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Create Account'} },
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Register'} },
   { path: 'feed', component: FeedComponent, canActivate: [AuthGuard], data: {title: 'Feed'} },
-  { path: 'profile/:id', component: UserComponent, data: {title: 'Profile'}},
+  { path: 'profile', component: UserComponent, data: {title: 'Profile'}},
   { path: 'profile/:id', component: UserViewComponent},
   { path: 'organisation/:id', component: OrganisationProfileComponent},
   { path: 'messages', component: ChatComponent, data: {title: 'Chat'}},
