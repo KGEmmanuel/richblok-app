@@ -15,7 +15,8 @@
                             <i class="feather-map-pin" *ngIf="currentJob?.completeAddress != null"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted on{{currentJob?.dateCreation?.toDate() | date}}
                     </div>
                     <div class="profile-right ml-auto">
-                        <button *ngIf="dispSav && dispApply" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save &nbsp; </button>
+                        <button *ngIf="dispSav && dispApply" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save
+              &nbsp; </button>
 
                         <button *ngIf="!dispApply" type="button" class="btn btn-outline-primary mr-1" [routerLink]="['/job-process/'+currentJob.id]"> &nbsp;
               SmartATS &nbsp; </button>
@@ -200,7 +201,8 @@
                                 <label class="custom-control-label" [for]="'sk'+i">{{sk.skillName}}({{sk.skillStringValue}})</label>
 
                             </div>
-                            <span *ngIf="usersTraining.length <1">You have no skills registered on RichBlok.  Navigate to records so as to register some</span>
+                            <span *ngIf="usersTraining.length <1">You have no skills registered on RichBlok. Navigate to records so as
+                to register some</span>
 
                         </div>
                         <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
@@ -224,7 +226,8 @@
                                 <input type="checkbox" class="custom-control-input" [checked]="currentApplication.trainings.includes(dip.id)" [id]="'train'+i" (change)="trainchanged($event)" [value]="dip.id">
                                 <label class="custom-control-label" [for]="'train'+i">{{dip.libelle}} in {{dip.domaineName}}</label>
                             </div>
-                            <span *ngIf="usersTraining.length <1">You have no diploma registered on RichBlok.  Navigate to records so as to register some</span>
+                            <span *ngIf="usersTraining.length <1">You have no diploma registered on RichBlok. Navigate to records so
+                as to register some</span>
 
                         </div>
                         <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
@@ -239,8 +242,7 @@
                 <ul>
                   <li *ngFor="let ex of currentJob?.experiences">{{ex.poste}} in {{ex.domaine}}</li>
                 </ul>
-                            </span>
-
+              </span>
                         </div>
                         <div class="col-lg-6">
                             <h6 style="color: grey;">Your Experiences</h6>
@@ -248,14 +250,50 @@
                                 <input type="checkbox" class="custom-control-input" [id]="'train'+i" (change)="expchanged($event)" [value]="exp.id" [checked]="currentApplication.exp.includes(exp.id)">
                                 <label class="custom-control-label" [for]="'train'+i">{{exp.libelle}}</label>
                             </div>
-                            <span *ngIf="userExperiences.length <1">You have no experience registered on RichBlok.  Navigate to records so as to register some</span>
+                            <span *ngIf="userExperiences.length <1">You have no experience registered on RichBlok. Navigate to records
+                so as to register some</span>
                         </div>
+                        <div style="margin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="step===6">
+                        <h6 style="color: grey;" class=" col-lg-12">Basic information and approvals</h6>
+                        <form>
+                            <div class="form-group col-lg-12">
+                                <label for="skillname">Town</label>
+                                <input type="text" required class="form-control" id="skillname" placeholder="Enter your town" formControlName="skillName">
+
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label for="skillname">State</label>
+                                <input type="text" required class="form-control" id="skillname" placeholder="Enter your state" formControlName="skillName">
+
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label for="skillname">Country</label>
+                                <input type="text" required class="form-control" id="skillname" placeholder="Enter your country" formControlName="skillName">
+
+                            </div>
+                            <div class="form-check  col-lg-12">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">
+                  I accept / agree to have my background checked by the recruiter through RichBlok</label>
+                            </div>
+                            <div class="form-check  col-lg-12">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                <label class="form-check-label" for="exampleCheck2">
+
+                  I sign that the information is correct and accepts the privacy / confidentiality / cookie policies
+                  and submits my application.</label>
+                            </div>
+                        </form>
                         <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
                             <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
                             <button class="btn btn-outline-primary" (click)="save()">Send application</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
