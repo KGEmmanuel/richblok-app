@@ -35,17 +35,12 @@
     "firebase": "^7.9.1",
     "geolib": "^3.2.1",
     "google-maps-ng2": "^1.0.10",
-    "html2canvas": "^1.0.0-rc.5",
     "jspdf": "^1.5.3",
     "jssha": "^3.1.0",
     "ng-bootstrap-modal": "^1.1.19",
-<<<<<<< HEAD
-    "ng-chat": "^3.0.0",
-=======
     "ng-circle-progress": "^1.5.1",
     "ng-multiselect-dropdown": "^0.2.10",
     "ng2-pdf-viewer": "^6.3.0",
->>>>>>> 3aa0ab454080f63676d0cda856dbc24a316037f6
     "ngx-countdown": "^9.0.1",
     "ngx-google-places-autocomplete": "^2.0.4",
     "ngx-skeleton-loader": "^1.2.6",
