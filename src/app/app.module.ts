@@ -1,3 +1,4 @@
+import { ProgressComponent } from './RibComponents/progress/progress.component';
 import { HttpClient, HttpHandler, HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -155,7 +156,7 @@ import { IdentifiedUsersComponent } from './feed/post/post-form/post-identify/id
 import { IdentifiedUsersItemComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-item/identified-users-item.component';
 import { IdentifiedUsersListComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-list/identified-users-list.component';
 import { PostIdentifyComponent } from './feed/post/post-form/post-identify/post-identify.component';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule, NgbTimepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { IncitationItemComponent } from './incitations/incitation-item/incitation-item.component';
 import { TagsComponent } from './RibComponents/tags/tags.component';
@@ -202,8 +203,11 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { RecordDocumentsComponent } from './record-documents/record-documents.component';
 import { RecordDocumentItemComponent } from './record-documents/record-document-item/record-document-item.component';
 import { RecordDocumentFormComponent } from './record-documents/record-document-form/record-document-form.component';
+import { UploadFileComponent } from './RibComponents/upload-file/upload-file.component';
+import { DndDirective } from './RibComponents/upload-file/dnd.directive';
 @NgModule({
   declarations: [
+    DndDirective,
     AppComponent,
     LoginComponent,
     ResetComponent,
@@ -387,7 +391,9 @@ import { RecordDocumentFormComponent } from './record-documents/record-document-
     MessageItemComponent,
     RecordDocumentFormComponent,
     RecordDocumentItemComponent,
-    RecordDocumentsComponent
+    RecordDocumentsComponent,
+    UploadFileComponent,
+    ProgressComponent
   ],
   imports: [
     BrowserModule,
@@ -397,6 +403,7 @@ import { RecordDocumentFormComponent } from './record-documents/record-document-
     AngularFirestoreModule,
     AngularFireStorageModule,
     BrowserAnimationsModule,
+    NgbTimepickerModule,
     AngularEditorModule,
     FormsModule,
     ToastrModule.forRoot(),

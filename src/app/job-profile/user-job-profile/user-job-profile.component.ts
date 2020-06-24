@@ -110,7 +110,7 @@ export class UserJobProfileComponent implements OnInit {
   }
 
   next() {
-    if (this.step < 4) {
+    if (this.step < 6) {
       this.step++;
     }
   }
