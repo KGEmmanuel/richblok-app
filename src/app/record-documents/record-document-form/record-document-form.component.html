@@ -71,7 +71,7 @@
         </div>
         <div class="upload-btn-wrapper d-flex justify-content-end">
             <button class="btn btn-outline-primary btn-sm mr-1" style="cursor: pointer;">Upload a file</button>
-            <input type="file" name="myfile" multiple/>
+            <input type="file" name="myfile" (change)="onSelectFile($event)"/>
         </div>
 
         <div class="d-flex justify-content-end">

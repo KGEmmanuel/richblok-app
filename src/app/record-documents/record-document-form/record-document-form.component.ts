@@ -8,6 +8,7 @@ import { Formation } from 'src/app/shared/entites/Formation';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 
 @Component({
   selector: 'app-record-document-form',
@@ -18,14 +19,15 @@ export class RecordDocumentFormComponent implements OnInit {
   currentDoc = new Document();
   currentExperience;
   uid;
-  docForm : FormGroup
+  docForm: FormGroup;
   submitted = false;
   experiences = new Array<Experience>();
   currentTraining = new Formation();
   allTrainings = new Array<Formation>();
-
+  currentfile: File;
   constructor(private expSvc: ExperienceService, private afAuth: AngularFireAuth, private formService: FormationService
-              ,private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) { }
+    ,         private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder,
+              private fileUpSvc: FileUploadService) { }
 
   ngOnInit(): void {
     this.afAuth.authState.subscribe(v => {
@@ -40,17 +42,17 @@ export class RecordDocumentFormComponent implements OnInit {
           });
         });
       }
-    })
+    });
     this.afAuth.authState.subscribe(val => {
       if (val) {
         this.uid = val.uid;
         this.formService.editableFormationsListQuery(this.uid).onSnapshot(val => {
           this.allTrainings = [];
           val.forEach(element => {
-              const train = element.data() as Formation;
-              train.id = element.id;
-              this.allTrainings.push(train);
-              console.log('train', train);
+            const train = element.data() as Formation;
+            train.id = element.id;
+            this.allTrainings.push(train);
+            console.log('train', train);
           });
         });
       }
@@ -62,15 +64,23 @@ export class RecordDocumentFormComponent implements OnInit {
       documentDescription: ['', Validators.required],
       signLevel: ['', Validators.required],
       visib: ['', Validators.required],
-}, );
+    });
   }
   get f() { return this.docForm.controls; }
-  save(){
-    this.submitted = true;
+  onSelectFile(event) {
+    this.currentfile = event.target.files && event.target.files[0];
+  }
 
+  save() {
+    this.submitted = true;
+    if (!this.currentfile) {
+      this.toastr.error('Aucun fichier choisi');
+      return;
+    }
+    
     // stop here if form is invalid
     if (this.docForm.invalid) {
-        return;
+      return;
     }
   }
 }
