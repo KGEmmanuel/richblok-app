@@ -1,6 +1,0 @@
-<ngb-rating [(rate)]="currentRate">
-  <ng-template let-fill="fill" let-index="index">
-    <span class="star" [class.filled]="fill === 100" [class.bad]="index < 3" [class.notbad]="index >= 3 && index < 7 " [class.good]="index > 8 ">&#9733;</span>
-  </ng-template>
-</ngb-rating>
-Rate: <b style="color: #057c8b;">{{currentRate}} {{rateInString}}</b>
