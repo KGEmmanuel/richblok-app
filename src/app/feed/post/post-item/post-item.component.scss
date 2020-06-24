@@ -1,0 +1,335 @@
+.like:hover {
+    color: rgb(1, 88, 104);
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.btn-group-fab {
+    position: fixed;
+    width: 50px;
+    height: auto;
+    right: 20px;
+    bottom: 20px;
+}
+
+.btn-group-fab div {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.btn-group-fab .btn {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50%;
+    display: block;
+    margin-bottom: 4px;
+    width: 40px;
+    height: 40px;
+    margin: 4px auto;
+}
+
+.btn-group-fab .btn-main {
+    width: 50px;
+    height: 50px;
+    right: 50%;
+    margin-right: -25px;
+    z-index: 9;
+}
+
+.btn-group-fab .btn-sub {
+    bottom: 0;
+    z-index: 8;
+    right: 50%;
+    margin-right: -20px;
+    -webkit-transition: all 2s;
+    transition: all 0.5s;
+}
+
+.btn-group-fab.active .btn-sub:nth-child(2) {
+    bottom: 60px;
+}
+
+.btn-group-fab.active .btn-sub:nth-child(3) {
+    bottom: 110px;
+}
+
+.btn-group-fab.active .btn-sub:nth-child(4) {
+    bottom: 160px;
+}
+
+.btn-group-fab .btn-sub:nth-child(5) {
+    bottom: 210px;
+}
+
+[data-tooltip]:before {
+    top: 50%;
+    margin-top: -11px;
+    font-weight: 600;
+    border-radius: 2px;
+    background: #585858;
+    color: #fff;
+    content: attr(data-tooltip);
+    font-size: 12px;
+    text-decoration: none;
+    visibility: hidden;
+    opacity: 0;
+    padding: 4px 7px;
+    margin-right: 12px;
+    position: absolute;
+    transform: scale(0);
+    right: 100%;
+    white-space: nowrap;
+    transform-origin: top right;
+    transition: all .3s cubic-bezier(.25, .8, .25, 1);
+}
+
+[data-tooltip]:hover:before {
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: right center 0;
+}
+
+.modal-dialog {
+    background-color: #2c2d2e;
+}
+
+.modal-content {
+    background-color: #2c2d2e;
+}
+
+
+/*Now the styles*/
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+/*Time to apply widths for accordian to work
+Width of image = 640px
+total images = 5
+so width of hovered image = 640px
+width of un-hovered image = 40px - you can set this to anything
+so total container width = 640 + 40*4 = 800px;
+default width = 800/5 = 160px;
+*/
+
+.accordian {
+    width: 500px;
+    height: 320px;
+    overflow: hidden;
+    margin-top: 10px;
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.35);
+    -webkit-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.35);
+    -moz-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.35);
+}
+
+
+/*A small hack to prevent flickering on some browsers*/
+
+.accordian ul {
+    width: 1205px;
+    /*This will give ample space to the last item to move
+instead of falling down/flickering during hovers.*/
+}
+
+.accordian li {
+    position: relative;
+    display: block;
+    width: 100px;
+    float: left;
+    border-left: 1px solid #888;
+    box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.5);
+    /*Transitions to give animation effect*/
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    /*If you hover on the images now you should be able to
+see the basic accordian*/
+}
+
+
+/*Reduce with of un-hovered elements*/
+
+.accordian ul:hover li {
+    width: 20px;
+}
+
+
+/*Lets apply hover effects now*/
+
+
+/*The LI hover style should override the UL hover style*/
+
+.accordian ul li:hover {
+    width: 420px;
+}
+
+.accordian li img {
+    display: block;
+}
+
+
+/*Image title styles*/
+
+.image_title {
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 640px;
+}
+
+.image_title a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 20px;
+    font-size: 16px;
+}
+
+.img {
+    cursor: pointer;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.slider {
+    width: 500px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.slides {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    cursor: pointer;
+    /*
+scroll-snap-points-x: repeat(300px);
+scroll-snap-type: mandatory;
+*/
+}
+
+.slides::-webkit-scrollbar-button:vertical:start:decrement {
+    background: linear-gradient(120deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(240deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(0deg, #696969 30%, rgba(0, 0, 0, 0) 31%);
+    background-color: #b6b6b6;
+}
+
+.slides::-webkit-scrollbar-button:vertical:end:increment {
+    background: linear-gradient(300deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(60deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(180deg, #696969 30%, rgba(0, 0, 0, 0) 31%);
+    background-color: #b6b6b6;
+}
+
+.slides::-webkit-scrollbar-button:horizontal:end:increment {
+    background: linear-gradient(210deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(330deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(90deg, #696969 30%, rgba(0, 0, 0, 0) 31%);
+    background-color: #b6b6b6;
+}
+
+.slides::-webkit-scrollbar-button:horizontal:start:decrement {
+    background: linear-gradient(30deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(150deg, #696969 40%, rgba(0, 0, 0, 0) 41%), linear-gradient(270deg, #696969 30%, rgba(0, 0, 0, 0) 31%);
+    background-color: #b6b6b6;
+}
+
+.slides::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.slides::-webkit-scrollbar-thumb {
+    background: black;
+    border-radius: 10px;
+}
+
+.slides::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.slides>div {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 500px;
+    height: 500px;
+    margin-right: 50px;
+    border-radius: 10px;
+    background: #eee;
+    transform-origin: center center;
+    transform: scale(1);
+    transition: transform 0.5s;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px;
+}
+
+.slides>div:target {
+    /*   transform: scale(0.8); */
+}
+
+.author-info {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 0.75rem;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+}
+
+.author-info a {
+    color: white;
+}
+
+img {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.slider>a {
+    display: inline-flex;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: white;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 0 0.5rem 0;
+    position: relative;
+}
+
+.slider>a:active {
+    top: 1px;
+}
+
+.slider>a:focus {
+    background: #000;
+}
+
+:host>>>.popover {
+    background-color: #009688;
+    color: #fff;
+}
+
+:host>>>.popover>.arrow:after {
+    border-top-color: #009688;
+}

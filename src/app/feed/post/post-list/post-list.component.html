@@ -1,0 +1,91 @@
+<div class="scrollbar" id="style" appScrollable (scrollPosition)="scrollHandler($event)" style="width: 100%!important;">
+    <div class="force-overflow">
+        <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
+            <app-post-form></app-post-form>
+        </div>
+        <div *ngFor="let item of page.data | async; let i=index" style="height: 60%;">
+            <app-post-item [currentPost]="item"></app-post-item>
+            <div *ngIf="i > 0 && (i+1)%5 === 0" class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
+                <div class="box-title border-bottom p-3">
+                    <h6 class="m-0">Job offers
+                    </h6>
+                </div>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="p-3 border-top">
+                            <div class="row">
+                                <div class="col-md-6" *ngFor="let job of allJobs | slice:0:4">
+                                    <app-jobs-item [currentJob]="job"></app-jobs-item>
+                                </div>
+                                <div *ngIf="allJobs.length === 0">
+                                    <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                  <img src="../../assets/imgs/jobs.png" style="width: 50%;">
+                  </span>
+                                    <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                  <h5>No job to display</h5>
+                  </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-title border-top p-3">
+                    <div class="d-flex justify-content-center">
+                        <button type="button " routerLink="/jobs" class="btn btn-lg btn-block btn-outline-gold mb-3 ">
+                     View all
+                    </button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="i > 0 && (i+1)%8 === 0" class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
+                <div class="box-title border-bottom p-3">
+                    <h6 class="m-0">People you might know
+                    </h6>
+                </div>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="p-3 border-top">
+                            <div class="row">
+                                <div class="col-lg-6" *ngFor="let item of users | async">
+                                    <app-friend-suggestion-item [iduser]="item.id"></app-friend-suggestion-item>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                    <img src="../../../../assets/imgs/friends.png" style="width: 40%;">
+                    </span>
+                                <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                                  <span class="d-flex justify-content-center">
+                                    <h5>No suggestion yet, complete your profile to have more proposals</h5>
+                                  </span>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="box-title border-top p-3">
+                    <div class="d-flex justify-content-center">
+                        <button type="button " routerLink="/friends" class="btn btn-lg btn-block btn-outline-gold mb-3 ">
+                   View all
+                  </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="(page.data | async)?.length === 0">
+            <span class="d-flex justify-content-center" style="padding-top: 10%;">
+      <img src="../../../../assets/imgs/feed2.png" style="width: 60%;">
+      </span>
+            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+      <span class="d-flex justify-content-center" style="padding-left: 5%;">
+        <h5>No item to display here. Enlarge your RichBlok community to have more rich contents</h5>
+      </span>
+            </span>
+        </div>
+        <p *ngIf="(page.data | async)?.length > 0"><span class="d-flex justify-content-center text-primary">All items displayed</span></p>
+        <app-loading-spinner *ngIf="page.loading | async"></app-loading-spinner>
+
+    </div>
+</div>

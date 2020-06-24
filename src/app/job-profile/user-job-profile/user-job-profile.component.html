@@ -1,0 +1,301 @@
+<header>
+    <app-header></app-header>
+</header>
+<div class="bg-white shadow-sm border-bottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center py-3">
+                    <div class="profile-left">
+                        <h5 class="font-weight-bold text-dark mb-1 mt-0">{{currentJob?.libelle}}</h5>
+                        <p class="mb-0 text-muted">
+                            <a class="mr-2 font-weight-bold" *ngIf="org" [routerLink]="['/organisation/'+org.id]">
+                {{org.nom}}
+              </a>
+                            <i class="feather-map-pin" *ngIf="currentJob?.completeAddress != null"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted on{{currentJob?.dateCreation?.toDate()}}
+                    </div>
+                    <div class="profile-right ml-auto">
+                        <button *ngIf="dispSav && dispApply" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save
+              &nbsp; </button>
+
+                        <button *ngIf="!dispApply" type="button" class="btn btn-outline-primary mr-1" [routerLink]="['/job-process/'+currentJob.id]"> &nbsp;
+              SmartATS &nbsp; </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="py-4">
+    <div class="container">
+        <div class="row">
+            <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Overview</h6>
+                    </div>
+                    <div class="box-body p-3">
+                        <p>{{currentJob?.description}}
+                        </p>
+                    </div>
+                </div>
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Job Details</h6>
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-borderless mb-0">
+                            <tbody>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Seniority Level</th>
+                                    <td class="p-3">{{currentJob?.fonction}}
+                                    </td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Industry</th>
+                                    <td class="p-3" *ngIf="org">{{org.domaine}}</td>
+                                    <td class="p-3" *ngIf="!org">N/A</td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Employment Type</th>
+                                    <td class="p-3">{{currentJob?.jobType}}
+                                    </td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Job Start</th>
+                                    <td class="p-3">{{currentJob?.jobstartDate}}</td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Skills</th>
+                                    <td class="p-9">
+                                        <div *ngFor="let item of currentJob?.competencessup">{{item.skillName}}({{item.skillMinvValText}})
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Trainings</th>
+                                    <td class="p-9">
+                                        <div *ngFor="let item of currentJob?.formations">{{item.nomDiplome}}({{item.domaine}})</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="box mb-3 shadow-sm border rounded bg-white osahan-post">
+                    <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" *ngIf="org" [src]="org.logo" alt="">
+                            <img class="rounded-circle" *ngIf="user" [src]="user.imageprofil" alt="">
+                        </div>
+                        <div class="font-weight-bold">
+                            <div class="text-truncate" *ngIf="org">{{org.nom}}</div>
+                            <div class="text-truncate" *ngIf="user">{{user.nom}} {{user.prenom}}</div>
+                            <div class="small text-gray-500" *ngIf="org">{{org.domaine}} | {{org.abonnees?.length}} followers</div>
+                        </div>
+                        <span class="ml-auto"></span>
+                    </div>
+                    <div class="p-3 osahan-post-body">
+                        <h5 class="mb-3">About us</h5>
+                        <p *ngIf="org"> {{org.about}} </p>
+                        <p *ngIf="user"> {{user.accroche}} </p>
+                    </div>
+                    <div class="overflow-hidden border-top text-center">
+                    </div>
+                </div>
+            </main>
+            <aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
+                <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                    <div class="p-5">
+                        <img *ngIf="org" [src]="org.logo" class="img-fluid" alt="Responsive image">
+                        <img *ngIf="user" [src]="user.imageprofil" class="img-fluid" alt="Responsive image">
+                    </div>
+                    <div class="p-3 border-top border-bottom">
+                        <h5 class="font-weight-bold text-dark mb-1 mt-0" *ngIf="org"><a [routerLink]="['/organisation/'+org.id]" style="color: white;">{{org.nom}}</a></h5>
+                        <h5 class="font-weight-bold text-dark mb-1 mt-0" *ngIf="user"><a [routerLink]="['/profile/'+user.id]" style="color: white;">{{user.nom}} {{user.prenom}}</a></h5>
+                        <p class="mb-0 text-muted" *ngIf="org">{{org.pays}}
+                        </p>
+                        <p class="mb-0 text-muted" *ngIf="user">{{user.poste}} @ {{user.lieu}}
+                        </p>
+                    </div>
+                    <div class="p-3">
+                        <div class="d-flex align-items-top mb-2">
+                            <p class="mb-0 text-muted">Posted</p>
+                            <p class="font-weight-bold text-dark mb-0 truncatemt-0 ml-auto">
+                                {{currentJob?.dateCreation.toDate()}}</p>
+                        </div>
+                        <div class="d-flex align-items-top">
+                            <p class="mb-0 text-muted">Applicant Rank</p>
+                            <p class="font-weight-bold text-dark mb-0 truncatemt-0 ml-auto">25</p>
+                        </div>
+                    </div>
+                </div>
+                <app-rib-solutions></app-rib-solutions>
+
+            </aside>
+            <aside class="col col-xl-3 order-xl-3 col-lg-6 order-lg-3 col-md-6 col-sm-6 col-12">
+                <button type="button" class="btn btn-lg btn-block btn-outline-gold mb-3" *ngIf="dispApply" data-toggle="modal" data-target="#interviewmodal"> Apply </button>
+                <app-similar-jobs [joboffer]="currentJob"></app-similar-jobs>
+                <app-job-aside></app-job-aside>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+    <app-footer></app-footer>
+</footer>
+<div class="modal fade" id="interviewmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div *ngIf="step===1">
+                    <div *ngFor="let question of currentJob.questions; let i = index">
+                        {{i}}. {{question}}
+                        <div class="form-group">
+                            <label class="mb-1">Answer to question {{i}}</label>
+                            <div class="position-relative icon-form-control">
+                                <i class="feather-map-pin position-absolute"></i>
+                                <input type="text" class="form-control" placeholder="Type your answer here">
+                            </div>
+                        </div>
+                    </div>
+                    <div style=" margin-top: 10px;" class="d-flex justify-content-end col-lg-12">
+                        <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                    </div>
+                </div>
+                <span class="row" *ngIf="step===2 || step === 3 || step === 4 || step ===5">
+          <span class="col-lg-10">
+            <h6>Job description</h6>
+            <span><small style="color: grey;">You have to check the items that will constitute your CV to
+                apply</small></span>
+                </span>
+                <span class="col-lg-2 d-flex justify-content-end">
+            <i class="feather-x" data-dismiss="modal"></i>
+          </span>
+                </span>
+                <hr>
+
+                <div class=" network-item  mb-3">
+                    <div *ngIf="step===2">
+                        <div class="col-lg-12">
+                            <textarea type="text" class="form-control" id="motivation" placeholder="Type your motivation about this job" [(ngModel)]="currentApplication.motivation"></textarea>
+                        </div>
+                        <div style=" margin-top: 10px;" class="d-flex justify-content-end col-lg-12">
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="step===3">
+                        <div class="col-lg-6">
+                            <span>
+                <h6 style="color: grey;">Required skills</h6>
+                <ul>
+                  <li *ngFor="let ReqSkil of currentJob?.competencessup">
+                    {{ReqSkil.skillName}}({{ReqSkil.skillMinvValText}})</li>
+                </ul>
+              </span>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6 style="color: grey;">Your skills</h6>
+                            <div class="custom-control custom-checkbox mb-3" *ngFor="let sk of usersSkils let i = index">
+                                <input type="checkbox" [checked]="currentApplication.skillsRef.includes(sk.id)" class="custom-control-input" [id]="'sk'+i" (change)="changed($event)" [value]="sk.id">
+                                <label class="custom-control-label" [for]="'sk'+i">{{sk.skillName}}({{sk.skillStringValue}})</label>
+
+                            </div>
+                            <span *ngIf="usersTraining.length <1">You have no skills registered on RichBlok. Navigate to records so as
+                to register some</span>
+
+                        </div>
+                        <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="step===4">
+                        <div class="col-lg-6">
+                            <span>
+                <h6 style="color: grey;">Required Diploma</h6>
+                <ul>
+                  <li *ngFor="let trai of currentJob?.formations">{{trai.nomDiplome}} in {{trai.domaine}}</li>
+                </ul>
+
+              </span>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6 style="color: grey;">Your Diplomas</h6>
+                            <div class="custom-control custom-checkbox mb-3" *ngFor="let dip of usersTraining let i = index">
+                                <input type="checkbox" class="custom-control-input" [checked]="currentApplication.trainings.includes(dip.id)" [id]="'train'+i" (change)="trainchanged($event)" [value]="dip.id">
+                                <label class="custom-control-label" [for]="'train'+i">{{dip.libelle}} in {{dip.domaineName}}</label>
+                            </div>
+                            <span *ngIf="usersTraining.length <1">You have no diploma registered on RichBlok. Navigate to records so
+                as to register some</span>
+
+                        </div>
+                        <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="step===5">
+                        <div class="col-lg-6">
+                            <span>
+                <h6 style="color: grey;">Required Experiences</h6>
+                <ul>
+                  <li *ngFor="let ex of currentJob?.experiences">{{ex.poste}} in {{ex.domaine}}</li>
+                </ul>
+              </span>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6 style="color: grey;">Your Experiences</h6>
+                            <div class="custom-control custom-checkbox mb-3" *ngFor="let exp of userExperiences let i = index">
+                                <input type="checkbox" class="custom-control-input" [id]="'train'+i" (change)="expchanged($event)" [value]="exp.id" [checked]="currentApplication.exp.includes(exp.id)">
+                                <label class="custom-control-label" [for]="'train'+i">{{exp.libelle}}</label>
+                            </div>
+                            <span *ngIf="userExperiences.length <1">You have no experience registered on RichBlok. Navigate to records
+                so as to register some</span>
+                        </div>
+                        <div style="margin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="next()">Next</button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="step===6">
+                        <h6 style="color: grey;" class=" col-lg-12">Basic information and approvals</h6>
+                        <form>
+                            <div class="form-group col-lg-12">
+                                <label for="skillname">Town</label>
+                                <input type="text" required class="form-control" id="skillname" placeholder="Enter your town" formControlName="skillName">
+
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label for="skillname">State</label>
+                                <input type="text" required class="form-control" id="skillname" placeholder="Enter your state" formControlName="skillName">
+
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label for="skillname">Country</label>
+                                <input type="text" required class="form-control" id="skillname" placeholder="Enter your country" formControlName="skillName">
+
+                            </div>
+                            <div class="form-check  col-lg-12">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">
+                  I accept / agree to have my background checked by the recruiter through RichBlok</label>
+                            </div>
+                            <div class="form-check  col-lg-12">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                <label class="form-check-label" for="exampleCheck2">
+
+                  I sign that the information is correct and accepts the privacy / confidentiality / cookie policies
+                  and submits my application.</label>
+                            </div>
+                        </form>
+                        <div style="fmargin-top: 10px;" class="col-lg-12 d-flex justify-content-end">
+                            <button class="btn btn-outline-danger" (click)="prev()">Previous</button> &nbsp; &nbsp;
+                            <button class="btn btn-outline-primary" (click)="save()">Send application</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

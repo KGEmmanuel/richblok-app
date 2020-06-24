@@ -1,0 +1,439 @@
+<header>
+    <app-header></app-header>
+</header>
+<div class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <aside class="col col-xl-3 order-xl-1 col-lg-12 order-lg-1 col-12 ">
+
+                <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                    <div class="py-4 px-3 border-bottom">
+                        <img src="{{currentUser.imageprofil}}" class="img-fluid mt-2 rounded-circle" alt="Profile image">
+                        <h5 class="font-weight-bold text-dark mb-1 mt-4">{{currentUser.nom}} {{currentUser.prenom}}</h5>
+                        <p class="mb-0 text-muted">{{currentUser.poste}} <span *ngIf="currentUser.lieu != null">at</span> {{currentUser.lieu}}</p>
+                    </div>
+                    <div class="d-flex">
+                        <div class="col-6 border-right p-3">
+                            <h6 class="font-weight-bold text-dark mb-1">{{currentUser.abonnees.length}}</h6>
+                            <p class="mb-0 text-black-50 small">Connections</p>
+                        </div>
+                        <div class="col-6 p-3">
+                            <h6 class="font-weight-bold text-dark mb-1">{{currentUser.visiteurs.length}}</h6>
+                            <p class="mb-0 text-black-50 small">Views</p>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden border-top">
+                        <div class="network-item-footer py-3 d-flex text-center">
+                            <div class="col-6 pl-3 pr-1">
+                                <button type="button" class="btn btn-primary btn-sm btn-block"> Connect </button>
+                            </div>
+                            <div class="col-6 pr-3 pl-1">
+                                <button type="button" class="btn btn-outline-primary btn-sm btn-block"> <i class="feather-user-plus"></i> Follow </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <app-connection-aside></app-connection-aside>
+                <app-follow-orgs></app-follow-orgs>
+                <app-rib-solutions></app-rib-solutions>
+            </aside>
+            <main class="col col-xl-9 order-xl-2 col-lg-12 order-lg-2 col-md-12 col-sm-12 col-12 ">
+                <div class="box border shadow-sm rounded bg-white mb-3 overflow-hidden">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Career Goal</h6>
+                    </div>
+                    <div class="row" style="padding:2%">
+                        <div class="col col-xl-3 col-lg-12">
+                            <div class="box border shadow-sm rounded bg-white mb-3 overflow-hidden">
+                                <div class="box-title border-bottom p-3">
+                                    <h6 class="m-0">
+                                        <span class="d-flex justify-content-center">
+                                    Certifications
+                                  </span>
+                                    </h6>
+                                </div>
+                                <span class="d-flex justify-content-center">
+                                  <circle-progress [percent]="85" [radius]="50" [titleColor]="'#78C000'" [unitsColor]="'#78C000'" [outerStrokeWidth]="8" [innerStrokeWidth]="4" [outerStrokeColor]="'#78C000'" [showSubtitle]="false" [innerStrokeColor]="'#C7E596'" [animation]="true" [animationDuration]="300"></circle-progress>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col col-xl-3 col-lg-12">
+                            <div class="box border shadow-sm rounded bg-white mb-3 overflow-hidden">
+                                <div class="box-title border-bottom p-3">
+                                    <h6 class="m-0">
+                                        <span class="d-flex justify-content-center">
+                                Evaluations
+                              </span>
+                                    </h6>
+                                </div>
+                                <span class="d-flex justify-content-center">
+                                <circle-progress [percent]="56" [radius]="50" [titleColor]="'#78C000'" [unitsColor]="'#78C000'" [outerStrokeWidth]="8" [innerStrokeWidth]="4" [outerStrokeColor]="'#78C000'" [showSubtitle]="false" [innerStrokeColor]="'#C7E596'" [animation]="true" [animationDuration]="300"></circle-progress>
+                              </span> </div>
+                        </div>
+                        <div class="col col-xl-3 col-lg-12">
+                            <div class="box border shadow-sm rounded bg-white mb-3 overflow-hidden">
+                                <div class="box-title border-bottom p-3">
+                                    <h6 class="m-0">
+                                        <span class="d-flex justify-content-center">
+                                Demonstrations
+                              </span>
+                                    </h6>
+                                </div>
+                                <span class="d-flex justify-content-center">
+                                <circle-progress [percent]="90" [radius]="50" [titleColor]="'#78C000'" [unitsColor]="'#78C000'" [outerStrokeWidth]="8" [innerStrokeWidth]="4" [outerStrokeColor]="'#78C000'" [showSubtitle]="false" [innerStrokeColor]="'#C7E596'" [animation]="true" [animationDuration]="300"></circle-progress>
+                              </span> </div>
+                        </div>
+                        <div class="col col-xl-3 col-lg-12">
+                            <div class="box border shadow-sm rounded bg-white mb-3 overflow-hidden">
+                                <div class="box-title border-bottom p-3">
+                                    <h6 class="m-0">
+                                        <span class="d-flex justify-content-center">
+                                Readiness
+                              </span>
+                                    </h6>
+                                </div>
+                                <span class="d-flex justify-content-center">
+                                <circle-progress [percent]="19" [radius]="50" [titleColor]="'#78C000'" [unitsColor]="'#78C000'" [outerStrokeWidth]="8" [innerStrokeWidth]="4" [outerStrokeColor]="'#78C000'" [showSubtitle]="false" [innerStrokeColor]="'#C7E596'" [animation]="true" [animationDuration]="300"></circle-progress>
+                              </span> </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col col-xl-6 col-lg-12">
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Infos</h6>
+                            </div>
+                            <div class="box-body p-3">
+                                <p>{{currentUser.accroche}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box shadow-sm mb-3 border rounded bg-white ads-box overflow-hidden">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Social Profiles</h6>
+                                <p class="mb-0 mt-0 small">Other social links
+                                </p>
+                            </div>
+                            <div class="p-3">
+                                <span class="truncate"><i class="feather-globe mr-2" style="color: rgb(175, 129, 31);"></i><a  style="color: white;">{{currentUser.email}}</a></span>
+                                <hr>
+                                <span class="truncate"><i class="feather-linkedin mr-2" style="color: #0e76a8;"></i><a  style="color: white;">{{currentUser.linkedIn}}</a></span>
+                                <hr>
+                                <span class="truncate"><i class="feather-twitter mr-2" style="color: #00acee"></i> <a  style="color: white;">{{currentUser.twiter}}</a></span>
+                                <hr>
+                                <span class="truncate"><i class="feather-facebook mr-2" style="color: #3b5998;"></i><a style="color: white;"> {{currentUser.facebook}}</a></span>
+                                <hr>
+                                <span class="truncate"><i class="feather-instagram mr-2" style="color: #c08d64 ;"></i><a  style="color: white;"> {{currentUser.youtube}}</a></span>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col col-xl-6 col-lg-12">
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Basic informations</h6>
+                            </div>
+                            <div class="box-body p-3">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-calendar mr-2" style="color: rgb(175, 129, 31);"></i> Date of birth
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.dateNaissance}}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-map-pin mr-2" style="color: rgb(175, 129, 31);"></i> Place of birth
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.lieuNaissance}}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-user mr-2" style="color: rgb(175, 129, 31);"></i> Sex
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.sexe}}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-phone-call mr-2" style="color: rgb(175, 129, 31);"></i> Telephone
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.telephone}}
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-mail mr-2" style="color: rgb(175, 129, 31);"></i> Email address
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.email}}
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-map-pin mr-2" style="color: rgb(175, 129, 31);"></i> Location
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.ville}}
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-award mr-2" style="color: rgb(175, 129, 31);"></i> Post
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.poste}}
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-home mr-2" style="color: rgb(175, 129, 31);"></i> Organisation
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.lieu}}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <i class="feather-user mr-2" style="color: rgb(175, 129, 31);"></i> Member since
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{currentUser.dateCreation.toDate() | date : 'medium'}}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h6 class="m-0">Experience</h6>
+                            </div>
+                            <div class="col-lg-4">
+                                <span class="d-flex justify-content-center">
+                                <h6 class="m-0">Level of trust</h6>
+                              </span>
+
+                                <br>
+                                <div class="row">
+                                    <div class="col-lg-6 d-flex justify-content-center">
+                                        <small>Community</small>
+                                    </div>
+                                    <div class="col-lg-6 d-flex justify-content-center">
+                                        <small>Employers</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="box-body p-3 border-bottom" *ngFor="let experience of experiences | slice:0: showexp; let i=index">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="d-flex align-items-top job-item-header pb-2">
+                                    <div class="mr-2">
+                                        <h6 class="font-weight-bold text-dark mb-0">{{experience.libelle}}</h6>
+                                        <div class="text-truncate text-primary">{{experience.entreprise}}</div>
+                                        <div class="small text-gray-500">{{experience.debut}} - {{experience.fin}} </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0">{{experience.description}}</p>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-6 d-felx justify-content-center">
+                                        <circle-progress [percent]="67" [radius]="50" [titleColor]="'#78C000'" [unitsColor]="'#78C000'" [outerStrokeWidth]="8" [innerStrokeWidth]="4" [outerStrokeColor]="'#78C000'" [showSubtitle]="false" [innerStrokeColor]="'#C7E596'" [animation]="true" [animationDuration]="300"></circle-progress>
+                                    </div>
+                                    <div class="col-lg-6 d-felx justify-content-center">
+                                        <circle-progress [percent]="56" [radius]="50" [titleColor]="'#78C000'" [unitsColor]="'#78C000'" [outerStrokeWidth]="8" [innerStrokeWidth]="4" [outerStrokeColor]="'#78C000'" [showSubtitle]="false" [innerStrokeColor]="'#C7E596'" [animation]="true" [animationDuration]="300"></circle-progress>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div *ngIf="experiences.length === 0">
+                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+          <img src="../../assets/imgs/lang.png" style="width: 40%;">
+          </span>
+                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+          <h5>No experience recorded.</h5>
+          </span>
+                    </div>
+                    <div class="box-title border-top p-3" *ngIf="showexp < experiences.length">
+                        <div class="d-flex justify-content-center">
+                            <button type="button " (click)="moreExp()" class="btn btn-lg btn-block btn-outline-gold mb-3 ">
+                  Show more
+                  </button>
+                        </div>
+                    </div>
+                    <div class="box-title border-top p-3" *ngIf="showexp === experiences.length && experiences.length > 2">
+                        <div class="d-flex justify-content-center">
+                            <button type="button " (click)="hidexp()" class="btn btn-lg btn-block btn-outline-danger mb-3 ">
+                Hide all
+                </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Education</h6>
+                    </div>
+                    <div class="box-body p-3 border-bottom" *ngFor="let training of trainings  | slice:0:showfrm; let i=index">
+                        <div class="d-flex align-items-top job-item-header pb-2">
+                            <div class="mr-2">
+                                <h6 class="font-weight-bold text-dark mb-0">{{training.libelle}}</h6>
+                                <div class="text-truncate text-primary">{{training.domaineName}}</div>
+                                <div class="small text-gray-500">{{training.datedeb}} - {{training.datefin}} </div>
+                            </div>
+                        </div>
+                        <p class="mb-0">{{training.description}}</p>
+
+                    </div>
+                    <div *ngIf="trainings.length === 0">
+                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+          <img src="../../assets/imgs/skill.png" style="width: 25%;">
+          </span>
+                        <span class="d-flex justify-content-center" style="padding-top: 5%;">
+          <h5>No education recorded.</h5>
+          </span>
+                    </div>
+                    <div class="box-title border-top p-3" *ngIf="showfrm < trainings.length">
+                        <div class="d-flex justify-content-center">
+                            <button type="button " (click)="moreFrm()" class="btn btn-lg btn-block btn-outline-gold mb-3 ">
+                Show more
+                </button>
+                        </div>
+                    </div>
+                    <div class="box-title border-top p-3" *ngIf="showfrm === trainings.length && trainings.length> 2">
+                        <div class="d-flex justify-content-center">
+                            <button type="button " (click)="hideFrm()" class="btn btn-lg btn-block btn-outline-danger mb-3 ">
+              Hide all
+              </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-xl-6 col-lg-12">
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Skills</h6>
+                            </div>
+                            <div class="scrollbar bg-white border" id="style">
+                                <div class=" force-overflow bg-white ">
+                                    <div class="box-body p-3">
+                                        <div class="border-bottom" *ngFor="let currentSkill of skills">
+                                            <div class="d-flex align-items-center osahan-post-header p-3  people-list">
+                                                <div class="overflow-hidden mr-2">
+                                                    <h6 class="font-weight-bold text-dark mb-0 truncatetext-truncate">{{currentSkill.skillName}}</h6>
+                                                    <div class="small text-gray-500"> {{currentSkill.skillLevel}}({{currentSkill.skillduration}} months)</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12" style="padding-bottom:2% !important;" *ngIf="currentSkill.skillLevel != null || currentSkill.skillLevel != undefined">
+                                                <div class="progress" *ngIf="currentSkill.skillLevel === 'Beginner'">
+                                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">20%</div>
+                                                </div>
+                                                <div class="progress" *ngIf="currentSkill.skillLevel === 'Elementary'">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">40%</div>
+                                                </div>
+                                                <div class="progress" *ngIf="currentSkill.skillLevel === 'Intermediate'">
+                                                    <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                                                </div>
+                                                <div class="progress" *ngIf="currentSkill.skillLevel === 'Upper-intermediate'">
+                                                    <div class="progress-bar" role="progressbar" style="width: 70%; background-color: rgb(59, 59, 219);" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+                                                </div>
+                                                <div class="progress" *ngIf="currentSkill.skillLevel === 'Advanced'">
+                                                    <div class="progress-bar" role="progressbar" style="width: 90%; background-color: rgb(202, 42, 235);" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
+                                                </div>
+                                                <div class="progress" *ngIf="currentSkill.skillLevel === 'Expert'">
+                                                    <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="skills.length === 0">
+                                            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                                <img src="../../assets/imgs/real.png" style="width: 40%;">
+                                </span>
+                                            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                                <h5>No skill recorded.</h5>
+                                </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col col-xl-6 col-lg-12">
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Realisations</h6>
+                            </div>
+                            <div class="scrollbar bg-white border" id="style">
+                                <div class=" force-overflow bg-white ">
+                                    <div class="box-body p-3">
+                                        <div class="row">
+                                            <div class="col-lg-6" *ngFor="let currentRealisation of realisations">
+                                                <article class="portfolio-item device tablet left flex-order-tablet_0 responsive-design video-design device-list">
+                                                    <div class="device-hardware">
+                                                        <a class="hover-trigger" data-toggle="modal" data-target="#realdetailModal">
+                                                            <span class="device-screen" style="background-image: url({{currentRealisation.image}});">
+                                              <span class="hover-name">{{currentRealisation.nom}}</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </article>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="realisations.length === 0" style="margin-top: 30% !important;">
+                                            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                                <img src="../../assets/imgs/feed.png" style="width: 40%;">
+                                </span>
+                                            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+                                <h5>No realisation recorded.</h5>
+                                </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<footer>
+    <app-footer></app-footer>
+</footer>

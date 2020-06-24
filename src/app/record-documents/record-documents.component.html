@@ -1,0 +1,34 @@
+<div class="box shadow-sm border rounded bg-white mb-3">
+    <div class="box-title border-bottom p-3">
+        <h6 class="row">
+            <span class="col-lg-6">
+      <span *ngIf="!form">
+       Documents
+      </span>
+            <span *ngIf="form">
+        Add a document
+      </span>
+            </span>
+            <span class="ml-auto col-lg-6 d-flex justify-content-end">
+      <button type="button" class="btn btn-light btn-sm" *ngIf="!form" (click)="showForm()"><i
+          class="feather-plus"></i></button>
+      <button type="button" class="btn btn-light btn-sm" *ngIf="form" (click)="hideForm()"><i
+          class="feather-x"></i></button>
+
+    </span>
+        </h6>
+    </div>
+    <app-record-document-form *ngIf="form" (skillSaved)="hideForm()"></app-record-document-form>
+    <div class="box-body " *ngIf="!form">
+        <app-record-document-item></app-record-document-item>
+
+        <!-- <div *ngIf="userDocs.length === 0">
+            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<img src="../../../assets/imgs/demons.png" style="width: 40%;">
+</span>
+            <span class="d-flex justify-content-center" style="padding-top: 5%;">
+<h5>No document recorded. Click on the top right button to record one</h5>
+</span>
+        </div>-->
+    </div>
+</div>

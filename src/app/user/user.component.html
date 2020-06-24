@@ -1,0 +1,99 @@
+<header>
+    <app-header></app-header>
+</header>
+<div class="py-4" *ngIf="currentUser">
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <aside class="col col-xl-3 order-xl-1 col-lg-12 order-lg-1 col-12">
+                <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                    <div class="py-4 px-3 border-bottom">
+                        <img [src]="currentUser?.imageprofil" class="img-fluid mt-2 rounded-circle" alt="Responsive image">
+                        <h5 class="font-weight-bold text-dark mb-1 mt-4">{{currentUser?.nom}} {{currentUser?.prenom}}</h5>
+                        <p class="mb-0 text-muted">{{currentUser?.poste}} at {{currentUser?.lieu}}</p>
+                    </div>
+                    <div class="d-flex">
+                        <div class="col-6 border-right p-3">
+                            <h6 class="font-weight-bold text-dark mb-1">{{currentUser?.abonnees?.length}}</h6>
+                            <p class="mb-0 text-black-50 small">Connections</p>
+                        </div>
+                        <div class="col-6 p-3">
+                            <h6 class="font-weight-bold text-dark mb-1">{{views}}</h6>
+                            <p class="mb-0 text-black-50 small">Views</p>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden border-top">
+                        <a class="font-weight-bold p-3 d-block" (click)="logout()" href=""> Log out </a>
+                    </div>
+                </div>
+                <app-skills></app-skills>
+                <app-rib-solutions></app-rib-solutions>
+
+            </aside>
+
+            <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-2 col-md-12 col-sm-12 col-12">
+                <div class="box shadow-sm rounded bg-white mb-3 overflow-hidden">
+                    <div>
+                        <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="connections-tab" data-toggle="tab" href="#portfolio" role="tab" aria-controls="porfolio" aria-selected="true">Portfolio</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="false">About</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" id="real-tab" data-toggle="tab" href="#real" role="tab" aria-controls="home" aria-selected="false">Realisations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="updates-tab" data-toggle="tab" href="#updates" role="tab" aria-controls="updates" aria-selected="false">Updates</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="connections-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="false">Connections</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <app-user-about></app-user-about>
+
+                    </div>
+                    <div class="tab-pane fade" id="updates" role="updates" aria-labelledby="updates-tab">
+                        <app-user-post></app-user-post>
+                    </div>
+                    <div class="tab-pane fade" id="real" role="real" aria-labelledby="real-tab">
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Realisations</h6>
+                            </div>
+
+                            <app-realisation></app-realisation>
+
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade" id="connections" role="connections" aria-labelledby="connections-tab">
+                        <app-user-friends></app-user-friends>
+                    </div>
+                    <div class="tab-pane  show active fade" id="portfolio" role="portfolio" aria-labelledby="portfolio-tab">
+                        <app-user-portfolio></app-user-portfolio>
+                    </div>
+                </div>
+
+            </main>
+            <aside class="col col-xl-3 order-xl-3 col-lg-12 order-lg-3 col-12">
+                <button type="button" class="btn btn-lg btn-block btn-outline-gold mb-3" routerLink="/settings"> <i class="feather-settings"></i> Configure my profile</button>
+                <app-user-links></app-user-links>
+                <app-follow-orgs></app-follow-orgs>
+                <app-similar-pages></app-similar-pages>
+                <app-job-aside></app-job-aside>
+            </aside>
+
+        </div>
+    </div>
+</div>
+<footer>
+    <app-footer></app-footer>
+</footer>

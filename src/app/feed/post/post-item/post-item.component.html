@@ -1,0 +1,141 @@
+<div class="box mb-3 shadow-sm border rounded bg-white osahan-post">
+    <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+        <div class="dropdown-list-image mr-3">
+            <img class="rounded-circle" [src]="ownedUser?.imageprofil" alt="">
+            <div class="status-indicator bg-success"></div>
+        </div>
+        <div class="font-weight-bold">
+            <div class="text-truncate pop" style="cursor: pointer;" [ngbPopover]="popContent" [routerLink]="['/profile/'+ ownedUser.id]">{{ownedUser?.nom}} {{ownedUser?.prenom}}</div>
+            <div class="small" style="color: grey;">{{ownedUser?.poste}} at {{ownedUser?.lieu}}</div>
+            <div class="small" style="color: grey;"><i class="feather-map-pin" *ngIf="currentPost?.location != null"></i> {{currentPost?.location}}</div>
+        </div>
+        <span *ngIf="!preview" class="ml-auto small" style="color: grey;"><i class="feather-clock"></i> {{currentPost?.date?.toDate() | date:"medium"}}
+      <br>
+      <div class="d-flex justify-content-end" style="padding-top: 2%;">
+        <span class="text-primary" style="font-size: 1.2m; font-weight: bold;">{{currentPost?.typePost}}</span>
+    </div>
+    </span>
+    <span *ngIf="preview" class="ml-auto small" style="color: grey;">{{currentPost?.date | date:"short"}}</span>
+</div>
+<div class="p-3 border-bottom osahan-post-body">
+    <h4>{{currentPost.titre}}</h4>
+    <p> {{currentPost?.description}} </p>
+    <!--<img *ngIf="currentPost?.medias" [src]="currentPost?.medias[0]?.src" style="width: 100%;" class="img-fluid">
+    <div *ngIf="currentPost?.medias.length>0">
+        <ul>
+            <li >
+                <img data-toggle="modal" data-target="#imageModal" [src]="med.src" style="width: 100% !important;" />
+            </li>
+        </ul>
+    </div>-->
+    <div class="slider" *ngIf="currentPost?.medias.length>0" style="margin-top: 4%;">
+        <div>
+            <div class="slides">
+                <div id="slide-{{i+1}}" *ngFor="let med of currentPost?.medias, let i = index">
+                    <img [src]="med.src" style="width: 100% !important; border-radius: 10px;" />
+                    <h2 *ngIf="currentPost.medias.length>1" style="position: absolute; margin-top: 40%; margin-left: 40%; color: rgb(10, 110, 105);">{{i+1}} / {{currentPost?.medias.length}}</h2>
+                </div>
+            </div>
+        </div>
+        <!--<div style="margin-top: 2%;">
+            <a href="#slide-{{i+1}}" rel="no-refresh" *ngFor="let med of currentPost?.medias, let i = index">
+                <button class="btn btn-primary" style="border-radius: 30%;" *ngIf="currentPost.medias.length>1" >
+             <h6 *ngIf="currentPost.medias.length>1"> {{i+1}} </h6>
+            </button>&nbsp;
+            </a>
+        </div>-->
+    </div>
+</div>
+<div class="p-3 border-bottom osahan-post-footer">
+    <div class="row">
+        <div class="col-lg-8">
+            <a class="mr-3 text-secondary" (click)="tooglelike()"><i class="feather-heart text-primary"
+            *ngIf="hasliked" title="dislike"></i> <i class="feather-heart like" *ngIf="!hasliked" title="Like"></i>
+          {{currentPost?.userliked?.length}}</a>
+            <a class="mr-3 text-secondary" (click)="tooglecomments()"><i class="feather-message-square" title="Comment"></i>
+          {{commentcount}}</a>
+            <a class="mr-3 text-secondary" data-toggle="modal" data-target="#exampleModalshare" title="Repost"><i class="feather-repeat"></i> </a>
+        </div>
+        <div class="col-lg-4 d-flex justify-content-end">
+            <app-certify-item></app-certify-item>
+        </div>
+    </div>
+</div>
+<app-post-comments [postItem]="currentPost" [currentUser]="currentuser" *ngIf="showcomments"></app-post-comments>
+</div>
+<div class="modal fade" id="exampleModalshare" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <span class="col-lg-12 d-flex justify-content-end">
+            <i class="feather-x" data-dismiss="modal"></i>
+          </span>
+                <hr>
+                <span style="margin-top: -4% !important;">
+         <app-post-share></app-post-share>
+        </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item " *ngFor="let med of currentPost?.medias">
+                            <img class="d-block w-100" [src]="med.src" alt="First slide">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #popContent class="popover">
+    <div class="border network-item rounded mb-3 bg-white">
+        <div class="p-3 d-flex align-items-center network-item-header border-bottom">
+            <div class="dropdown-list-image mr-3">
+                <img class="rounded-circle" src="{{ownedUser.imageprofil}}" alt="">
+            </div>
+            <a>
+                <div class="font-weight-bold">
+                    <h6 class="font-weight-bold text-dark mb-0 " title="{{ownedUser.nom}} {{ownedUser.prenom}}">
+                        {{ownedUser.nom}} {{ownedUser.prenom}}
+                    </h6>
+                    <div class="small text-black-50 " title="{{ownedUser.poste}} at {{ownedUser.lieu}}">{{ownedUser.poste}} at {{ownedUser.lieu}}</div>
+                </div>
+
+            </a>
+        </div>
+        <div class="network-item-footer py-3 d-flex text-center ">
+            <div class="col-6 pl-3 pr-1">
+                <app-initchat></app-initchat>
+            </div>
+            <div class="col-6 pr-3 pl-1">
+                <button type="button" class="btn btn-outline-danger btn-sm btn-block"> <i class="feather-user-minus"></i>
+          Disconnect</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
