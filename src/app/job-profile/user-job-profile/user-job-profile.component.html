@@ -12,7 +12,7 @@
                             <a class="mr-2 font-weight-bold" *ngIf="org" [routerLink]="['/organisation/'+org.id]">
                 {{org.nom}}
               </a>
-                            <i class="feather-map-pin" *ngIf="currentJob?.completeAddress != null"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted on{{currentJob?.dateCreation?.toDate() | date}}
+                            <i class="feather-map-pin" *ngIf="currentJob?.completeAddress != null"></i> <span [innerHTML]="currentJob?.completeAddress"> </span> -- Posted on{{currentJob?.dateCreation?.toDate()}}
                     </div>
                     <div class="profile-right ml-auto">
                         <button *ngIf="dispSav && dispApply" type="button" class="btn btn-light mr-1" (click)="save()"> &nbsp; Save
@@ -122,7 +122,7 @@
                         <div class="d-flex align-items-top mb-2">
                             <p class="mb-0 text-muted">Posted</p>
                             <p class="font-weight-bold text-dark mb-0 truncatemt-0 ml-auto">
-                                {{currentJob?.dateCreation.toDate() | date}}</p>
+                                {{currentJob?.dateCreation.toDate()}}</p>
                         </div>
                         <div class="d-flex align-items-top">
                             <p class="mb-0 text-muted">Applicant Rank</p>

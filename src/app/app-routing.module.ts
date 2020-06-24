@@ -1,3 +1,4 @@
+import { UploadFileComponent } from './RibComponents/upload-file/upload-file.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
@@ -85,7 +86,9 @@ const routes: Routes = [
   { path: 'create-challenge', component: EvaluateFormComponent},
   { path: 'search', component: SearchComponent},
   { path: '404', component: NotfoundComponent },
+  { path: 'upload', component: UploadFileComponent },
   { path: '**', component: NotfoundComponent }
+
 ];
 
 @NgModule({
