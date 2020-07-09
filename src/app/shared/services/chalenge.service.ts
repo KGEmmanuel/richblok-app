@@ -1,0 +1,33 @@
+import { Injectable } from '@angular/core';
+import { Challenge } from '../entites/Challenge';
+import * as firebase from 'firebase';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChalengeService {
+
+  readonly path = 'challenges';
+  db = firebase.firestore();
+
+  constructor() { }
+
+  chalengesListOf(owner: string) {
+    return this.db.collection(this.path).where('creatorRef', '==', owner);
+  }
+
+  chalengesListOfSkill(skill: string) {
+
+  }
+
+  save(job: Challenge) {
+    job.dateCreation = new Date();
+    return this.db.collection(this.path).add(Object.assign({}, job));
+  }
+  update(job: Challenge){
+    return this.db.collection(this.path).doc(job.id).update(Object.assign({},job));
+  }
+  getDocRef(id) {
+    return this.db.collection(this.path).doc(id);
+  }
+}

@@ -1,0 +1,115 @@
+<header>
+  <app-header></app-header>
+</header>
+
+<div class="py-5 bg-primary">
+  <div class="container">
+     <div class="row">
+        <div class="col-md-8 mx-auto">
+           <h1 class="text-white font-weight-light"> Offer a <span class="font-weight-bold">Job</span></h1>
+           <p class="mb-2 text-white-50">Use our ATS (Application Tracking Software) solution to hire fast and free with background checks
+           </p>
+        </div>
+     </div>
+  </div>
+</div>
+<div class="py-5">
+  <div class="container">
+     <div class="row">
+        <div class="col-md-10 mx-auto">
+           <div class="bg-white p-5 shadow-sm box border rounded">
+            <main style="padding-top: 4%;padding-bottom: 4%;">
+
+              <div class="container">
+                  <h3 class="card-title" style="color: grey !important
+                  ;">RichBlok Application Tracking Software interface</h3>
+                   <span>
+                    <h5 style="color: grey !important;">A 5 step recruitment process</h5>
+                  </span>
+                  <hr>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="main-timeline4">
+                              <div class="timeline" *ngIf="currentJob.currentStep>=1" >
+                                  <span class="timeline-icon"></span>
+                                  <span  class="year" style="cursor: pointer;" (click)="navStep1()">Step 1 </span>
+                                  <div class="timeline-content" style="cursor: pointer;" (click)="navStep1()">
+                                      <h3 class="title">Job offer</h3>
+                                      <p class="description">
+
+                                          Welcome on the RichBlok tracking software interface. In this step your are required to post the job offer, define pre-selection criteria, pre-interviews questionnaires and challenges.
+
+                                      </p>
+                                      <br>
+                                      <p class="description" *ngIf="currentJob.currentStep==1">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==1" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=2">
+                                  <span class="timeline-icon"></span>
+                                  <span  class="year" style="cursor: pointer;" routerLink="/post-job-step-two">Step 2</span>
+                                  <div class="timeline-content">
+                                      <h3 class="title">Sorting</h3>
+                                      <p class="description">
+                                        In this step our AI will authomatically sort the top  between the applicants and propose them to you. You will be able to prepare the pre-interview, check their background and send some to the pre-interviews
+                                      </p>
+                                      <br>
+                                      <p class="description" *ngIf="currentJob.currentStep==2">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==2" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=3">
+                                  <span class="timeline-icon"></span>
+                                  <span  class="year"  style="cursor: pointer;" routerLink="/post-job-step-three">Step 3</span>
+                                  <div class="timeline-content">
+                                      <h3 class="title">Scoring</h3>
+                                      <p class="description">
+                                       You are on the right way. This step requires you to do the scoring of the pre-interviews for each participant, formulate the salary package and invitation to the final interviews
+                                      </p>
+                                      <br>
+                                      <p class="description" *ngIf="currentJob.currentStep==3">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==3" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=4">
+                                  <span class="timeline-icon"></span>
+                                  <span  class="year"  style="cursor: pointer;" routerLink="/post-job-step-four"> Step 4</span>
+                                  <div class="timeline-content">
+                                      <h3 class="title">Purposes</h3>
+                                      <p class="description">
+                                        You are almost done.  You are mainly required here to do the final interviews and transmission of the process report
+                                      </p>
+                                      <br>
+                                      <br>
+                                      <p class="description" *ngIf="currentJob.currentStep==4">This step must be completed before going to the next step</p>
+                                      <hr/>
+                                  </div>
+                                  <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==4" (click)="nextStep()"> close this step</button>
+                              </div>
+                              <div class="timeline" *ngIf="currentJob.currentStep>=5">
+                                <span class="timeline-icon"></span>
+                                <span  class="year"  style="cursor: pointer;" routerLink="/post-job-step-five">Step 5</span>
+                                <div class="timeline-content">
+                                    <h3 class="title">Recruit</h3>
+                                    <p class="description">
+                                        Final Step. Here you just have to send the certified recruitment notes and smart contract to the selected candidates
+                                    </p>
+                                </div>
+                                <button class="btn btn-primary btn-block text-uppercase" *ngIf="currentJob.currentStep==5" (click)="nextStep()"> close The recruitement</button>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </main>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+<footer>
+  <app-footer></app-footer>
+</footer>

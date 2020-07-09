@@ -1,0 +1,14 @@
+<ng-template #rt let-r="result" let-t="term">
+  <img [src]="'https://upload.wikimedia.org/wikipedia/commons/thumb/' + r['flag']" class="mr-1" style="width: 20px;height: 20px; border-radius: 50%;">
+  <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+</ng-template>
+<div class="form-group">
+  <label class="mb-1">Identify</label>
+  <div class="position-relative icon-form-control">
+     <i class="feather-user position-absolute"></i>
+     <input type="text"  name="key" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" [resultTemplate]="rt"
+     [inputFormatter]="formatter" placeholder="Enter a user name">
+  </div>
+</div>
+
+<app-identified-users></app-identified-users>

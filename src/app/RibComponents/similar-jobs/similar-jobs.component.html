@@ -1,0 +1,9 @@
+<div class="box shadow-sm border rounded bg-white mb-3">
+  <div class="box-title border-bottom p-3">
+     <h6 class="m-0">Similar Jobs
+     </h6>
+  </div>
+  <div class="box-body p-3">
+     <app-jobs-item *ngFor="let item of similarjobs" [currentJob]="item" ></app-jobs-item>
+  </div>
+</div>

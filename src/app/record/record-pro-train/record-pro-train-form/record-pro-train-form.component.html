@@ -1,0 +1,72 @@
+<div class="border">
+    <form class="px-4 py-3" [formGroup]="trainForm" (ngSubmit)="save()">
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label for="diploma">Training Diploma</label>
+                <input required [(ngModel)]="currentTraining.libelle" type="text" class="form-control" id="diploma" placeholder="Enter the name of your training" formControlName="libelle" [ngClass]="{ 'is-invalid': submitted && f.libelle.errors }">
+                <div *ngIf="submitted && f.libelle.errors" class="invalid-feedback">
+                    <div *ngIf="f.libelle.errors.required">Enter your tranning diploma</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="domain">Training Domain</label>
+                <input required type="text" [(ngModel)]="currentTraining.domaineName" class="form-control" id="domain" placeholder="Enter the domain of your training" formControlName="domaineName" [ngClass]="{ 'is-invalid': submitted && f.domaineName.errors }">
+                <div *ngIf="submitted && f.domaineName.errors" class="invalid-feedback">
+                    <div *ngIf="f.domaineName.errors.required">Enter your tranning domain</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label for="trainingcenter">Training center</label>
+                <input required type="text" [(ngModel)]="currentTraining.etablissement" class="form-control" id="trainingcenter" placeholder="Enter the name of your training center" formControlName="etablissement" [ngClass]="{ 'is-invalid': submitted && f.etablissement.errors }">
+                <div *ngIf="submitted && f.etablissement.errors" class="invalid-feedback">
+                    <div *ngIf="f.etablissement.errors.required">Enter your tranning center</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="trainingtype">Training Type</label>
+                <select required [(ngModel)]="currentTraining.typeFormation" class="form-control" id="trainingtype" formControlName="typeFormation" [ngClass]="{ 'is-invalid': submitted && f.typeFormation.errors }">
+          <option [value]="'Accademic'">Accademic</option>
+          <option [value]="'Professionnal'">Professionnal</option>
+        </select>
+                <div *ngIf="submitted && f.typeFormation.errors" class="invalid-feedback">
+                    <div *ngIf="f.typeFormation.errors.required">Choose the training center</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="form-group col-lg-6">
+                <label for="from">From</label>
+                <input required type="date" [(ngModel)]="currentTraining.datedeb" class="form-control" id="from" formControlName="datedeb" [ngClass]="{ 'is-invalid': submitted && f.datedeb.errors }">
+                <div *ngIf="submitted && f.datedeb.errors" class="invalid-feedback">
+                    <div *ngIf="f.datedeb.errors.required">Choose a date</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-6" *ngIf="onIt">
+                <label for="to">To</label>
+                <input required type="date" [(ngModel)]="currentTraining.datefin" class="form-control" id="to" formControlName="datefin" [ngClass]="{ 'is-invalid': submitted && f.datefin.errors }">
+            </div>
+        </div>
+        <div class="form-check mb-3">
+            <input required type="checkbox" class="form-check-input" id="dropdownCheck" (change)="setonit($event)">
+            <label class="form-check-label" for="dropdownCheck">
+        Currently on it?
+      </label>
+
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea required type="date" [(ngModel)]="currentTraining.description" placeholder="Describe your training in few words" class="form-control" id="description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+            <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                <div *ngIf="f.description.errors.required">Enter a description to this train</div>
+            </div>
+
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary btn-sm"> Save </button>
+
+        </div>
+    </form>
+</div>

@@ -1,0 +1,11 @@
+<div class="box shadow-sm border rounded bg-white mb-3">
+  <div class="box-title border-bottom p-3">
+    <h6 class="m-0">Education</h6>
+  </div>
+  <div class="scrollbar border bg-white" id="style" appScrollable>
+    <div class="force-overflow">
+      <app-record-pro-train-item *ngFor="let item of allTrainings" [currentItem]="item" (itemEdited)="dispEdit($event)"
+        [displaymode]="displaymode"></app-record-pro-train-item>
+    </div>
+  </div>
+</div>

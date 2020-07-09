@@ -1,0 +1,18 @@
+<div *ngIf="currentRealisation">
+    <article class="portfolio-item device tablet left flex-order-tablet_0 responsive-design video-design device-list">
+        <div class="device-hardware">
+            <div style="float: right;">
+                &nbsp; <i class="feather-edit" *ngIf="displaymode=='priv'" (click)="edit()" style="color: rgb(175, 129, 31);cursor: pointer;"></i>&nbsp;&nbsp;
+                <i class="feather-trash" *ngIf="displaymode=='priv'" (click)="delete()" style="color: rgb(161, 67, 67);cursor: pointer;"></i>
+            </div>
+            <a class="hover-trigger" data-toggle="modal" data-target="#realdetailModal">
+                <span class="device-screen" style="background-image: url({{currentRealisation.image}});">
+          <span class="hover-name">{{currentRealisation.nom}}</span>
+                </span>
+            </a>
+        </div>
+    </article>
+</div>
+<div>
+    <app-record-realisation-details></app-record-realisation-details>
+</div>
