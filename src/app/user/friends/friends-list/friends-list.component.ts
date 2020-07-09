@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import * as firebase from 'firebase';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-friends-list',
@@ -17,11 +18,16 @@ export class FriendsListComponent implements OnInit {
   ngOnInit() {
     this.userSvc.initDatas();
     // alert(firebase.auth().currentUser.uid);
-    this.userSvc.getDocRef(firebase.auth().currentUser?.uid).onSnapshot(val => {
-      this.currentUser = val.data() as Utilisateur;
-      this.currentUser.id = val.id;
-      // console.log(this.currentUser.abonnees);
+    firebase.auth().onAuthStateChanged(v => {
+      if (v) {
+        this.userSvc.getDocRef(firebase.auth().currentUser?.uid).onSnapshot(val => {
+          this.currentUser = val.data() as Utilisateur;
+          this.currentUser.id = val.id;
+          console.log('abonnéés', this.currentUser.abonnees);
+        });
+      }
     });
+
   }
 
 }

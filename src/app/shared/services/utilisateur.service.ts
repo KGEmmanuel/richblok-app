@@ -86,8 +86,8 @@ export class UtilisateurService {
     }));
   }
 
-  getByEmail(mail: string){
-    return this.afs.collection(this.path).where('email','==',mail);
+  getByEmail(mail: string) {
+    return this.afs.collection(this.path).where('email', '==', mail);
   }
 
 
@@ -354,33 +354,45 @@ export class UtilisateurService {
     return p;
   }
 
-  mightKnowUser(user: Utilisateur): Observable<Utilisateur[]>{
-     return this.angFs.collection<Utilisateur>(this.path,ref=>ref.where('demandesabonnees','array-contains',user)).valueChanges({ idField: 'id' });
-    //return null;
+  mightKnowUser(user: Utilisateur): Observable<Utilisateur[]> {
+
+    return this.angFs.collection(this.path)
+    .snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Utilisateur;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }).filter( (a) => {
+        console.log(a.id, user);
+        return a.id !== user.id && !user.abonnees.includes(a.id) && !user.demandesabonnees.includes(a.id);
+      }))
+    );
+    // return this.angFs.collection<Utilisateur>(this.path).snapshotChanges();
+    // return null;
   }
 
-  askconnection(from: string, to: string ){
+  askconnection(from: string, to: string ) {
     return this.afs.collection(this.path).doc(to).update({
       demandesabonnees: firebase.firestore.FieldValue.arrayUnion(from)
       });
   }
 
-  saveJob(uid,jobId){
+  saveJob(uid, jobId) {
     return this.afs.collection(this.path).doc(uid).update({
       savedJobs: firebase.firestore.FieldValue.arrayUnion(jobId)
-      }); 
+      });
   }
 
-  confirmconnection(of:string, by: string){
+  confirmconnection(of: string, by: string) {
     return this.afs.collection(this.path).doc(by).update({
       demandesabonnees: firebase.firestore.FieldValue.arrayRemove(of)
-      }).then(v=>{
+      }).then(v => {
         return this.afs.collection(this.path).doc(by).update({
           abonnees: firebase.firestore.FieldValue.arrayUnion(of)
           });
-      }).catch(er=>{
+      }).catch(er => {
         return null;
-      })
+      });
   }
 
   initDatas(user?: string) {

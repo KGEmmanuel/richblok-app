@@ -147,8 +147,8 @@ export class FriendsItemComponent implements OnInit {
     const index = this.currentUser.demandesabonnees.indexOf(this.connectedUser.id);
     this.currentUser.demandesabonnees.splice(index);
     this.userSvc.update(this.currentUser.id, {
-      'demandesabonnees': this.currentUser.demandesabonnees,
-      'abonnees': this.currentUser.abonnees
+      demandesabonnees: this.currentUser.demandesabonnees,
+      abonnees: this.currentUser.abonnees
     }).then(val => {
       this.toastSvc.success('Invitation cancelled', 'Success');
     }).catch(err => {

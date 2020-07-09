@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import { ToastrService } from 'ngx-toastr';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-friend-suggestion',
@@ -21,14 +22,17 @@ export class FriendSuggestionComponent implements OnInit {
   users: Observable<Utilisateur[]>;
   currentUser = new Utilisateur();
   uid;
-  constructor(private usvc: UtilisateurService, private afAuth: AngularFireAuth) { }
+  constructor(private usvc: UtilisateurService, private afAuth: AngularFireAuth, private userSvc: UserService) { }
 
   ngOnInit() {
     this.afAuth.auth.onAuthStateChanged(v => {
       // alert('tes test detjhsdf')
       if (v) {
         this.uid = v.uid;
-        this.users = this.usvc.mightKnowUser(this.uid);
+        this.userSvc.get(this.uid).subscribe(u => {
+          this.users = this.usvc.mightKnowUser(u);
+          this.currentUser = u;
+         });
       }
 
     });

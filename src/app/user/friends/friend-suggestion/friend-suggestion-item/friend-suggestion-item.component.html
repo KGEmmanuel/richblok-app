@@ -29,9 +29,9 @@
       </div>
       <div class="network-item-footer py-3 d-flex text-center">
         <div class="col-10 pl-3 pr-1">
-          <button type="button" class="btn btn-primary btn-sm btn-block" *ngIf="!cancel" (click)="suivre()"><i
+          <button *ngIf="!demandefaite()" type="button"  class="btn btn-primary btn-sm btn-block" (click)="suivre()"><i
               class="feather-user-plus"></i> Connect </button>
-          <button type="button" class="btn btn-danger btn-sm btn-block" *ngIf="cancel" (click)="annuler()"><i
+          <button type="button" class="btn btn-danger btn-sm btn-block" *ngIf="demandefaite()" (click)="annuler()"><i
               class="feather-user-minus"></i> Cancel </button>
         </div>
         <div class="col-2 d-flex justify-content-end">

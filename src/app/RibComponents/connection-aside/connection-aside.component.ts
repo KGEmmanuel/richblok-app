@@ -11,18 +11,22 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class ConnectionAsideComponent implements OnInit {
 
-  users : Observable<Utilisateur[]>
+  users: Observable<Utilisateur[]>;
   uid;
-  numUsers : number;
+  numUsers: number;
+  currentUser: Utilisateur;
   constructor(private userSvc: UtilisateurService, private afAuth: AngularFireAuth) { }
 
   ngOnInit() {
 
     this.afAuth.auth.onAuthStateChanged(v=>{
       // alert('tes test detjhsdf')
-      if(v){
+      if (v) {
         this.uid = v.uid;
-        this.users = this.userSvc.mightKnowUser(this.uid);
+        this.userSvc.get(this.uid).subscribe(u => {
+          this.users = this.userSvc.mightKnowUser(u);
+          this.currentUser = u;
+         });
       }
 
     });

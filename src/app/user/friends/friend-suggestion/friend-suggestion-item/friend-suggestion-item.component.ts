@@ -44,6 +44,18 @@ export class FriendSuggestionItemComponent implements OnInit {
     this.userSvc.getDocRef(firebase.auth().currentUser.uid).onSnapshot(val => {
       this.connectedUser = val.data() as Utilisateur;
       this.connectedUser.id = val.id;
+      if (!this.connectedUser.demandesabonnees) {
+        this.connectedUser.demandesabonnees = [];
+      }
+      if (!this.currentUser.demandesabonnees) {
+        this.currentUser.demandesabonnees = []
+      }
+      if (!this.connectedUser.abonnees) {
+        this.connectedUser.abonnees = [];
+      }
+      if (!this.currentUser.abonnees) {
+        this.currentUser.abonnees = []
+      }
     });
   }
 
@@ -94,6 +106,9 @@ export class FriendSuggestionItemComponent implements OnInit {
    * Vérifie si la demande a té envoyé
    */
   demandefaite(): boolean {
+    if (!this.currentUser.demandesabonnees) {
+      return false;
+    }
     if (this.currentUser.demandesabonnees.includes(this.connectedUser.id)) {
       return true;
     }
