@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap, map, first } from 'rxjs/operators';
 import { SubscriptionTier, SubscriptionStatus } from '../entites/Subscription';
+import { AnalyticsService } from './analytics.service';
 import * as firebase from 'firebase/app';
 import 'firebase/functions';
 
@@ -20,12 +21,14 @@ export class SubscriptionService {
 
   constructor(
     private afs: AngularFirestore,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private analytics: AnalyticsService
   ) {
     this.initSubscriptionListener();
   }
 
   private initSubscriptionListener() {
+    let previousTier: SubscriptionTier | null = null;
     this.afAuth.authState.pipe(
       switchMap(user => {
         if (user) {
@@ -41,6 +44,17 @@ export class SubscriptionService {
         return of({ tier: 'free' as SubscriptionTier, status: 'free' as SubscriptionStatus });
       })
     ).subscribe(sub => {
+      // Fire Purchase event on free → pro transition
+      if (previousTier === 'free' && (sub.tier === 'pro' || sub.tier === 'team')) {
+        this.analytics.track('Purchase', {
+          value: sub.tier === 'team' ? 49 : 10,
+          currency: 'USD',
+          content_type: 'subscription',
+          content_name: sub.tier === 'team' ? 'pro_team' : 'pro_monthly'
+        });
+        this.analytics.track('Subscribe', { tier: sub.tier });
+      }
+      previousTier = sub.tier;
       this.tierSubject.next(sub.tier);
       this.statusSubject.next(sub.status);
     });

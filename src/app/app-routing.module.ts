@@ -43,6 +43,7 @@ import { JobProcessComponent } from './job-profile/job-process/job-process.compo
 import { SearchComponent } from './search/search.component';
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
 import { BadgePageComponent } from './badge/badge-page.component';
+import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -87,6 +88,7 @@ const routes: Routes = [
   { path: 'search', component: SearchComponent},
   { path: 'badge/:id', component: BadgePageComponent, data: {title: 'Verified Badge'} },
   { path: 'u/:id', redirectTo: 'profile/:id', pathMatch: 'full'},
+  { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
   { path: '404', component: NotfoundComponent },
   { path: 'upload', component: UploadFileComponent },
   { path: '**', component: NotfoundComponent }

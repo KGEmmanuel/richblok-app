@@ -74,8 +74,11 @@
                         </div>
                     </div>
                     <div *ngIf="show" class="d-flex justify-content-end" style="margin-top: 5%;">
-                        <button type="button" (click)="next()" *ngIf="etape < currentChal.questions.length" class="btn btn-outline-primary btn-sm mr-1">Next</button>
-                        <button type="button" (click)="next()" *ngIf="etape === currentChal.questions.length" class="btn btn-outline-primary btn-sm mr-1">Send your Answers</button>
+                        <button type="button" (click)="next()" *ngIf="etape < currentChal.questions.length" class="btn btn-primary btn-sm mr-1" [disabled]="submitting">Next →</button>
+                        <button type="button" (click)="next()" *ngIf="etape === currentChal.questions.length" class="btn btn-success btn-sm mr-1" [disabled]="submitting">
+                            <span *ngIf="!submitting">Submit & Get My Badge →</span>
+                            <span *ngIf="submitting">Scoring your answers…</span>
+                        </button>
                     </div>
                 </div>
             </div>

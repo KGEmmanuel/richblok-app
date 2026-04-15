@@ -1,0 +1,41 @@
+<div class="seed-page">
+  <header>
+    <h1>🌱 Admin · Seed challenges</h1>
+    <p>
+      This page seeds the 5 MVP challenges ({{ totalQuestions }} questions total) into Firestore.
+      Requires an authenticated session. Running it again upserts existing challenges by slug.
+    </p>
+  </header>
+
+  <button type="button"
+          class="seed-cta"
+          (click)="runSeed()"
+          [disabled]="running">
+    {{ running ? 'Seeding…' : 'Run seed' }}
+  </button>
+
+  <div class="seed-status" *ngIf="statuses.length">
+    <div *ngFor="let s of statuses" class="seed-row" [attr.data-status]="s.status">
+      <div class="seed-left">
+        <span class="seed-icon" [attr.data-status]="s.status">
+          <ng-container [ngSwitch]="s.status">
+            <ng-container *ngSwitchCase="'pending'">⏳</ng-container>
+            <ng-container *ngSwitchCase="'creating'">⚡</ng-container>
+            <ng-container *ngSwitchCase="'done'">✅</ng-container>
+            <ng-container *ngSwitchCase="'error'">❌</ng-container>
+          </ng-container>
+        </span>
+        <strong>{{ s.title }}</strong>
+        <code class="seed-slug">{{ s.slug }}</code>
+      </div>
+      <div class="seed-right">
+        <span *ngIf="s.id" class="seed-docid">doc: {{ s.id }}</span>
+        <span *ngIf="s.message" class="seed-message">{{ s.message }}</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>After running, users can take challenges at <code>/evaluate</code>.</p>
+  </footer>
+</div>

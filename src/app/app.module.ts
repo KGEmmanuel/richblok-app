@@ -212,6 +212,7 @@ import { ProfileCompletenessComponent } from './shared/components/profile-comple
 import { UpgradeModalComponent } from './shared/components/upgrade-modal/upgrade-modal.component';
 import { ReferralWidgetComponent } from './shared/components/referral-widget/referral-widget.component';
 import { BadgePageComponent } from './badge/badge-page.component';
+import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -405,7 +406,8 @@ import { BadgePageComponent } from './badge/badge-page.component';
     ProfileCompletenessComponent,
     UpgradeModalComponent,
     ReferralWidgetComponent,
-    BadgePageComponent
+    BadgePageComponent,
+    AdminSeedComponent
   ],
   imports: [
     BrowserModule,
