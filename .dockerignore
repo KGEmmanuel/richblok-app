@@ -1,7 +1,14 @@
 node_modules
-dist
 .git
 .firebase
 *.rar
 *.zip
 .claude
+src
+e2e
+*.md
+angular.json
+tsconfig*.json
+karma.conf.js
+tslint.json
+browserslist
