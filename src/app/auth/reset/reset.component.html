@@ -10,18 +10,24 @@
                             <p class="text-muted">An email will be sent to you to reset your password
                             </p>
                         </div>
-                        <form #templateVariableName="ngForm" (ngSubmit)="reset()">
+                        <div *ngIf="sent" class="alert alert-success">
+                          Password reset email sent to <strong>{{mail}}</strong>. Check your inbox and spam folder.
+                        </div>
+                        <form #templateVariableName="ngForm" (ngSubmit)="reset()" *ngIf="!sent">
                             <div class="form-group">
                                 <label class="mb-1">Email</label>
                                 <div class="position-relative icon-form-control">
                                     <i class="feather-user position-absolute"></i>
-                                    <input type="email" name="mail" class="form-control" [(ngModel)]="mail">
+                                    <input required type="email" name="mail" class="form-control" [(ngModel)]="mail">
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-block text-uppercase" type="submit"> Send  </button>
+                            <button class="btn btn-primary btn-block text-uppercase" type="submit" [disabled]="loading || !mail">
+                              <span *ngIf="!loading">Send reset email</span>
+                              <span *ngIf="loading">Sending...</span>
+                            </button>
                             <div class="py-3 d-flex align-item-center">
-                                <a href="sign-in">Sign In</a>
-                                <span class="ml-auto"> New to RichBlok? <a class="font-weight-bold" href="register">Join now</a></span>
+                                <a [routerLink]="['/sign-in']">Sign In</a>
+                                <span class="ml-auto"> New to RichBlok? <a class="font-weight-bold" [routerLink]="['/register']">Join now</a></span>
                             </div>
                         </form>
                     </div>

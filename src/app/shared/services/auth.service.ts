@@ -7,126 +7,187 @@ import * as firebase from 'firebase/app';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TagsService } from './tags.service';
-import { tag } from '@turf/turf';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  userData: any; // Save logged in user data
+  userData: any;
   currentUser: Observable<Utilisateur>;
   readonly userPath = 'utilisateurs';
 
   constructor(
-    public afs: AngularFirestore,   // Inject Firestore service
-    public afAuth: AngularFireAuth, // Inject Firebase auth service
+    public afs: AngularFirestore,
+    public afAuth: AngularFireAuth,
     public router: Router,
-    public ngZone: NgZone, // NgZone service to remove outside scope warning
-    public tagSvc:  TagsService
+    public ngZone: NgZone,
+    public tagSvc: TagsService,
+    private toastr: ToastrService
   ) {
-    /* Saving user data in localstorage when
-    logged in and setting up null when logged out */
-
-    firebase.firestore().enablePersistence()
+    firebase.firestore().enablePersistence({ synchronizeTabs: true } as any)
       .catch(err => {
-        if (err.code == 'failed-precondition') {
-          // only be enabled in one tab at a a time (multiple tabs open)
-        } else if (err.code == 'unimplemented') {
-          // browser does not support all of the features required to enable persistence
+        if (err && err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+          // eslint-disable-next-line no-console
+          console.warn('Firestore persistence:', err);
         }
       });
   }
 
-  // Sign in with email/password
-  SignIn(email, password) {
+  /**
+   * Translates Firebase Auth error codes into user-friendly messages.
+   */
+  private friendlyAuthError(err: any): string {
+    const code = err && err.code ? err.code : '';
+    const message = err && err.message ? err.message : 'Something went wrong';
+    switch (code) {
+      case 'auth/user-not-found':
+        return 'No account found with that email. Create one below?';
+      case 'auth/wrong-password':
+        return 'Incorrect password. Try again or reset it.';
+      case 'auth/invalid-email':
+        return 'That email address is not valid.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled. Contact support.';
+      case 'auth/too-many-requests':
+        return 'Too many sign-in attempts. Please wait a few minutes and try again.';
+      case 'auth/network-request-failed':
+        return 'Network issue — please check your internet and try again.';
+      case 'auth/email-already-in-use':
+        return 'An account with this email already exists. Try signing in.';
+      case 'auth/weak-password':
+        return 'Password is too weak. Use at least 6 characters.';
+      case 'auth/operation-not-allowed':
+        return 'Email/password sign-in is currently disabled. Contact support.';
+      case 'auth/unauthorized-domain':
+        return 'This domain is not authorized for sign-in. Contact support.';
+      case 'auth/popup-blocked':
+        return 'Popup was blocked. Please allow popups for this site.';
+      case 'auth/popup-closed-by-user':
+        return 'Sign-in was cancelled.';
+      default:
+        return message || 'Sign-in failed. Please try again.';
+    }
+  }
+
+  /**
+   * Sign in with email/password. Returns the user or throws a friendly error.
+   */
+  SignIn(email: string, password: string) {
     return this.afAuth.auth.signInWithEmailAndPassword(email, password)
       .then((result) => {
+        this.SetUserData(result.user).catch(err => {
+          // Non-fatal: user is authenticated even if doc write fails
+          // eslint-disable-next-line no-console
+          console.warn('SetUserData warning:', err);
+        });
         this.ngZone.run(() => {
           this.router.navigate(['feed']);
         });
-        this.SetUserData(result.user);
-      }).catch((error) => {
-        window.alert(error.message)
+        return result.user;
       })
+      .catch((error) => {
+        const msg = this.friendlyAuthError(error);
+        this.toastr.error(msg, 'Sign-in failed');
+        throw error;
+      });
   }
 
-  // Sign up with email/password
-  SignUp(email, password) {
+  /**
+   * Create a new account with email/password.
+   */
+  SignUp(email: string, password: string) {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-      
+      .catch((error) => {
+        const msg = this.friendlyAuthError(error);
+        this.toastr.error(msg, 'Sign-up failed');
+        throw error;
+      });
   }
 
-  // Send email verfificaiton when new user sign up
   SendVerificationMail() {
     return this.afAuth.auth.currentUser.sendEmailVerification()
       .then(() => {
+        this.toastr.success('Verification email sent. Check your inbox.', 'Email sent');
         this.router.navigate(['forgot-password']);
-      })
+      });
   }
 
-  // Reset Forggot password
-  ForgotPassword(passwordResetEmail) {
+  /**
+   * Send password reset email.
+   */
+  ForgotPassword(passwordResetEmail: string) {
     return this.afAuth.auth.sendPasswordResetEmail(passwordResetEmail)
       .then(() => {
-        window.alert('Password reset email sent, check your inbox.');
-      }).catch((error) => {
-        window.alert(error)
+        this.toastr.success('Password reset email sent. Check your inbox (and spam folder).', 'Email sent');
       })
+      .catch((error) => {
+        const msg = this.friendlyAuthError(error);
+        this.toastr.error(msg, 'Reset failed');
+        throw error;
+      });
   }
 
-  // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return (user !== null && user.emailVerified !== false);
+    } catch {
+      return false;
+    }
   }
 
-  // Sign in with Google
   GoogleAuth() {
     return this.AuthLogin(new firebase.auth.GoogleAuthProvider());
   }
 
-  // Auth logic to run auth providers
-  AuthLogin(provider) {
+  AuthLogin(provider: firebase.auth.AuthProvider) {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((result) => {
+        this.SetUserData(result.user).catch(err => {
+          // eslint-disable-next-line no-console
+          console.warn('SetUserData warning:', err);
+        });
         this.ngZone.run(() => {
           this.router.navigate(['feed']);
-        })
-        this.SetUserData(result.user);
-      }).catch((error) => {
-        window.alert(error)
+        });
+        return result.user;
       })
+      .catch((error) => {
+        const msg = this.friendlyAuthError(error);
+        this.toastr.error(msg, 'Sign-in failed');
+        throw error;
+      });
   }
 
-  /* Setting up user data when sign in with username/password,
-  sign up with username/password and sign in with social auth
-  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-  SetUserData(user) {
+  /**
+   * Writes minimal user data to Firestore. Only writes fields that have a value
+   * (avoids overwriting existing profile fields with null on subsequent sign-ins).
+   */
+  SetUserData(user: firebase.User) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`${this.userPath}/${user.uid}`);
-    const userData: Utilisateur = {
+    const userData: any = {
       id: user.uid,
       email: user.email,
-      nom: user.displayName,
-      imageprofil: user.photoURL,
-      emailVerified: user.emailVerified,
-      tags: this.tagSvc.buildTags([user.displayName])
+      emailVerified: user.emailVerified
+    };
+    if (user.displayName) {
+      userData.nom = user.displayName;
+      userData.tags = this.tagSvc.buildTags([user.displayName]);
     }
-    return userRef.set(userData, {
-      merge: true
-    })
+    if (user.photoURL) {
+      userData.imageprofil = user.photoURL;
+    }
+    return userRef.set(userData, { merge: true });
   }
 
-  // Sign out
   SignOut() {
     return this.afAuth.auth.signOut().then(() => {
       localStorage.removeItem('user');
       this.router.navigate(['sign-in']);
-      alert('signout');
-    }).catch(err=>{
-       alert(err.message);
-    })
+    }).catch(err => {
+      this.toastr.error(err && err.message ? err.message : 'Sign-out failed', 'Error');
+    });
   }
-
-
 }

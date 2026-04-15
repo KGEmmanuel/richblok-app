@@ -1,31 +1,33 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { CanActivate, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import { map, take } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 
+/**
+ * Redirects already-authenticated users AWAY from auth pages (sign-in, register, forgot-password)
+ * back to the feed. Lets logged-out users through.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class SecureInnerPagesGuard implements CanActivate {
 
   constructor(
-    public authService: AuthService,private afAuth: AngularFireAuth,
-    public router: Router
-  ) { }
+    private afAuth: AngularFireAuth,
+    private router: Router
+  ) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-      this.afAuth.auth.onAuthStateChanged(val=>{
-        if(val) {
-          window.alert('You are not allowed to access this URL! You are  connectd ');
-          console.log(' lkjkjqsf   ',this.afAuth.auth);
-          this.router.navigate(['feed']);
+  canActivate(): Observable<boolean> {
+    return this.afAuth.authState.pipe(
+      take(1),
+      map(user => {
+        if (user) {
+          this.router.navigate(['/feed']);
+          return false;
         }
-       })
-    
-    return true;
+        return true;
+      })
+    );
   }
-
 }
