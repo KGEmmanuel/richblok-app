@@ -49,11 +49,16 @@ export class GlobalErrorHandlerService implements ErrorHandler {
   private shouldNotifyUser(error: any): boolean {
     if (!error) { return false; }
     const msg = (error.message || '').toLowerCase();
-    // Skip noisy Firestore / RxJS internal errors
+    const code = (error.code || '').toLowerCase();
+    // Skip noisy Firestore / RxJS / browser-extension internal errors
     if (msg.includes('expressionchangedafterithasbeencheckederror')) { return false; }
     if (msg.includes('canceled') || msg.includes('cancelled')) { return false; }
+    if (msg.includes('exclusive access to the persistence layer')) { return false; }
+    if (msg.includes('asyncqueue is already failed')) { return false; }
+    if (msg.includes('a listener indicated an asynchronous response')) { return false; }
+    if (msg.includes('message channel closed')) { return false; }
+    if (code === 'failed-precondition') { return false; }
     if (msg.includes('chunk') && msg.includes('failed')) {
-      // Stale chunk after deploy — suggest reload
       return true;
     }
     return true;

@@ -26,13 +26,12 @@ export class AuthService {
     public tagSvc: TagsService,
     private toastr: ToastrService
   ) {
-    firebase.firestore().enablePersistence({ synchronizeTabs: true } as any)
-      .catch(err => {
-        if (err && err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
-          // eslint-disable-next-line no-console
-          console.warn('Firestore persistence:', err);
-        }
-      });
+    // Fire-and-forget: offline persistence is a nice-to-have, not required.
+    // Silently swallow failed-precondition (multiple tabs) and unimplemented (browser unsupported).
+    try {
+      (firebase.firestore().enablePersistence as any)({ synchronizeTabs: true })
+        .catch(() => { /* ignore */ });
+    } catch (_) { /* ignore */ }
   }
 
   /**
