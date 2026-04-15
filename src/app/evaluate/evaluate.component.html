@@ -56,3 +56,5 @@
 <footer>
     <app-footer></app-footer>
 </footer>
+
+<app-upgrade-modal [open]="upgradeOpen" [trigger]="upgradeTrigger" (closed)="onUpgradeClosed()"></app-upgrade-modal>

@@ -32,6 +32,24 @@
     <meta property="og:site_name" content="RichBlok">
     <meta name="twitter:card" content="summary_large_image">
 
+    <!-- Meta Pixel (Facebook Ads) — activates when window.RB_META_PIXEL_ID is set -->
+    <script>
+      (function() {
+        var pid = (window.RB_META_PIXEL_ID || '').trim();
+        if (!pid) return;
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', pid);
+        fbq('track', 'PageView');
+      })();
+    </script>
+
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900" rel="stylesheet">

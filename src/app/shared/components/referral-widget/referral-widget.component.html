@@ -1,0 +1,34 @@
+<div class="rw-card" [class.rw-compact]="compact">
+  <div class="rw-header">
+    <div>
+      <div class="rw-eyebrow">🎁 Referral program</div>
+      <div class="rw-title">Give 1 month · Get 1 month</div>
+    </div>
+    <div class="rw-stats" *ngIf="stats$ | async as s">
+      <div><strong>{{ s.totalSent }}</strong><span>sent</span></div>
+      <div><strong>{{ s.signedUp }}</strong><span>signed up</span></div>
+      <div><strong>{{ s.freeMonthsEarned }}</strong><span>free months</span></div>
+    </div>
+  </div>
+
+  <p class="rw-sub">Share your invite link. When a friend upgrades to Pro, you both get a free month.</p>
+
+  <div class="rw-link-row">
+    <code class="rw-link">{{ inviteUrl || 'Sign in to get your link' }}</code>
+    <button type="button" class="rw-copy" (click)="copy()" [disabled]="!inviteUrl">
+      {{ copied ? '✓ Copied' : 'Copy' }}
+    </button>
+  </div>
+
+  <div class="rw-share-row">
+    <button type="button" class="rw-share-btn rw-wa" (click)="shareWA()" [disabled]="!inviteUrl">
+      WhatsApp
+    </button>
+    <button type="button" class="rw-share-btn rw-tw" (click)="shareTwitter()" [disabled]="!inviteUrl">
+      Twitter
+    </button>
+    <button type="button" class="rw-share-btn rw-li" (click)="shareLinkedIn()" [disabled]="!inviteUrl">
+      LinkedIn
+    </button>
+  </div>
+</div>

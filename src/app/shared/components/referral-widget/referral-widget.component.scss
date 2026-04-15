@@ -1,0 +1,117 @@
+$accent: #1dd1a1;
+$accent-2: #00d4ff;
+$text: #212b3b;
+$text-muted: #6b7a99;
+$border: #e3e8f0;
+$surface: #ffffff;
+$bg-soft: #f6f9fc;
+
+:host { display: block; }
+
+.rw-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+.rw-compact { padding: 16px; }
+
+.rw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.rw-eyebrow {
+  color: $accent;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.rw-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: $text;
+  letter-spacing: -0.01em;
+}
+.rw-stats {
+  display: flex;
+  gap: 16px;
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    strong { font-size: 20px; font-weight: 800; color: $text; }
+    span { font-size: 11px; color: $text-muted; text-transform: uppercase; letter-spacing: 0.05em; }
+  }
+}
+.rw-sub {
+  color: $text-muted;
+  font-size: 14px;
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+.rw-link-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 12px;
+  background: $bg-soft;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 4px;
+}
+.rw-link {
+  flex: 1;
+  padding: 10px 12px;
+  background: transparent;
+  color: $text;
+  font-family: monospace;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+}
+.rw-copy {
+  background: $accent;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.rw-share-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.rw-share-btn {
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 1px solid $border;
+  background: $surface;
+  color: $text;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .15s ease;
+  &:hover { transform: translateY(-1px); }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+  &.rw-wa { border-color: rgba(37, 211, 102, 0.4); color: #1a7e3a; }
+  &.rw-tw { border-color: rgba(0, 0, 0, 0.2); }
+  &.rw-li { border-color: rgba(10, 102, 194, 0.4); color: #0a66c2; }
+}

@@ -15,7 +15,12 @@ export const environment = {
     measurementId: 'G-SGSCGBB322',
     timestampsInSnapshots: true
   },
-  googleKey : 'AIzaSyCD7cXCYuY2__P5Hlfvx28L-UiqO06uGmY',
+  // Google Maps API key — inject at build time or leave empty.
+  // The original developer's key was removed; replace with a restricted key from Google Cloud Console.
+  // Restrictions to set: HTTP referrers (websites) → richblok-app-production-86b6.up.railway.app/*
+  googleKey: '',
+  // Facebook / Meta Pixel — set the ID once ads campaign is live
+  metaPixelId: '',
   stripe: {
     publishableKey: 'pk_test_YOUR_STRIPE_KEY',
   }

@@ -11,7 +11,8 @@ export const environment = {
     measurementId: 'G-SGSCGBB322',
     timestampsInSnapshots: true
   },
-  googleKey : 'AIzaSyCD7cXCYuY2__P5Hlfvx28L-UiqO06uGmY',
+  googleKey: '',        // Inject at build time via CI env, or paste a restricted key
+  metaPixelId: '',      // Meta Pixel ID for Facebook Ads tracking
   stripe: {
     publishableKey: 'pk_live_YOUR_STRIPE_KEY',
   }

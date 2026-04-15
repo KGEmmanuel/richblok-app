@@ -1,5 +1,8 @@
 import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
+import { SubscriptionService } from '../shared/services/subscription.service';
+import { AnalyticsService } from '../shared/services/analytics.service';
+import { UpgradeTrigger } from '../shared/components/upgrade-modal/upgrade-modal.component';
 
 @Component({
   selector: 'app-evaluate',
@@ -8,11 +11,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EvaluateComponent implements OnInit {
 
-  constructor(private title: Title, private meta : Meta) { }
+  upgradeOpen = false;
+  upgradeTrigger: UpgradeTrigger = 'manual';
+
+  constructor(
+    private title: Title,
+    private meta: Meta,
+    private subscription: SubscriptionService,
+    private analytics: AnalyticsService
+  ) {}
 
   ngOnInit() {
-    this.title.setTitle('RichBlok | Evaluations');
-    this.meta.updateTag({ name: 'description', content: 'Create, participate to challenge created by RchBlok users' });
+    this.title.setTitle('RichBlok | Challenges');
+    this.meta.updateTag({ name: 'description', content: 'Take a skill challenge and earn a verified badge on RichBlok.' });
+    this.analytics.pageView('evaluate');
   }
 
+  checkLimitAndPrompt() {
+    this.subscription.checkChallengeLimit().subscribe(canTake => {
+      if (!canTake) {
+        this.upgradeTrigger = 'challenge_limit';
+        this.upgradeOpen = true;
+      }
+    });
+  }
+
+  onUpgradeClosed() {
+    this.upgradeOpen = false;
+  }
 }

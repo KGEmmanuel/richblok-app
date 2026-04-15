@@ -1,0 +1,200 @@
+$bg: #0b1220;
+$surface: #0f1a2f;
+$surface-2: #16243f;
+$accent: #1dd1a1;
+$accent-2: #00d4ff;
+$text: #ffffff;
+$text-muted: #a5b4cf;
+$text-dim: #6b7a99;
+$border: #223154;
+
+.um-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 9, 18, 0.8);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: um-fade 0.25s ease;
+  padding: 16px;
+}
+@keyframes um-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.um-modal {
+  position: relative;
+  background: linear-gradient(145deg, $surface-2, $surface);
+  color: $text;
+  border: 1px solid rgba(29, 209, 161, 0.4);
+  border-radius: 20px 20px 0 0;
+  padding: 32px 24px 28px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
+  animation: um-slide 0.3s cubic-bezier(.22, .68, .36, 1);
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 20px 20px 0 0;
+    background: linear-gradient(135deg, $accent, $accent-2);
+    opacity: 0.2;
+    z-index: -1;
+    filter: blur(20px);
+  }
+}
+@keyframes um-slide {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.um-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: $text-dim;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  &:hover { color: $text; }
+}
+
+.um-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, $accent, $accent-2);
+  color: $bg;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.um-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+.um-sub {
+  color: $text-muted;
+  font-size: 15px;
+  margin: 0 0 20px;
+  line-height: 1.55;
+}
+
+.um-annual-toggle {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 16px;
+  button {
+    background: transparent;
+    border: none;
+    color: $text-muted;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    &.active { background: $surface-2; color: $text; }
+  }
+}
+.um-save {
+  background: rgba(29, 209, 161, 0.15);
+  color: $accent;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.um-price {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 20px;
+  .um-price-main {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .um-price-period {
+    color: $text-dim;
+    font-size: 14px;
+    margin-left: 6px;
+  }
+}
+
+.um-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  li {
+    padding: 7px 0;
+    color: $text-muted;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    &:last-child { border-bottom: none; }
+  }
+}
+
+.um-cta {
+  width: 100%;
+  background: linear-gradient(135deg, $accent, $accent-2);
+  color: $bg;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(29, 209, 161, .4);
+  transition: transform .15s ease;
+  &:hover:not(:disabled) { transform: translateY(-2px); }
+  &:disabled { opacity: .7; cursor: not-allowed; }
+}
+
+.um-guarantee {
+  text-align: center;
+  color: $text-dim;
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
+.um-later {
+  display: block;
+  background: transparent;
+  border: none;
+  color: $text-dim;
+  text-align: center;
+  margin: 16px auto 0;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  &:hover { color: $text; text-decoration: underline; }
+}
+.um-wait-hint {
+  text-align: center;
+  color: $text-dim;
+  font-size: 12px;
+  font-style: italic;
+  margin: 16px 0 0;
+}
+
+@media (min-width: 600px) {
+  .um-overlay { align-items: center; }
+  .um-modal { border-radius: 20px; padding: 40px; }
+}

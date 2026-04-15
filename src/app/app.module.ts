@@ -209,6 +209,9 @@ import { UploadFileComponent } from './RibComponents/upload-file/upload-file.com
 import { DndDirective } from './RibComponents/upload-file/dnd.directive';
 import { RequiresProDirective } from './shared/directives/requires-pro.directive';
 import { ProfileCompletenessComponent } from './shared/components/profile-completeness/profile-completeness.component';
+import { UpgradeModalComponent } from './shared/components/upgrade-modal/upgrade-modal.component';
+import { ReferralWidgetComponent } from './shared/components/referral-widget/referral-widget.component';
+import { BadgePageComponent } from './badge/badge-page.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -399,7 +402,10 @@ import { ProfileCompletenessComponent } from './shared/components/profile-comple
     UploadFileComponent,
     ProgressComponent,
     RequiresProDirective,
-    ProfileCompletenessComponent
+    ProfileCompletenessComponent,
+    UpgradeModalComponent,
+    ReferralWidgetComponent,
+    BadgePageComponent
   ],
   imports: [
     BrowserModule,
@@ -419,7 +425,7 @@ import { ProfileCompletenessComponent } from './shared/components/profile-comple
     NgMultiSelectDropDownModule.forRoot(),
     // SignaturePadModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyCD7cXCYuY2__P5Hlfvx28L-UiqO06uGmY',
+      apiKey: environment.googleKey,
       libraries: ['places']
     }),
     MatGoogleMapsAutocompleteModule,

@@ -42,6 +42,7 @@ import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.co
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { SearchComponent } from './search/search.component';
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
+import { BadgePageComponent } from './badge/badge-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -84,6 +85,8 @@ const routes: Routes = [
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent, canActivate: [AuthGuard] },
   { path: 'create-challenge', component: EvaluateFormComponent, canActivate: [AuthGuard]},
   { path: 'search', component: SearchComponent},
+  { path: 'badge/:id', component: BadgePageComponent, data: {title: 'Verified Badge'} },
+  { path: 'u/:id', redirectTo: 'profile/:id', pathMatch: 'full'},
   { path: '404', component: NotfoundComponent },
   { path: 'upload', component: UploadFileComponent },
   { path: '**', component: NotfoundComponent }
