@@ -219,6 +219,7 @@ import { StarProfileComponent } from './star-profile/star-profile.component';
 import { AiCoachComponent } from './ai-coach/ai-coach.component';
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
+import { OnboardComponent } from './onboard/onboard.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -419,7 +420,8 @@ import { UniversityDashboardComponent } from './university-dashboard/university-
     StarProfileComponent,
     AiCoachComponent,
     EmployerDashboardComponent,
-    UniversityDashboardComponent
+    UniversityDashboardComponent,
+    OnboardComponent
   ],
   imports: [
     BrowserModule,

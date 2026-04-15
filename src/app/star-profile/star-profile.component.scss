@@ -182,6 +182,12 @@ $border-hi: #3f3f46;
   gap: 8px;
   flex: 1;
 }
+.sp-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .sp-chip {
   align-self: flex-start;
   background: rgba(29, 209, 161, 0.12);
@@ -192,6 +198,34 @@ $border-hi: #3f3f46;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+.sp-status-chip {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.sp-status-verified {
+  background: rgba(29, 209, 161, 0.18);
+  color: $accent;
+  border: 1px solid rgba(29, 209, 161, 0.35);
+}
+.sp-status-draft {
+  background: rgba(250, 204, 21, 0.10);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.30);
+}
+.sp-answer.sp-draft {
+  border-left: 3px solid rgba(250, 204, 21, 0.45);
+}
+.sp-answer.sp-verified {
+  border-left: 3px solid rgba(29, 209, 161, 0.55);
 }
 .sp-q {
   font-size: 16px;
@@ -270,6 +304,71 @@ $border-hi: #3f3f46;
     border-color: $border;
     &:hover { border-color: $border-hi; color: $text; }
   }
+}
+
+.sp-verify-block {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 12px;
+}
+.sp-verify-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  color: $text;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.sp-verify-icon { font-size: 16px; }
+.sp-verify-sub {
+  color: $text-muted;
+  font-size: 13px;
+  line-height: 1.55;
+  margin-bottom: 12px;
+  em { font-style: normal; font-weight: 600; color: $text; }
+}
+.sp-verify-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sp-verify-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  padding: 12px 14px;
+  background: rgba(24, 24, 27, 0.6);
+  border: 1px solid $border;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+  color: $text;
+  &:hover { border-color: $accent-2; transform: translateY(-1px); }
+}
+.sp-verify-card-title {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+.sp-verify-card-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: $text-dim;
+  font-family: 'JetBrains Mono', monospace;
+}
+.sp-verify-card-cta {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: $accent-2;
+  letter-spacing: 0.02em;
 }
 
 .sp-pod-card {

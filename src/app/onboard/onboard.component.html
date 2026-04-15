@@ -1,0 +1,129 @@
+<div class="ob-page">
+  <header class="ob-nav">
+    <a class="ob-logo" [routerLink]="['/landing']">
+      <span class="ob-logo-mark">R</span>ichblok
+    </a>
+    <a class="ob-nav-link" [routerLink]="['/evaluate']">Or start with a challenge →</a>
+  </header>
+
+  <!-- STEP: Upload -->
+  <section class="ob-step" *ngIf="step === 'upload'">
+    <div class="ob-eyebrow">STEP 1 OF 3</div>
+    <h1 class="ob-h1">Upload your CV. Find your interview stories.</h1>
+    <p class="ob-sub">
+      Drop your résumé. In 60 seconds we'll extract your experience and draft
+      <strong>behavioral interview answers (STAR)</strong> from your actual work —
+      then help you verify them with a skills challenge.
+    </p>
+
+    <div class="ob-drop"
+         [class.dragging]="dragging"
+         (drop)="onDrop($event)"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()">
+      <div class="ob-drop-icon">📄</div>
+      <div class="ob-drop-title">Drop your CV here</div>
+      <div class="ob-drop-sub">PDF · up to 8&nbsp;MB · your file never leaves our server after parsing</div>
+      <label class="ob-drop-btn">
+        Choose file
+        <input type="file" accept="application/pdf,.pdf" (change)="onFileSelected($event)" hidden>
+      </label>
+    </div>
+
+    <details class="ob-text-toggle">
+      <summary>Or paste your CV as text →</summary>
+      <textarea
+        [(ngModel)]="pastedText"
+        name="cvText"
+        placeholder="Paste your résumé text here (name, contact, experience, projects, skills, education)..."
+        rows="10"></textarea>
+      <button type="button" class="ob-cta" (click)="submitText()" [disabled]="!pastedText || pastedText.length < 120">
+        Parse my CV →
+      </button>
+    </details>
+
+    <div class="ob-trust">
+      <span>🔒 Private by default · CV bytes discarded after parsing · only structured data stored</span>
+    </div>
+  </section>
+
+  <!-- STEP: Extracting -->
+  <section class="ob-step ob-step-center" *ngIf="step === 'extracting' || step === 'generating'">
+    <div class="ob-loader">
+      <div class="ob-spinner"></div>
+      <div class="ob-loader-msg">{{ extractingMessage }}</div>
+    </div>
+    <div class="ob-loader-sub">{{ step === 'generating' ? 'Generating your STAR story library…' : 'This takes ~10 seconds.' }}</div>
+  </section>
+
+  <!-- STEP: Preview -->
+  <section class="ob-step" *ngIf="step === 'preview' && extracted">
+    <div class="ob-eyebrow">STEP 2 OF 3</div>
+    <h1 class="ob-h1">
+      Found
+      <span class="ob-accent">{{ expCount }}</span> {{ expCount === 1 ? 'experience' : 'experiences' }}<span *ngIf="projectCount"> + <span class="ob-accent">{{ projectCount }}</span> {{ projectCount === 1 ? 'project' : 'projects' }}</span><span *ngIf="skillCount"> · <span class="ob-accent">{{ skillCount }}</span> skills</span>.
+    </h1>
+    <p class="ob-sub" *ngIf="extracted.profile?.fullName">
+      Welcome, <strong>{{ extracted.profile.fullName }}</strong>. Here's what we picked up:
+    </p>
+
+    <div class="ob-preview">
+      <div class="ob-pv-section" *ngIf="extracted.experiences?.length">
+        <div class="ob-pv-head">💼 Experience</div>
+        <div class="ob-pv-item" *ngFor="let x of extracted.experiences">
+          <div class="ob-pv-title">{{ x.role }} <span class="ob-pv-dim">· {{ x.company }}</span></div>
+          <div class="ob-pv-meta" *ngIf="x.startDate || x.duration || x.location">
+            <span *ngIf="x.startDate">{{ x.startDate }}{{ x.endDate ? ' — ' + x.endDate : ' — present' }}</span>
+            <span *ngIf="x.duration">{{ x.duration }}</span>
+            <span *ngIf="x.location">{{ x.location }}</span>
+          </div>
+          <div class="ob-pv-desc" *ngIf="x.description">{{ x.description }}</div>
+          <ul class="ob-pv-achievements" *ngIf="x.achievements?.length">
+            <li *ngFor="let a of x.achievements">{{ a }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ob-pv-section" *ngIf="extracted.projects?.length">
+        <div class="ob-pv-head">🛠 Projects</div>
+        <div class="ob-pv-item" *ngFor="let p of extracted.projects">
+          <div class="ob-pv-title">{{ p.name }}</div>
+          <div class="ob-pv-desc" *ngIf="p.description">{{ p.description }}</div>
+          <div class="ob-pv-tech" *ngIf="p.tech?.length">
+            <span *ngFor="let t of p.tech" class="ob-pv-chip">{{ t }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ob-pv-section" *ngIf="extracted.skills?.length">
+        <div class="ob-pv-head">⚡ Skills</div>
+        <div class="ob-pv-chip-row">
+          <span *ngFor="let s of extracted.skills" class="ob-pv-chip">{{ s }}</span>
+        </div>
+      </div>
+
+      <div class="ob-pv-empty" *ngIf="!extracted.experiences?.length && !extracted.projects?.length">
+        <p>We couldn't extract much structure from this CV. You can still continue — we'll ask you a few questions to build your first STAR answer.</p>
+      </div>
+    </div>
+
+    <div class="ob-preview-cta">
+      <button type="button" class="ob-cta" (click)="generateStarStories()">
+        Generate my STAR story library
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <button type="button" class="ob-cta-ghost" (click)="reset()">Upload a different file</button>
+    </div>
+  </section>
+
+  <!-- STEP: Error -->
+  <section class="ob-step ob-step-center" *ngIf="step === 'error'">
+    <div class="ob-error-icon">😕</div>
+    <h2 class="ob-h2">We hit a snag</h2>
+    <p class="ob-error-msg">{{ errorMsg }}</p>
+    <div class="ob-preview-cta">
+      <button type="button" class="ob-cta" (click)="reset()">Try again</button>
+      <a [routerLink]="['/evaluate']" class="ob-cta-ghost">Start with a challenge instead</a>
+    </div>
+  </section>
+</div>

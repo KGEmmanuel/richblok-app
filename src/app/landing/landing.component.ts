@@ -26,17 +26,18 @@ export class LandingComponent implements OnInit {
     en: {
       nav_login: 'Sign in',
       nav_signup: 'Get started',
-      hero_title: 'Turn real project work into',
-      hero_accent: 'interview-ready stories.',
-      hero_sub: 'Complete a Richblok challenge. Get verified behavioral stories (STAR) grounded in your actual work. Practice them with an AI coach. Get discovered by employers who trust the proof.',
-      hero_cta: 'Start Free Challenge',
-      hero_note: 'Free. 3 challenges/month. No card required.',
-      counter_prefix: 'badges earned by African tech talent',
-      how_title: 'Complete a project. Unlock interview answers. Get discovered.',
-      how_1_title: 'Complete a challenge',
-      how_1_desc: 'Pick from 5 skill tracks. Your real performance under time pressure becomes the raw material for your stories.',
-      how_2_title: 'Get your STAR answers',
-      how_2_desc: 'Instantly generated from your actual work — Leadership, Pressure Performance, Decision Making, and more behavioral competencies.',
+      hero_title: 'Turn your CV into',
+      hero_accent: 'interview-ready stories — in 60 seconds.',
+      hero_sub: 'Upload your CV. Richblok drafts your behavioral (STAR) answers for every role — Leadership, Decision-Making, Pressure Performance. Then verify each story with a 20-minute challenge so recruiters trust the proof.',
+      hero_cta: 'Upload your CV',
+      hero_cta_sub: 'Step 2 — Verify your stories with a 20-min challenge',
+      hero_note: 'Free. No card. PDF stays private — bytes discarded after parsing.',
+      counter_prefix: 'CVs turned into verified stories',
+      how_title: 'Upload, verify, get discovered — the shortcut to interview confidence.',
+      how_1_title: 'Upload your CV',
+      how_1_desc: 'Drop your PDF. We instantly draft STAR answers for 5+ behavioral competencies — grounded in your real experiences and projects.',
+      how_2_title: 'Verify with a 20-min challenge',
+      how_2_desc: 'Take a quick scored challenge. Each passed challenge flips matching stories from "draft" to "✓ verified" — proof recruiters can click.',
       how_3_title: 'Practice + get discovered',
       how_3_desc: 'AI coach helps you sharpen each answer. Verified profile is searchable by employers hiring African remote talent.',
       trust_title: 'Trusted across Africa',
@@ -66,23 +67,25 @@ export class LandingComponent implements OnInit {
       faq_4_q: 'What payment methods work in Africa?',
       faq_4_a: 'Visa, Mastercard, Verve, and local bank cards via Stripe. Works in Nigeria, Kenya, Ghana, South Africa, Cameroon, Senegal, and 20+ more.',
       final_title: 'Ready to be provable?',
-      final_sub: 'Join African tech talent already earning verified badges.',
-      final_cta: 'Start Free Challenge'
+      final_sub: 'Upload your CV now — get 5+ draft STAR stories in 60 seconds, then verify them with a 20-min challenge.',
+      final_cta: 'Upload your CV',
+      hero_secondary_cta: 'Or start with a challenge →'
     },
     fr: {
       nav_login: 'Connexion',
       nav_signup: 'Commencer',
-      hero_title: 'Transformez vos projets en',
-      hero_accent: 'histoires d\'entretien.',
-      hero_sub: 'Relevez un défi Richblok. Obtenez des histoires comportementales vérifiées (STAR) basées sur votre vrai travail. Entraînez-vous avec un coach IA. Soyez découvert par des recruteurs qui font confiance aux preuves.',
-      hero_cta: 'Commencer gratuitement',
-      hero_note: 'Gratuit. 3 défis/mois. Aucune carte bancaire.',
-      counter_prefix: 'badges obtenus par des talents africains',
-      how_title: 'Relevez un défi. Obtenez vos réponses. Soyez découvert.',
-      how_1_title: 'Relevez un défi',
-      how_1_desc: 'Choisissez parmi 5 domaines. Votre vraie performance sous pression devient la matière première de vos histoires.',
-      how_2_title: 'Obtenez vos réponses STAR',
-      how_2_desc: 'Générées à partir de votre vrai travail — Leadership, Performance sous pression, Prise de décision, et autres compétences comportementales.',
+      hero_title: 'Transformez votre CV en',
+      hero_accent: 'histoires d\'entretien — en 60 secondes.',
+      hero_sub: 'Déposez votre CV. Richblok rédige vos réponses comportementales (STAR) pour chaque rôle — Leadership, Décision, Performance sous pression. Puis vérifiez chaque histoire avec un défi de 20 min pour que les recruteurs fassent confiance à la preuve.',
+      hero_cta: 'Déposer mon CV',
+      hero_cta_sub: 'Étape 2 — Vérifiez vos histoires avec un défi de 20 min',
+      hero_note: 'Gratuit. Sans carte. PDF privé — fichiers supprimés après analyse.',
+      counter_prefix: 'CV transformés en histoires vérifiées',
+      how_title: 'Déposez, vérifiez, soyez découvert — le raccourci vers la confiance en entretien.',
+      how_1_title: 'Déposez votre CV',
+      how_1_desc: 'Déposez votre PDF. On rédige instantanément vos réponses STAR pour 5+ compétences comportementales — ancrées dans vos vraies expériences et projets.',
+      how_2_title: 'Vérifiez avec un défi de 20 min',
+      how_2_desc: 'Relevez un défi scoré. Chaque défi réussi fait passer vos histoires de « brouillon » à « ✓ vérifié » — une preuve cliquable pour les recruteurs.',
       how_3_title: 'Entraînez-vous et soyez repéré',
       how_3_desc: 'Un coach IA vous aide à affiner chaque réponse. Votre profil vérifié est recherché par les recruteurs.',
       trust_title: 'Utilisé à travers l’Afrique',
@@ -112,8 +115,9 @@ export class LandingComponent implements OnInit {
       faq_4_q: 'Quels moyens de paiement en Afrique ?',
       faq_4_a: 'Visa, Mastercard, Verve et cartes bancaires locales via Stripe. Fonctionne au Nigeria, Kenya, Ghana, Afrique du Sud, Cameroun, Sénégal, et 20+ autres pays.',
       final_title: 'Prêt à être prouvable ?',
-      final_sub: 'Rejoignez les talents tech africains qui obtiennent déjà leurs badges vérifiés.',
-      final_cta: 'Commencer gratuitement'
+      final_sub: 'Déposez votre CV maintenant — 5+ histoires STAR brouillon en 60 secondes, puis vérifiez-les avec un défi de 20 min.',
+      final_cta: 'Déposer mon CV',
+      hero_secondary_cta: 'Ou commencer par un défi →'
     }
   };
 
@@ -171,12 +175,20 @@ export class LandingComponent implements OnInit {
   }
 
   primaryCta() {
-    this.analytics.track('LandingCtaClick', { cta: 'primary_hero' });
+    // New CV-first primary path. Anonymous users can upload before registering;
+    // their pending STAR draft is stashed in localStorage and auto-claimed on register.
+    this.analytics.track('LandingCtaClick', { cta: 'primary_hero_upload_cv' });
+    this.router.navigate(['/onboard']);
+  }
+
+  secondaryCta() {
+    // "Or start with a challenge" — kept available for users who prefer challenge-first.
+    this.analytics.track('LandingCtaClick', { cta: 'secondary_hero_challenge' });
     const user = firebase.auth().currentUser;
     if (user) {
       this.router.navigate(['/evaluate']);
     } else {
-      this.router.navigate(['/register'], { queryParams: { from: 'landing' } });
+      this.router.navigate(['/register'], { queryParams: { from: 'landing_challenge' } });
     }
   }
 

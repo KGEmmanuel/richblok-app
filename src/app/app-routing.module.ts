@@ -50,6 +50,7 @@ import { StarProfileComponent } from './star-profile/star-profile.component';
 import { AiCoachComponent } from './ai-coach/ai-coach.component';
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
+import { OnboardComponent } from './onboard/onboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -96,6 +97,7 @@ const routes: Routes = [
   { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
+  { path: 'onboard', component: OnboardComponent, data: {title: 'Upload your CV'} },
   { path: 'star/:id', component: StarProfileComponent, data: {title: 'STAR Profile'} },
   { path: 'coach/:id', component: AiCoachComponent, canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },
   { path: 'employer/dashboard', component: EmployerDashboardComponent, canActivate: [AuthGuard], data: {title: 'Employer · Talent'} },

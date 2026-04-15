@@ -21,6 +21,22 @@ export interface StarMapInput {
   project?: string;
 }
 
+/** Structured CV payload returned from /api/cv-extract */
+export interface CvData {
+  profile?: { fullName?: string; headline?: string; location?: string; email?: string };
+  experiences?: Array<any>;
+  projects?: Array<any>;
+  education?: Array<any>;
+  skills?: string[];
+}
+
+export interface CvToStarInput {
+  uid: string;
+  cvData: CvData;
+  userName?: string;
+  targetCompetencies?: CompetencyTag[];
+}
+
 /**
  * Generates STAR behavioral-interview answers from a completed challenge
  * and stores them as a StarProfile in Firestore. Used by the challenge
@@ -69,13 +85,21 @@ export class StarMapperService {
         });
       }),
       switchMap(result => {
+        const markedAnswers = (result.answers || []).map(a => ({
+          ...a,
+          source: 'challenge' as const,
+          verified: true,
+          verifiedByBadgeId: input.badgeId,
+          verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }));
         const profile: StarProfile = {
           uid: input.uid,
+          source: 'challenge',
           challengeId: input.challengeId,
           challengeTitle: input.challengeTitle,
           badgeId: input.badgeId,
           score: input.score,
-          answers: result.answers,
+          answers: markedAnswers,
           unlockedQuestions: result.unlockedQuestions,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -83,6 +107,76 @@ export class StarMapperService {
         return from(this.afs.collection('star_profiles').add(profile as any)).pipe(
           map(ref => ({ ...profile, id: ref.id }))
         );
+      })
+    );
+  }
+
+  /**
+   * CV-first flow: turn a parsed CV into DRAFT STAR stories (unverified).
+   * User later completes challenges to flip each competency to verified.
+   */
+  generateFromCv(input: CvToStarInput): Observable<StarProfile> {
+    const body = {
+      cvData: input.cvData,
+      userName: input.userName || (input.cvData.profile && input.cvData.profile.fullName) || '',
+      targetCompetencies: input.targetCompetencies || []
+    };
+
+    return this.http.post<{ answers: StarAnswer[]; mode: string }>(
+      '/api/cv-to-star',
+      body
+    ).pipe(
+      catchError(err => {
+        // eslint-disable-next-line no-console
+        console.warn('CV-to-STAR API error, returning empty set', err);
+        return of({ answers: [], mode: 'client_fallback' });
+      }),
+      switchMap(result => {
+        const markedAnswers = (result.answers || []).map(a => ({
+          ...a,
+          source: 'cv' as const,
+          verified: false
+        }));
+        const unlockedQuestions = markedAnswers.map(a => a.question).filter(Boolean);
+
+        const profile: StarProfile = {
+          uid: input.uid,
+          source: 'cv',
+          cvProfileName: (input.cvData.profile && input.cvData.profile.fullName) || '',
+          cvExperienceCount: (input.cvData.experiences || []).length,
+          cvProjectCount: (input.cvData.projects || []).length,
+          answers: markedAnswers,
+          unlockedQuestions,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        return from(this.afs.collection('star_profiles').add(profile as any)).pipe(
+          map(ref => ({ ...profile, id: ref.id }))
+        );
+      })
+    );
+  }
+
+  /**
+   * Mark answers for a given competency as verified when a matching
+   * challenge has been passed. Called from the challenge submit flow
+   * when the user already has a CV-based StarProfile.
+   */
+  verifyCompetencies(profileId: string, competencies: CompetencyTag[], badgeId: string): Observable<void> {
+    return this.afs.doc<StarProfile>(`star_profiles/${profileId}`).valueChanges().pipe(
+      first(),
+      switchMap(p => {
+        if (!p) { return of<void>(undefined); }
+        const updated = (p.answers || []).map(a => {
+          if (competencies.indexOf(a.competency) >= 0 && !a.verified) {
+            return { ...a, verified: true, verifiedByBadgeId: badgeId, verifiedAt: new Date() };
+          }
+          return a;
+        });
+        return from(this.afs.doc(`star_profiles/${profileId}`).update({
+          answers: updated,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }));
       })
     );
   }

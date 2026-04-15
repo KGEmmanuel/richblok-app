@@ -227,6 +227,24 @@ $rb-border-hi: #3f3f46;
   &:hover { border-color: $rb-accent; }
 }
 .rb-cta-note { color: $rb-text-dim; font-size: 13px; margin: 10px 0 0; }
+.rb-hero-cta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.rb-cta-link {
+  background: transparent;
+  border: none;
+  color: $rb-text-dim;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 4px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: color .15s ease;
+  &:hover { color: $rb-accent; }
+}
 
 // Hero visual: badge preview
 .rb-hero-visual { display: flex; justify-content: center; }

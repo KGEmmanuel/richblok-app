@@ -10,19 +10,35 @@ export interface StarAnswer {
   action: string;                 // "A" of STAR
   result: string;                 // "R" of STAR
   editedByUser?: boolean;
+
+  // v3.1 CV-first additions
+  source?: 'challenge' | 'cv' | 'linkedin' | 'manual';
+  sourceExperience?: string;      // e.g. "Acme Corp · Senior Engineer" when source = 'cv'
+  verified?: boolean;             // true once a matching challenge has been passed
+  verifiedByBadgeId?: string;     // the badge that verified this competency
+  verifiedAt?: any;
 }
 
-/** A STAR Profile is generated per (user, challenge completion) tuple. */
+/** A STAR Profile is generated per (user, source) tuple. */
 export interface StarProfile {
   id?: string;
   uid: string;
-  challengeId: string;
-  challengeTitle: string;
+
+  // Source metadata — EITHER challenge OR CV (or both later)
+  source: 'challenge' | 'cv' | 'mixed';
+  challengeId?: string;
+  challengeTitle?: string;
   realisationId?: string;
   badgeId?: string;
   score?: number;
+
+  // CV mode
+  cvProfileName?: string;
+  cvExperienceCount?: number;
+  cvProjectCount?: number;
+
   answers: StarAnswer[];
-  unlockedQuestions: string[];    // list of behavioral interview questions unlocked
+  unlockedQuestions: string[];
   createdAt?: any;
   updatedAt?: any;
   lastCoachedAt?: any;

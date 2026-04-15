@@ -4,7 +4,17 @@ import { StarMapperService } from '../shared/services/star-mapper.service';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { ShareService } from '../shared/services/share.service';
 import { StarProfile, StarAnswer } from '../shared/entites/StarProfile';
+import { CompetencyTag } from '../shared/entites/Challenge';
 import { SeoService } from '../shared/services/seo.service';
+import { CHALLENGES_SEED } from '../shared/data/challenges-seed';
+
+interface SuggestedChallenge {
+  slug: string;
+  titre: string;
+  estimatedDuration: string;
+  skills: string[];
+  matchedCompetencies: CompetencyTag[];
+}
 
 @Component({
   selector: 'app-star-profile',
@@ -17,7 +27,9 @@ export class StarProfileComponent implements OnInit {
   loading = true;
   error: string | null = null;
   fromChallenge = false;
+  fromCv = false;
   expanded: { [i: number]: boolean } = {};
+  suggestionsPerAnswer: { [i: number]: SuggestedChallenge[] } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -36,6 +48,7 @@ export class StarProfileComponent implements OnInit {
 
     this.route.queryParamMap.subscribe(q => {
       this.fromChallenge = q.get('fromChallenge') === '1';
+      this.fromCv = q.get('fromCv') === '1';
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -56,7 +69,50 @@ export class StarProfileComponent implements OnInit {
       this.profile = p;
       // Auto-expand the first answer so the user sees value immediately
       this.expanded[0] = true;
+      this.computeSuggestions();
     });
+  }
+
+  private computeSuggestions() {
+    if (!this.profile || !this.profile.answers) { return; }
+    this.profile.answers.forEach((a, i) => {
+      // Only suggest verification challenges for draft (unverified) answers
+      if (a.verified) { this.suggestionsPerAnswer[i] = []; return; }
+      const matches: SuggestedChallenge[] = [];
+      CHALLENGES_SEED.forEach((ch: any) => {
+        const tags: CompetencyTag[] = ch.competencyTags || [];
+        if (tags.indexOf(a.competency) >= 0) {
+          matches.push({
+            slug: ch.slug,
+            titre: ch.titre,
+            estimatedDuration: ch.estimatedDuration || '20 minutes',
+            skills: ch.skills || [],
+            matchedCompetencies: tags.filter((t: CompetencyTag) => t === a.competency)
+          });
+        }
+      });
+      // Cap at 2 suggestions per answer to keep UI tight
+      this.suggestionsPerAnswer[i] = matches.slice(0, 2);
+    });
+  }
+
+  takeChallenge(slug: string, competency: CompetencyTag) {
+    this.analytics.track('SuggestedChallengeClick', {
+      profileId: this.profile ? this.profile.id : null,
+      slug,
+      competency
+    });
+    // Stash the pending-verification intent so the challenge submit flow can
+    // flip matching draft answers to verified once the badge is earned.
+    try {
+      if (this.profile && this.profile.id) {
+        localStorage.setItem('richblok_pending_verify', JSON.stringify({
+          profileId: this.profile.id,
+          competency
+        }));
+      }
+    } catch { /* ignore */ }
+    this.router.navigate(['/evaluate'], { queryParams: { slug } });
   }
 
   toggle(i: number) {

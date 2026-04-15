@@ -5,8 +5,13 @@ const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Parse JSON bodies for API endpoints (keep limit small; STAR context is modest)
-app.use('/api', express.json({ limit: '100kb' }));
+// Parse JSON bodies per endpoint. CV uploads can be ~12MB (PDF base64).
+app.use('/api/star-map', express.json({ limit: '100kb' }));
+app.use('/api/coach', express.json({ limit: '100kb' }));
+app.use('/api/cv-extract', express.json({ limit: '12mb' }));
+app.use('/api/cv-to-star', express.json({ limit: '200kb' }));
+// Default smaller limit for other /api endpoints
+app.use('/api/health', express.json({ limit: '8kb' }));
 
 // Anthropic Claude API config
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
@@ -187,19 +192,22 @@ app.get('/api/health', (req, res) => {
 
 /**
  * Call Claude Messages API.
+ * `userContent` may be a plain string OR an array of content blocks
+ * (for PDF / document inputs: [{type:'document',source:{type:'base64',...}}, {type:'text',text:'...'}]).
  * Returns { content: string } or throws.
  */
-function callClaude({ model, system, userMessage, maxTokens = 1200, temperature = 0.4 }) {
+function callClaude({ model, system, userMessage, userContent, maxTokens = 1200, temperature = 0.4 }) {
   return new Promise((resolve, reject) => {
     if (!ANTHROPIC_API_KEY) {
       return reject(new Error('ANTHROPIC_API_KEY not configured on server'));
     }
+    const content = userContent !== undefined ? userContent : userMessage;
     const body = JSON.stringify({
       model: model || CLAUDE_MODEL,
       max_tokens: maxTokens,
       temperature,
       system: system || '',
-      messages: [{ role: 'user', content: userMessage }]
+      messages: [{ role: 'user', content }]
     });
     const req = https.request({
       hostname: 'api.anthropic.com',
@@ -210,7 +218,8 @@ function callClaude({ model, system, userMessage, maxTokens = 1200, temperature 
         'x-api-key': ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
         'content-length': Buffer.byteLength(body)
-      }
+      },
+      timeout: 60000
     }, (resp) => {
       let chunks = '';
       resp.on('data', c => chunks += c);
@@ -220,14 +229,19 @@ function callClaude({ model, system, userMessage, maxTokens = 1200, temperature 
           if (parsed.error) {
             return reject(new Error(parsed.error.message || 'Claude API error'));
           }
-          const content = (parsed.content && parsed.content[0] && parsed.content[0].text) || '';
-          resolve({ content, usage: parsed.usage });
+          // Concatenate text blocks (Claude may return multiple text blocks)
+          const text = (parsed.content || [])
+            .filter(b => b.type === 'text')
+            .map(b => b.text)
+            .join('\n');
+          resolve({ content: text, usage: parsed.usage });
         } catch (e) {
           reject(e);
         }
       });
     });
     req.on('error', reject);
+    req.on('timeout', () => { req.destroy(new Error('Claude API timeout')); });
     req.write(body);
     req.end();
   });
@@ -416,6 +430,243 @@ Coach them. Be specific and actionable.`;
       error: err.message,
       reply: 'I hit a temporary issue reaching my model. In the meantime, the best thing you can do is add one specific number to your Result — a score, a percentile, a date — and rewrite the Action in one sentence that starts with a verb.'
     });
+  }
+});
+
+/**
+ * POST /api/cv-extract
+ * Body (PDF mode):   { source: 'pdf', filename, base64 }          — PDF binary up to ~8MB
+ * Body (text mode):  { source: 'text', text }                     — pasted resume text
+ *
+ * Returns structured JSON parsed from the CV:
+ *   { mode, profile: { fullName, headline, location, email },
+ *     experiences: [{ role, company, location, startDate, endDate, duration, description, achievements[] }],
+ *     projects: [{ name, description, tech[], impact }],
+ *     education: [{ school, degree, field, years }],
+ *     skills: [...strings...] }
+ */
+app.post('/api/cv-extract', async (req, res) => {
+  const p = req.body || {};
+  const source = p.source || (p.base64 ? 'pdf' : 'text');
+
+  if (!ANTHROPIC_API_KEY) {
+    return res.json({
+      mode: 'fallback',
+      error: 'AI parsing not configured. Set ANTHROPIC_API_KEY to enable CV parsing.',
+      profile: { fullName: '', headline: '', location: '' },
+      experiences: [],
+      projects: [],
+      education: [],
+      skills: []
+    });
+  }
+
+  const system = `You are a world-class résumé parser. Extract structured information from a CV/resume. Output ONLY valid JSON matching the shape described. Be faithful to the source — do not invent content. If a field is absent, omit it or use an empty array. Quantify achievements when the CV includes numbers.`;
+
+  const instruction = `Extract a structured JSON from this résumé. Return EXACTLY this shape (no markdown, no commentary):
+
+{
+  "profile": {
+    "fullName": "",
+    "headline": "",
+    "location": "",
+    "email": ""
+  },
+  "experiences": [
+    {
+      "role": "",
+      "company": "",
+      "location": "",
+      "startDate": "",
+      "endDate": "",
+      "duration": "",
+      "description": "",
+      "achievements": ["...", "..."]
+    }
+  ],
+  "projects": [
+    {
+      "name": "",
+      "description": "",
+      "tech": ["..."],
+      "impact": ""
+    }
+  ],
+  "education": [
+    {
+      "school": "",
+      "degree": "",
+      "field": "",
+      "years": ""
+    }
+  ],
+  "skills": ["skill1", "skill2"]
+}
+
+Rules:
+- Each experience "description" is 1-2 sentences summarizing scope.
+- "achievements" is an array of concrete, quantified bullet points (2-5 max per role).
+- Projects include personal / academic / side projects explicitly mentioned.
+- "headline" is a one-line self-description (e.g., "Senior Backend Engineer · Payments").
+- Keep dates in "YYYY-MM" format when possible; otherwise use what the CV shows.
+- Return ONLY the JSON. No prose before or after.`;
+
+  try {
+    let userContent;
+
+    if (source === 'pdf' && p.base64) {
+      // PDF document input (Claude 3.5+ supports direct PDF via Messages API)
+      userContent = [
+        {
+          type: 'document',
+          source: {
+            type: 'base64',
+            media_type: 'application/pdf',
+            data: p.base64
+          }
+        },
+        { type: 'text', text: instruction }
+      ];
+    } else if (p.text && typeof p.text === 'string') {
+      // Pasted text
+      userContent = `${instruction}\n\nCV TEXT:\n"""\n${String(p.text).substring(0, 18000)}\n"""`;
+    } else {
+      return res.status(400).json({ error: 'Provide { source:"pdf", base64 } or { source:"text", text }' });
+    }
+
+    const { content, usage } = await callClaude({
+      model: CLAUDE_HAIKU_MODEL,
+      system,
+      userContent,
+      maxTokens: 4000,
+      temperature: 0.2
+    });
+
+    // Extract JSON
+    let json = content.trim();
+    const match = json.match(/\{[\s\S]*\}/);
+    if (match) json = match[0];
+    const parsed = JSON.parse(json);
+
+    res.json({
+      mode: 'ai',
+      ...parsed,
+      _usage: usage
+    });
+  } catch (err) {
+    console.error('cv-extract error:', err.message);
+    res.json({
+      mode: 'error',
+      error: err.message,
+      profile: {},
+      experiences: [],
+      projects: [],
+      education: [],
+      skills: []
+    });
+  }
+});
+
+/**
+ * POST /api/cv-to-star
+ * Body: { cvData (parsed), uid?, userName?, targetCompetencies?: string[] }
+ *
+ * Turns a parsed CV into N draft STAR answers (one per experience × competency pair).
+ * Each answer carries source:"cv" and verified:false until the user completes a challenge.
+ */
+app.post('/api/cv-to-star', async (req, res) => {
+  const p = req.body || {};
+  const cv = p.cvData || {};
+  const experiences = Array.isArray(cv.experiences) ? cv.experiences : [];
+  const projects = Array.isArray(cv.projects) ? cv.projects : [];
+
+  // Pick a diverse set of competencies to cover (max 6)
+  const allCompetencies = ['leadership', 'pressure_performance', 'decision_making', 'learning_from_failure', 'teamwork', 'communication', 'initiative', 'adaptability'];
+  const targetCompetencies = Array.isArray(p.targetCompetencies) && p.targetCompetencies.length
+    ? p.targetCompetencies
+    : allCompetencies.slice(0, 6);
+
+  function fallbackAnswers() {
+    // Pick the first experience or project we can reference, or return empty.
+    const source = experiences[0] || projects[0];
+    if (!source) { return []; }
+    return targetCompetencies.slice(0, 5).map(tag => ({
+      competency: tag,
+      competencyLabel: COMPETENCY_LABELS[tag] || tag,
+      question: COMPETENCY_Q[tag] || 'Tell me about a challenging experience.',
+      situation: `In my role as ${source.role || source.name || 'a contributor'} ${source.company ? 'at ' + source.company : ''}, ${source.description || ''}`.trim(),
+      task: `Demonstrate ${(COMPETENCY_LABELS[tag] || tag).toLowerCase()} in a concrete professional context.`,
+      action: (source.achievements && source.achievements[0]) || 'I took ownership of the outcome and executed.',
+      result: `Delivered measurable impact on the project.`,
+      verified: false,
+      source: 'cv'
+    }));
+  }
+
+  if (!ANTHROPIC_API_KEY || (experiences.length === 0 && projects.length === 0)) {
+    return res.json({ mode: 'fallback', answers: fallbackAnswers() });
+  }
+
+  try {
+    const system = `You are a behavioral interview coach. You read a candidate's CV and draft honest, specific STAR (Situation, Task, Action, Result) answers based ONLY on the experiences and projects listed. You NEVER invent facts. You reference real company names, roles, numbers, and achievements from the CV. Mark each STAR answer as DRAFT until the candidate verifies it with a Richblok challenge. Return ONLY valid JSON.`;
+
+    const prompt = `CANDIDATE CV DATA:
+${JSON.stringify({ profile: cv.profile, experiences, projects, skills: cv.skills }, null, 2)}
+
+TASK: For each of these ${targetCompetencies.length} behavioral competencies, write a STAR draft answer grounded in ONE of the candidate's real experiences or projects above.
+${targetCompetencies.map(t => `- ${t} → "${COMPETENCY_Q[t]}"`).join('\n')}
+
+Rules:
+- Pull from the CV verbatim where possible (role, company, tech, numbers).
+- Each STAR field (S/T/A/R) is 1-2 crisp sentences.
+- If the CV doesn't contain enough material for a competency, SKIP that competency entirely. Better to return 3 strong answers than 6 weak ones.
+- Every answer MUST name a real experience/project from the CV.
+- Output this EXACT JSON shape (no prose, no markdown):
+
+{
+  "answers": [
+    {
+      "competency": "leadership",
+      "question": "Tell me about a time you led a team through a complex problem.",
+      "situation": "...",
+      "task": "...",
+      "action": "...",
+      "result": "...",
+      "sourceExperience": "Company X · Role Y"
+    }
+  ]
+}`;
+
+    const { content } = await callClaude({
+      model: CLAUDE_HAIKU_MODEL,
+      system,
+      userMessage: prompt,
+      maxTokens: 3500,
+      temperature: 0.35
+    });
+
+    let json = content.trim();
+    const match = json.match(/\{[\s\S]*\}/);
+    if (match) json = match[0];
+    const parsed = JSON.parse(json);
+
+    const answers = (parsed.answers || []).map(a => ({
+      competency: a.competency,
+      competencyLabel: COMPETENCY_LABELS[a.competency] || a.competency,
+      question: a.question || COMPETENCY_Q[a.competency] || '',
+      situation: a.situation || '',
+      task: a.task || '',
+      action: a.action || '',
+      result: a.result || '',
+      sourceExperience: a.sourceExperience || '',
+      verified: false,
+      source: 'cv'
+    }));
+
+    res.json({ mode: 'ai', answers });
+  } catch (err) {
+    console.error('cv-to-star error:', err.message);
+    res.json({ mode: 'fallback_error', error: err.message, answers: fallbackAnswers() });
   }
 });
 

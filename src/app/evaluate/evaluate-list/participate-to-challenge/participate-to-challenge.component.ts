@@ -198,7 +198,39 @@ export class ParticipateToChallengeComponent implements OnInit {
             answerCount: profile.answers.length,
             challenge: this.currentChal.titre
           });
-          this.router.navigate(['/star', profile.id], { queryParams: { fromChallenge: 1 } });
+
+          // PRD v3 — CV-first flow: if the user arrived via a "Verify this
+          // competency" suggestion on their CV-draft STAR profile, flip the
+          // matching draft answers to verified and route them back there.
+          let pendingVerify: { profileId?: string; competency?: CompetencyTag } | null = null;
+          try {
+            const raw = localStorage.getItem('richblok_pending_verify');
+            if (raw) { pendingVerify = JSON.parse(raw); }
+          } catch { /* ignore */ }
+
+          if (passed && pendingVerify && pendingVerify.profileId) {
+            const compsToVerify: CompetencyTag[] = pendingVerify.competency
+              ? [pendingVerify.competency]
+              : competencyTags;
+            this.starMapper.verifyCompetencies(pendingVerify.profileId, compsToVerify, badgeId).subscribe(
+              () => {
+                try { localStorage.removeItem('richblok_pending_verify'); } catch { /* ignore */ }
+                this.analytics.track('CvDraftVerified', {
+                  profileId: pendingVerify.profileId,
+                  competencies: compsToVerify,
+                  badgeId
+                });
+                this.router.navigate(['/star', pendingVerify.profileId], {
+                  queryParams: { verified: compsToVerify.join(',') }
+                });
+              },
+              () => {
+                this.router.navigate(['/star', profile.id], { queryParams: { fromChallenge: 1 } });
+              }
+            );
+          } else {
+            this.router.navigate(['/star', profile.id], { queryParams: { fromChallenge: 1 } });
+          }
         }, err => {
           // eslint-disable-next-line no-console
           console.warn('STAR generation failed; redirecting to badge page.', err);
