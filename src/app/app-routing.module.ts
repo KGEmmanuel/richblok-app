@@ -51,6 +51,8 @@ import { AiCoachComponent } from './ai-coach/ai-coach.component';
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
 import { OnboardComponent } from './onboard/onboard.component';
+import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
+import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -63,8 +65,8 @@ const routes: Routes = [
   { path: 'organisation/:id', component: OrganisationProfileComponent},
   { path: 'messages', component: ChatComponent, canActivate: [AuthGuard], data: {title: 'Chat'}},
   { path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard], data: {title: 'Notifications'}},
-  { path: 'jobs', component: JobsComponent, data: {title: 'Jobs'}},
-  { path: 'organisation', component: OrganisationProfileComponent},
+  { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard], data: {title: 'Jobs'}},
+  { path: 'organisation', component: OrganisationProfileComponent, canActivate: [AuthGuard]},
   { path: 'record', component: RecordComponent, canActivate: [AuthGuard], data: {title: 'Records'}},
   { path: 'friends', component: FriendsComponent, canActivate: [AuthGuard], data: {title: 'Connections'}},
   { path: 'settings', component: UserSettingsComponent, canActivate: [AuthGuard], data: {title: 'Settings'}},
@@ -73,7 +75,7 @@ const routes: Routes = [
   { path: 'forgot-password', component: ResetComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'verify-email-address', component: VerifyEmailComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'demonstrate', component: DemonstrateComponent, canActivate: [AuthGuard], data: {title: 'Demonstrate'}},
-  { path: 'evaluate', component: EvaluateComponent, data: {title: 'Evaluate'}},
+  { path: 'evaluate', component: EvaluateComponent, canActivate: [AuthGuard], data: {title: 'Evaluate'}},
   { path: 'participate', component: ParticipateToChallengeComponent, canActivate: [AuthGuard], data: {title: 'Participate'}},
   { path: 'create-organisation', component: CreateOrganisationComponent, canActivate: [AuthGuard]},
   { path: 'organisation-settings', component: OrganisationSettingsComponent, canActivate: [AuthGuard]},
@@ -97,6 +99,8 @@ const routes: Routes = [
   { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
+  { path: 'admin/challenges', component: AdminChallengesComponent, canActivate: [AuthGuard], data: {title: 'Admin · Challenges'}},
+  { path: 'sponsor', component: SponsorChallengeComponent, data: {title: 'Sponsor a challenge'}},
   { path: 'onboard', component: OnboardComponent, data: {title: 'Upload your CV'} },
   { path: 'star/:id', component: StarProfileComponent, data: {title: 'STAR Profile'} },
   { path: 'coach/:id', component: AiCoachComponent, canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },

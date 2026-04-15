@@ -234,6 +234,16 @@ $border-hi: #3f3f46;
   0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
   40% { opacity: 1; transform: scale(1); }
 }
+.ac-cursor {
+  display: inline-block;
+  color: #1dd1a1;
+  font-weight: 700;
+  margin-left: 2px;
+  animation: ac-blink 1s steps(2, start) infinite;
+}
+@keyframes ac-blink {
+  to { visibility: hidden; }
+}
 
 .ac-suggestions {
   display: flex;

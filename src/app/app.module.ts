@@ -2,6 +2,7 @@ import { ProgressComponent } from './RibComponents/progress/progress.component';
 import { HttpClient, HttpHandler, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -220,6 +221,8 @@ import { AiCoachComponent } from './ai-coach/ai-coach.component';
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
 import { OnboardComponent } from './onboard/onboard.component';
+import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
+import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -421,7 +424,9 @@ import { OnboardComponent } from './onboard/onboard.component';
     AiCoachComponent,
     EmployerDashboardComponent,
     UniversityDashboardComponent,
-    OnboardComponent
+    OnboardComponent,
+    AdminChallengesComponent,
+    SponsorChallengeComponent
   ],
   imports: [
     BrowserModule,
@@ -454,6 +459,9 @@ import { OnboardComponent } from './onboard/onboard.component';
     PdfViewerModule,
     ReactiveFormsModule,
     NgCircleProgressModule.forRoot({
+    }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: (window as any).location.hostname !== 'localhost'
     }),
 
 

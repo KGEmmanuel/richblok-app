@@ -16,6 +16,12 @@
       Track challenge completion, verified competency badges, and employer engagement across your cohort.
       Export CSV for accreditation reporting.
     </p>
+    <div class="ud-pilot-banner" *ngIf="isPilotPreview">
+      <strong>Pilot preview.</strong> You're seeing an aggregate view of all Richblok users.
+      To filter to your institution's cohort, email
+      <a href="mailto:emmanuel3kaldjob@gmail.com">emmanuel3kaldjob@gmail.com</a>
+      and we'll set <code>role: 'university_admin'</code> + <code>institution_id</code> on your account.
+    </div>
   </section>
 
   <section class="ud-stats">

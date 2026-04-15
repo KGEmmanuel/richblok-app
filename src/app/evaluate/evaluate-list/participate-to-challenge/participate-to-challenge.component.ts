@@ -10,6 +10,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AnalyticsService } from 'src/app/shared/services/analytics.service';
 import { StarMapperService } from 'src/app/shared/services/star-mapper.service';
 import { CompetencyTag } from 'src/app/shared/entites/Challenge';
+import { HttpClient } from '@angular/common/http';
 import * as firebase from 'firebase/app';
 import { first } from 'rxjs/operators';
 
@@ -35,8 +36,11 @@ export class ParticipateToChallengeComponent implements OnInit {
     private afs: AngularFirestore,
     private afAuth: AngularFireAuth,
     private analytics: AnalyticsService,
-    private starMapper: StarMapperService
+    private starMapper: StarMapperService,
+    private http: HttpClient
   ) {}
+
+  podMatch: { whatsappLink?: string; podId?: string; full?: boolean } | null = null;
 
   ngOnInit() {
     this.etape = 1;
@@ -265,6 +269,26 @@ export class ParticipateToChallengeComponent implements OnInit {
   start() {
     this.show = true;
     this.analytics.track('ChallengeStart', { challenge_id: this.currentChal.id, skill: (this.currentChal.skills || [])[0] });
+    // Try to auto-match the user to an accountability pod (4-6 people starting
+    // this same challenge within a 7-day rolling window). Non-blocking; a
+    // failure here must never block challenge start.
+    this.afAuth.authState.pipe(first()).subscribe(u => {
+      if (!u || !this.currentChal.id) { return; }
+      this.http.post('/api/pods/match', {
+        uid: u.uid,
+        challengeId: this.currentChal.id
+      }).subscribe(
+        (resp: any) => {
+          this.podMatch = resp;
+          this.analytics.track('AccountabilityPodMatched', {
+            challengeId: this.currentChal.id,
+            podId: resp.podId,
+            full: !!resp.full
+          });
+        },
+        () => { /* silently skip — not critical */ }
+      );
+    });
   }
 
   private scoreToPercentile(score: number): number {

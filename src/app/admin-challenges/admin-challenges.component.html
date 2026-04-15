@@ -1,0 +1,120 @@
+<div class="ac-page">
+  <header class="ac-nav">
+    <a class="ac-logo" [routerLink]="['/admin']">
+      <span class="ac-logo-mark">R</span>ichblok
+      <span class="ac-logo-tag">· Admin · Challenges</span>
+    </a>
+    <button type="button" class="ac-new-btn" (click)="newChallenge()" [disabled]="!isAdmin">
+      + New challenge
+    </button>
+  </header>
+
+  <section class="ac-hero">
+    <div class="ac-eyebrow">CHALLENGE EDITOR</div>
+    <h1 class="ac-h1">Manage the Richblok challenge catalog</h1>
+    <p class="ac-sub">
+      Create, edit, and tag challenges with STAR competencies. Tags drive the CV-verify-loop widget
+      and the employer dashboard competency filter.
+    </p>
+  </section>
+
+  <div class="ac-loading" *ngIf="loading">Loading…</div>
+
+  <div class="ac-not-admin" *ngIf="!loading && isAdmin === false">
+    <h2>Admin access required</h2>
+    <p>Your account needs <code>role: 'admin'</code> on <code>utilisateurs/&lt;uid&gt;</code>. Contact support to request.</p>
+  </div>
+
+  <div class="ac-wrap" *ngIf="!loading && isAdmin">
+    <!-- Editor panel -->
+    <aside class="ac-editor" *ngIf="editing">
+      <h2>{{ editing.id ? 'Edit challenge' : 'New challenge' }}</h2>
+
+      <label>Title</label>
+      <input type="text" [(ngModel)]="editing.titre" placeholder="e.g. React & JavaScript — Mid Level">
+
+      <label>Slug</label>
+      <input type="text" [(ngModel)]="editing.slug" placeholder="kebab-case-slug">
+
+      <label>Description</label>
+      <textarea rows="4" [(ngModel)]="editing.description"></textarea>
+
+      <label>Skills (comma-separated)</label>
+      <input type="text" [(ngModel)]="skillsInput" placeholder="React, JavaScript, TypeScript">
+
+      <label>STAR Competency Tags</label>
+      <div class="ac-tag-grid">
+        <button type="button" class="ac-tag"
+                *ngFor="let t of competencyOptions"
+                [class.active]="hasTag(t.tag)"
+                (click)="toggleTag(t.tag)">
+          {{ t.label }}
+        </button>
+      </div>
+
+      <div class="ac-row">
+        <div class="ac-field">
+          <label>Format</label>
+          <select [(ngModel)]="editing.challengeFormat">
+            <option *ngFor="let f of formatOptions" [value]="f">{{ f }}</option>
+          </select>
+        </div>
+        <div class="ac-field">
+          <label>Estimated duration</label>
+          <input type="text" [(ngModel)]="editing.estimatedDuration">
+        </div>
+      </div>
+
+      <div class="ac-row">
+        <div class="ac-field">
+          <label>Language</label>
+          <select [(ngModel)]="editing.language">
+            <option value="EN">EN</option>
+            <option value="FR">FR</option>
+          </select>
+        </div>
+        <div class="ac-field">
+          <label>Type</label>
+          <select [(ngModel)]="editing.type">
+            <option value="SKILL">Skill</option>
+            <option value="REC">Recruitment</option>
+            <option value="FREE">Free</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ac-actions">
+        <button type="button" class="ac-save" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Saving…' : 'Save' }}
+        </button>
+        <button type="button" class="ac-cancel" (click)="cancel()">Cancel</button>
+      </div>
+    </aside>
+
+    <!-- List -->
+    <section class="ac-list">
+      <div class="ac-card" *ngFor="let c of challenges">
+        <div class="ac-card-head">
+          <div>
+            <div class="ac-card-title">{{ c.titre }}</div>
+            <div class="ac-card-meta">{{ c.slug }} · {{ c.challengeFormat }} · {{ c.estimatedDuration }}</div>
+          </div>
+          <div class="ac-card-actions">
+            <button type="button" class="ac-link" (click)="edit(c)">Edit</button>
+            <button type="button" class="ac-link ac-danger" (click)="deleteChallenge(c)">Delete</button>
+          </div>
+        </div>
+        <div class="ac-card-tags" *ngIf="c.competencyTags?.length">
+          <span class="ac-card-chip" *ngFor="let t of c.competencyTags">{{ competencyLabel(t) }}</span>
+        </div>
+        <div class="ac-card-skills" *ngIf="c.skills?.length">
+          {{ c.skills.join(' · ') }}
+        </div>
+      </div>
+
+      <div class="ac-empty" *ngIf="challenges.length === 0">
+        <p>No challenges yet. Click "+ New challenge" to create your first one.</p>
+      </div>
+    </section>
+  </div>
+</div>

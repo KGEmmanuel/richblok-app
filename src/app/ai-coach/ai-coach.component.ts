@@ -9,6 +9,7 @@ interface ChatMessage {
   role: 'user' | 'coach';
   text: string;
   timestamp: Date;
+  streaming?: boolean;
 }
 
 @Component({
@@ -98,24 +99,59 @@ export class AiCoachComponent implements OnInit, AfterViewChecked {
       competency: this.activeAnswer.competency
     });
 
+    // Insert an empty streaming coach bubble we'll append to as deltas arrive.
+    const coachMsg: ChatMessage = { role: 'coach', text: '', timestamp: new Date(), streaming: true };
+    this.messages.push(coachMsg);
+    this.shouldScroll = true;
+
+    // Use fetch + ReadableStream so we can POST a body and consume SSE.
     try {
-      const resp: any = await this.http.post('/api/coach', {
-        answer: this.activeAnswer,
-        userMessage: text,
-        projectContext: this.profile?.challengeTitle
-      }).toPromise();
-      this.messages.push({
-        role: 'coach',
-        text: resp.reply || 'Let me help you improve this answer.',
-        timestamp: new Date()
+      const resp = await fetch('/api/coach/stream', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          answer: this.activeAnswer,
+          userMessage: text,
+          projectContext: this.profile?.challengeTitle
+        })
       });
-      this.shouldScroll = true;
+      if (!resp.ok || !resp.body) {
+        throw new Error('coach stream failed: HTTP ' + resp.status);
+      }
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buf = '';
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) { break; }
+        buf += decoder.decode(value, { stream: true });
+        // SSE frames delimited by \n\n
+        let idx;
+        while ((idx = buf.indexOf('\n\n')) >= 0) {
+          const frame = buf.substring(0, idx);
+          buf = buf.substring(idx + 2);
+          const line = frame.split('\n').find(l => l.startsWith('data:'));
+          if (!line) { continue; }
+          try {
+            const evt = JSON.parse(line.slice(5).trim());
+            if (evt.type === 'delta' && evt.text) {
+              coachMsg.text += evt.text;
+              this.shouldScroll = true;
+            } else if (evt.type === 'error') {
+              coachMsg.text = coachMsg.text || ('Coach error: ' + (evt.message || 'unknown'));
+            } else if (evt.type === 'done') {
+              coachMsg.streaming = false;
+            }
+          } catch { /* keepalive */ }
+        }
+      }
+      coachMsg.streaming = false;
+      if (!coachMsg.text) {
+        coachMsg.text = 'Let me help you improve this answer.';
+      }
     } catch (err) {
-      this.messages.push({
-        role: 'coach',
-        text: 'I had trouble connecting right now. Try rephrasing — I read everything you write.',
-        timestamp: new Date()
-      });
+      coachMsg.streaming = false;
+      coachMsg.text = 'I had trouble connecting right now. Try rephrasing — I read everything you write.';
     } finally {
       this.sending = false;
     }

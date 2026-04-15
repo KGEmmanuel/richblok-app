@@ -49,6 +49,11 @@
                     <div class="d-flex justify-content-end" style="margin-top: 5%;">
                         <button type="button" (click)="start()" *ngIf="!show" class="btn btn-outline-primary btn-sm mr-1">Start with the questions</button>
                     </div>
+                    <div class="alert alert-success mt-3" *ngIf="show && podMatch?.whatsappLink" style="border-left: 4px solid #25d366;">
+                        <strong>🤝 Accountability pod ready.</strong>
+                        {{ podMatch.full ? 'You\'re the 5th person — pod is full.' : 'Others are taking this challenge this week. Join them on WhatsApp:' }}
+                        <a [href]="podMatch.whatsappLink" target="_blank" rel="noopener" class="ml-2">Invite your pod on WhatsApp →</a>
+                    </div>
                     <div class="row" *ngIf="show">
                         <div class="col-lg-6">
                             <h5>Question number : {{etape}}</h5>

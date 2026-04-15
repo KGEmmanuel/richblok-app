@@ -149,6 +149,20 @@ $border-hi: #3f3f46;
   }
   .ed-score-max { font-size: 16px; margin-left: 4px; color: $text-dim; }
 }
+.ed-competency-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 10px 0 14px;
+}
+.ed-competency-chip {
+  background: rgba(34, 211, 238, 0.10);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: #22d3ee;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
 .ed-candidate-foot {
   display: flex; justify-content: space-between; align-items: center;
   flex-wrap: wrap; gap: 8px;

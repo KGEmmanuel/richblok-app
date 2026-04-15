@@ -54,11 +54,11 @@
             <div class="ac-msg-avatar">
               {{ m.role === 'coach' ? '🤖' : 'You' }}
             </div>
-            <div class="ac-msg-bubble">{{ m.text }}</div>
-          </div>
-          <div *ngIf="sending" class="ac-msg coach">
-            <div class="ac-msg-avatar">🤖</div>
-            <div class="ac-msg-bubble ac-typing"><span></span><span></span><span></span></div>
+            <div class="ac-msg-bubble">
+              {{ m.text }}
+              <span *ngIf="m.streaming && !m.text" class="ac-typing"><span></span><span></span><span></span></span>
+              <span *ngIf="m.streaming && m.text" class="ac-cursor">▍</span>
+            </div>
           </div>
           <div #scrollAnchor></div>
         </div>

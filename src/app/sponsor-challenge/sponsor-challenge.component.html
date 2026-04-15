@@ -1,0 +1,69 @@
+<div class="sc-page">
+  <header class="sc-nav">
+    <a class="sc-logo" [routerLink]="['/landing']">
+      <span class="sc-logo-mark">R</span>ichblok
+      <span class="sc-logo-tag">· Sponsor a challenge</span>
+    </a>
+  </header>
+
+  <section class="sc-hero">
+    <div class="sc-eyebrow">EMPLOYER SPONSORSHIP</div>
+    <h1 class="sc-h1">Put your brand in front of verified African tech talent.</h1>
+    <p class="sc-sub">
+      Sponsor a Richblok challenge. Your logo appears on the challenge page and every badge
+      earned from it. Top performers enter your recruiting pipeline.
+      <strong>$500 per sponsored challenge.</strong> Cancelable anytime before launch.
+    </p>
+  </section>
+
+  <!-- STEP: Pick challenge -->
+  <section class="sc-wrap" *ngIf="step === 'pick'">
+    <h2>1. Pick a challenge to sponsor</h2>
+    <div class="sc-grid" *ngIf="!loading">
+      <button type="button" class="sc-card" *ngFor="let c of challenges" (click)="pick(c)">
+        <div class="sc-card-title">{{ c.titre }}</div>
+        <div class="sc-card-skills" *ngIf="c.skills?.length">{{ c.skills.slice(0,4).join(' · ') }}</div>
+        <div class="sc-card-tags" *ngIf="c.competencyTags?.length">
+          <span class="sc-tag" *ngFor="let t of c.competencyTags">{{ t }}</span>
+        </div>
+        <span class="sc-card-cta">Sponsor this →</span>
+      </button>
+    </div>
+    <div *ngIf="loading">Loading challenges…</div>
+  </section>
+
+  <!-- STEP: Brand details -->
+  <section class="sc-wrap" *ngIf="step === 'brand' && selected">
+    <h2>2. Your brand on "{{ selected.titre }}"</h2>
+
+    <label>Company name <span class="sc-req">*</span></label>
+    <input type="text" [(ngModel)]="sponsorName" placeholder="e.g. MTN Mobile Money">
+
+    <label>Logo URL (square, public HTTPS link)</label>
+    <input type="text" [(ngModel)]="sponsorLogoUrl" placeholder="https://…/logo.png">
+
+    <label>Prize or incentive for top performer</label>
+    <textarea rows="3" [(ngModel)]="prizeDescription" placeholder="e.g. Interview fast-track to our fintech engineering team + $100 airtime voucher"></textarea>
+
+    <label>Contact email <span class="sc-req">*</span></label>
+    <input type="email" [(ngModel)]="contactEmail" placeholder="hiring@yourcompany.com">
+
+    <p class="sc-err" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+    <div class="sc-actions">
+      <button type="button" class="sc-primary" (click)="payAndSponsor()" [disabled]="saving">
+        {{ saving ? 'Starting checkout…' : 'Pay $500 and launch →' }}
+      </button>
+      <button type="button" class="sc-ghost" (click)="reset()">Back</button>
+    </div>
+    <p class="sc-fine">
+      30-day refund if fewer than 20 candidates start your challenge. Cancel anytime via Stripe portal.
+    </p>
+  </section>
+
+  <section class="sc-wrap" *ngIf="step === 'error'">
+    <h2>Something went wrong</h2>
+    <p class="sc-err">{{ errorMsg }}</p>
+    <button type="button" class="sc-ghost" (click)="reset()">Start over</button>
+  </section>
+</div>

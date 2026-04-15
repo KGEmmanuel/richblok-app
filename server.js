@@ -2,14 +2,120 @@ const express = require('express');
 const path = require('path');
 const https = require('https');
 
+// Stripe is optional — if the library isn't installed yet (first deploy before
+// `npm install` finishes) or keys aren't set, every Stripe route returns a
+// structured 501 so the rest of the server boots fine.
+let stripeLib = null;
+try { stripeLib = require('stripe'); } catch (_) { /* installed on first deploy */ }
+
+// firebase-admin is also optional. We prefer admin-SDK writes for Stripe webhook
+// handling; when unavailable we fall back to the REST-update helper below.
+let admin = null;
+try {
+  admin = require('firebase-admin');
+  if (!admin.apps.length) {
+    try {
+      const svc = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+      if (svc) {
+        admin.initializeApp({ credential: admin.credential.cert(JSON.parse(svc)) });
+      } else {
+        admin.initializeApp();
+      }
+    } catch (e) {
+      console.warn('firebase-admin init failed (non-fatal):', e.message);
+      admin = null;
+    }
+  }
+} catch (_) { /* installed lazily */ }
+
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// --- Stripe webhook MUST receive the RAW body to verify signature. Register
+// that raw-body route BEFORE the JSON body-parsers below. ---
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripeLib || !process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return res.status(501).json({ error: 'Stripe not configured' });
+  }
+  const stripe = stripeLib(process.env.STRIPE_SECRET_KEY);
+  const sig = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('stripe webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const meta = session.metadata || {};
+        if (meta.kind === 'pro_subscription' && meta.uid) {
+          await updateSubscription(meta.uid, {
+            subscription_tier: 'pro',
+            subscription_status: 'active',
+            stripe_customer_id: session.customer || null,
+            stripe_subscription_id: session.subscription || null,
+            subscription_started_at: new Date().toISOString()
+          });
+        } else if (meta.kind === 'employer_license' && meta.employerId) {
+          await updateEmployer(meta.employerId, {
+            license_tier: meta.tier || 'starter',
+            license_status: 'active',
+            stripe_customer_id: session.customer || null,
+            stripe_subscription_id: session.subscription || null,
+            license_started_at: new Date().toISOString()
+          });
+        } else if (meta.kind === 'sponsor_challenge' && meta.challengeId) {
+          await updateChallenge(meta.challengeId, {
+            sponsored: true,
+            sponsor_paid_at: new Date().toISOString(),
+            sponsor_stripe_session: session.id,
+            sponsor_amount_cents: session.amount_total || null
+          });
+        }
+        break;
+      }
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object;
+        const meta = sub.metadata || {};
+        if (meta.kind === 'pro_subscription' && meta.uid) {
+          await updateSubscription(meta.uid, {
+            subscription_tier: 'free',
+            subscription_status: 'canceled',
+            subscription_canceled_at: new Date().toISOString()
+          });
+        } else if (meta.kind === 'employer_license' && meta.employerId) {
+          await updateEmployer(meta.employerId, {
+            license_status: 'canceled',
+            license_canceled_at: new Date().toISOString()
+          });
+        }
+        break;
+      }
+      default:
+        // ignore others
+        break;
+    }
+    res.json({ received: true });
+  } catch (err) {
+    console.error('stripe webhook handler error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Parse JSON bodies per endpoint. CV uploads can be ~12MB (PDF base64).
 app.use('/api/star-map', express.json({ limit: '100kb' }));
 app.use('/api/coach', express.json({ limit: '100kb' }));
+app.use('/api/coach/stream', express.json({ limit: '100kb' }));
 app.use('/api/cv-extract', express.json({ limit: '12mb' }));
 app.use('/api/cv-to-star', express.json({ limit: '200kb' }));
+app.use('/api/stripe/checkout', express.json({ limit: '16kb' }));
+app.use('/api/stripe/portal', express.json({ limit: '8kb' }));
+app.use('/api/pods/match', express.json({ limit: '32kb' }));
+app.use('/api/admin/challenges', express.json({ limit: '200kb' }));
 // Default smaller limit for other /api endpoints
 app.use('/api/health', express.json({ limit: '8kb' }));
 
@@ -668,6 +774,419 @@ Rules:
     console.error('cv-to-star error:', err.message);
     res.json({ mode: 'fallback_error', error: err.message, answers: fallbackAnswers() });
   }
+});
+
+/* =========================================================================
+ * Firestore write helpers (admin SDK preferred, REST fallback with ID token)
+ * ========================================================================= */
+
+async function updateSubscription(uid, patch) {
+  return firestoreMerge('utilisateurs', uid, patch);
+}
+async function updateEmployer(employerId, patch) {
+  return firestoreMerge('employers', employerId, patch);
+}
+async function updateChallenge(challengeId, patch) {
+  return firestoreMerge('challenges', challengeId, patch);
+}
+async function firestoreMerge(collection, id, patch) {
+  if (admin && admin.apps && admin.apps.length) {
+    try {
+      await admin.firestore().collection(collection).doc(id).set(patch, { merge: true });
+      return true;
+    } catch (e) {
+      console.warn('admin firestore merge failed:', e.message);
+    }
+  }
+  // REST fallback: PATCH with updateMask. Only works while rules allow server writes.
+  return new Promise((resolve) => {
+    const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/${collection}/${id}`;
+    const mask = Object.keys(patch).map(k => 'updateMask.fieldPaths=' + encodeURIComponent(k)).join('&');
+    const fields = {};
+    for (const [k, v] of Object.entries(patch)) {
+      if (typeof v === 'string') fields[k] = { stringValue: v };
+      else if (typeof v === 'number') fields[k] = Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+      else if (typeof v === 'boolean') fields[k] = { booleanValue: v };
+      else if (v === null || v === undefined) fields[k] = { nullValue: null };
+      else fields[k] = { stringValue: JSON.stringify(v) };
+    }
+    const body = JSON.stringify({ fields });
+    const u = new URL(url + '?' + mask);
+    const req = https.request({
+      hostname: u.hostname,
+      path: u.pathname + u.search,
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) },
+      timeout: 15000
+    }, (resp) => {
+      let c = '';
+      resp.on('data', d => c += d);
+      resp.on('end', () => resolve(resp.statusCode < 300));
+    });
+    req.on('error', () => resolve(false));
+    req.write(body); req.end();
+  });
+}
+
+/* =========================================================================
+ * Stripe: /api/stripe/checkout  — create Checkout Session
+ *   Body: { kind: 'pro_subscription'|'employer_license'|'sponsor_challenge',
+ *           uid?, employerId?, challengeId?, tier?, successUrl, cancelUrl }
+ * ========================================================================= */
+app.post('/api/stripe/checkout', async (req, res) => {
+  if (!stripeLib || !process.env.STRIPE_SECRET_KEY) {
+    return res.status(501).json({ error: 'Stripe not configured on server' });
+  }
+  const stripe = stripeLib(process.env.STRIPE_SECRET_KEY);
+  const b = req.body || {};
+  const kind = b.kind;
+  if (!kind) return res.status(400).json({ error: 'kind required' });
+
+  try {
+    let price, mode, metadata = { kind };
+    if (kind === 'pro_subscription') {
+      if (!b.uid) return res.status(400).json({ error: 'uid required' });
+      price = process.env.STRIPE_PRICE_PRO_MONTHLY;
+      mode = 'subscription';
+      metadata.uid = b.uid;
+    } else if (kind === 'employer_license') {
+      if (!b.employerId) return res.status(400).json({ error: 'employerId required' });
+      const tier = b.tier === 'pro' ? 'pro' : 'starter';
+      price = tier === 'pro' ? process.env.STRIPE_PRICE_EMPLOYER_PRO : process.env.STRIPE_PRICE_EMPLOYER_STARTER;
+      mode = 'subscription';
+      metadata.employerId = b.employerId;
+      metadata.tier = tier;
+    } else if (kind === 'sponsor_challenge') {
+      if (!b.challengeId) return res.status(400).json({ error: 'challengeId required' });
+      price = b.priceId || process.env.STRIPE_PRICE_SPONSOR_CHALLENGE;
+      mode = 'payment';
+      metadata.challengeId = b.challengeId;
+      if (b.sponsorName) metadata.sponsorName = String(b.sponsorName).substring(0, 120);
+    } else {
+      return res.status(400).json({ error: 'unknown kind' });
+    }
+    if (!price) return res.status(500).json({ error: `Stripe price for ${kind} not configured` });
+
+    const session = await stripe.checkout.sessions.create({
+      mode,
+      line_items: [{ price, quantity: 1 }],
+      success_url: b.successUrl || 'https://richblok-app-production-86b6.up.railway.app/?stripe=success',
+      cancel_url: b.cancelUrl || 'https://richblok-app-production-86b6.up.railway.app/?stripe=cancel',
+      metadata,
+      subscription_data: mode === 'subscription' ? { metadata } : undefined,
+      allow_promotion_codes: true
+    });
+    res.json({ url: session.url, id: session.id });
+  } catch (err) {
+    console.error('stripe checkout error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================================================================
+ * Stripe: /api/stripe/portal  — self-service billing portal
+ *   Body: { customerId, returnUrl }
+ * ========================================================================= */
+app.post('/api/stripe/portal', async (req, res) => {
+  if (!stripeLib || !process.env.STRIPE_SECRET_KEY) {
+    return res.status(501).json({ error: 'Stripe not configured on server' });
+  }
+  const stripe = stripeLib(process.env.STRIPE_SECRET_KEY);
+  const { customerId, returnUrl } = req.body || {};
+  if (!customerId) return res.status(400).json({ error: 'customerId required' });
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: returnUrl || 'https://richblok-app-production-86b6.up.railway.app/settings'
+    });
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================================================================
+ * WhatsApp Accountability Pods
+ *   POST /api/pods/match  { uid, challengeId, phone? }
+ *     - Finds or creates a pod of 3-5 users starting the same challenge
+ *       within a rolling 7-day window. Returns a WhatsApp deep link + pod id.
+ *   GET  /api/pods/nudge?secret=...
+ *     - Cron-invoked (e.g., Railway cron hourly). For every pod, if it's
+ *       been 7 days since last nudge, emits a nudge record in pod_nudges
+ *       (which Cloud Messaging/Twilio/etc. can deliver). Idempotent.
+ * ========================================================================= */
+app.post('/api/pods/match', async (req, res) => {
+  const { uid, challengeId, phone } = req.body || {};
+  if (!uid || !challengeId) return res.status(400).json({ error: 'uid + challengeId required' });
+  try {
+    const pod = await findOrCreatePod(challengeId, uid, phone);
+    // Deep link that opens WhatsApp with a pre-filled group-invite message.
+    const share = encodeURIComponent(
+      `Hey! We're in the same Richblok challenge. Join our accountability pod — 4-6 of us doing "${pod.challengeTitle || challengeId}" this week. Reply YES and I'll add you to the group.`
+    );
+    const podUrl = `https://wa.me/?text=${share}`;
+    res.json({
+      podId: pod.id,
+      members: pod.members,
+      full: pod.members.length >= 5,
+      whatsappLink: podUrl
+    });
+  } catch (err) {
+    console.error('pod match error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+async function findOrCreatePod(challengeId, uid, phone) {
+  // Admin SDK preferred for transactional read + write
+  if (admin && admin.apps.length) {
+    const db = admin.firestore();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const podsRef = db.collection('accountability_pods');
+    const q = await podsRef
+      .where('challengeId', '==', challengeId)
+      .where('createdAt', '>=', sevenDaysAgo)
+      .where('closed', '==', false)
+      .limit(5)
+      .get();
+    let doc = q.docs.find(d => {
+      const m = d.data().members || [];
+      return m.length < 5 && !m.some(x => x.uid === uid);
+    });
+    if (!doc) {
+      const ref = await podsRef.add({
+        challengeId,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        closed: false,
+        members: [{ uid, phone: phone || null, joinedAt: new Date().toISOString() }],
+        lastNudgeAt: null
+      });
+      const snap = await ref.get();
+      return { id: ref.id, ...snap.data() };
+    }
+    const data = doc.data();
+    const members = [...(data.members || []), { uid, phone: phone || null, joinedAt: new Date().toISOString() }];
+    await doc.ref.update({
+      members,
+      closed: members.length >= 5
+    });
+    return { id: doc.id, ...data, members };
+  }
+  // Fallback without admin — return a deterministic "room" based on challengeId+week
+  const weekKey = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  return {
+    id: `fallback_${challengeId}_${weekKey}`,
+    challengeId,
+    members: [{ uid, phone: phone || null, joinedAt: new Date().toISOString() }],
+    createdAt: new Date().toISOString(),
+    closed: false
+  };
+}
+
+// Cron-invoked nudge emitter — idempotent; writes to pod_nudges so a separate
+// delivery worker (Twilio / WA Business API) can pick them up.
+app.get('/api/pods/nudge', async (req, res) => {
+  if (process.env.PODS_CRON_SECRET && req.query.secret !== process.env.PODS_CRON_SECRET) {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+  if (!admin || !admin.apps.length) return res.json({ emitted: 0, mode: 'no_admin_sdk' });
+  try {
+    const db = admin.firestore();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const pods = await db.collection('accountability_pods')
+      .where('closed', '==', false)
+      .limit(50)
+      .get();
+    let emitted = 0;
+    for (const doc of pods.docs) {
+      const d = doc.data();
+      const last = d.lastNudgeAt && d.lastNudgeAt.toDate ? d.lastNudgeAt.toDate() : d.lastNudgeAt;
+      if (last && last > sevenDaysAgo) continue;
+      await db.collection('pod_nudges').add({
+        podId: doc.id,
+        challengeId: d.challengeId,
+        memberUids: (d.members || []).map(m => m.uid),
+        emittedAt: admin.firestore.FieldValue.serverTimestamp(),
+        delivered: false
+      });
+      await doc.ref.update({ lastNudgeAt: admin.firestore.FieldValue.serverTimestamp() });
+      emitted++;
+    }
+    res.json({ emitted });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================================================================
+ * Admin: challenge CRUD (Firestore-backed). Auth is Firebase ID token in
+ * Authorization: Bearer <token> — verified via admin SDK. User must have
+ * role === 'admin' on utilisateurs/{uid}.
+ * ========================================================================= */
+async function requireAdmin(req, res) {
+  if (!admin || !admin.apps.length) {
+    res.status(501).json({ error: 'firebase-admin not configured' });
+    return null;
+  }
+  const h = req.headers.authorization || '';
+  const m = h.match(/^Bearer (.+)$/);
+  if (!m) { res.status(401).json({ error: 'missing bearer token' }); return null; }
+  try {
+    const decoded = await admin.auth().verifyIdToken(m[1]);
+    const userDoc = await admin.firestore().collection('utilisateurs').doc(decoded.uid).get();
+    const role = userDoc.exists ? (userDoc.data() || {}).role : null;
+    if (role !== 'admin') { res.status(403).json({ error: 'admin role required' }); return null; }
+    return decoded;
+  } catch (err) {
+    res.status(401).json({ error: 'invalid token' });
+    return null;
+  }
+}
+
+app.post('/api/admin/challenges', async (req, res) => {
+  const user = await requireAdmin(req, res);
+  if (!user) return;
+  const b = req.body || {};
+  if (!b.titre || !b.slug) return res.status(400).json({ error: 'titre + slug required' });
+  try {
+    const db = admin.firestore();
+    const ref = b.id
+      ? db.collection('challenges').doc(b.id)
+      : db.collection('challenges').doc();
+    const payload = {
+      titre: b.titre,
+      slug: b.slug,
+      description: b.description || '',
+      skills: b.skills || [],
+      competencyTags: b.competencyTags || [],
+      challengeFormat: b.challengeFormat || 'solo_capstone',
+      estimatedDuration: b.estimatedDuration || '20 minutes',
+      language: b.language || 'EN',
+      type: b.type || 'SKILL',
+      creatorType: b.creatorType || 'SYS',
+      creatorRef: user.uid,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    if (!b.id) payload.createdAt = admin.firestore.FieldValue.serverTimestamp();
+    await ref.set(payload, { merge: true });
+    res.json({ id: ref.id, ...payload });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/challenges/:id', async (req, res) => {
+  const user = await requireAdmin(req, res);
+  if (!user) return;
+  try {
+    await admin.firestore().collection('challenges').doc(req.params.id).delete();
+    res.json({ deleted: req.params.id });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+/* =========================================================================
+ * AI Coach SSE streaming endpoint
+ *   POST /api/coach/stream   → keep-alive SSE (`text/event-stream`).
+ *   Events: {type:'delta', text:'…'} repeated, then {type:'done'}.
+ * ========================================================================= */
+app.post('/api/coach/stream', async (req, res) => {
+  const p = req.body || {};
+  if (!p.answer || !p.userMessage) {
+    return res.status(400).json({ error: 'answer + userMessage required' });
+  }
+  res.set({
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'Cache-Control': 'no-cache, no-transform',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no'
+  });
+  res.flushHeaders && res.flushHeaders();
+  const emit = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+
+  if (!ANTHROPIC_API_KEY) {
+    emit({ type: 'delta', text: 'To make this answer land, quantify your Result with a specific number — "I scored X/100, placing me in the top Y%." Then rewrite the Action in one verb-led sentence.' });
+    emit({ type: 'done', mode: 'fallback' });
+    return res.end();
+  }
+
+  const system = `You are a sharp, warm behavioral interview coach. You help candidates turn their real project work into compelling STAR answers. Be direct, specific, practical. Point out weak spots. Suggest concrete rewrites. Keep replies under 150 words unless asked for more.`;
+  const userPrompt = `Candidate's draft STAR answer for "${p.answer.question}":
+
+Situation: ${p.answer.situation}
+Task: ${p.answer.task}
+Action: ${p.answer.action}
+Result: ${p.answer.result}
+
+Candidate's question/request to you: "${p.userMessage}"
+
+${p.projectContext ? `Project context: ${String(p.projectContext).substring(0, 400)}` : ''}
+
+Coach them. Be specific and actionable.`;
+
+  const body = JSON.stringify({
+    model: CLAUDE_MODEL,
+    max_tokens: 600,
+    temperature: 0.6,
+    system,
+    stream: true,
+    messages: [{ role: 'user', content: userPrompt }]
+  });
+
+  const upstream = https.request({
+    hostname: 'api.anthropic.com',
+    path: '/v1/messages',
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-length': Buffer.byteLength(body)
+    },
+    timeout: 90000
+  }, (upRes) => {
+    let buf = '';
+    upRes.on('data', chunk => {
+      buf += chunk.toString('utf8');
+      // SSE frames are separated by \n\n
+      let idx;
+      while ((idx = buf.indexOf('\n\n')) >= 0) {
+        const frame = buf.substring(0, idx);
+        buf = buf.substring(idx + 2);
+        // Each frame has `event: xxx\ndata: {...}`
+        const dataLine = frame.split('\n').find(l => l.startsWith('data:'));
+        if (!dataLine) continue;
+        const dataStr = dataLine.slice(5).trim();
+        if (!dataStr) continue;
+        try {
+          const json = JSON.parse(dataStr);
+          if (json.type === 'content_block_delta' && json.delta && json.delta.text) {
+            emit({ type: 'delta', text: json.delta.text });
+          } else if (json.type === 'message_stop') {
+            emit({ type: 'done', mode: 'ai' });
+          }
+        } catch (_) { /* non-JSON keepalive */ }
+      }
+    });
+    upRes.on('end', () => {
+      emit({ type: 'done', mode: 'ai' });
+      res.end();
+    });
+    upRes.on('error', (err) => {
+      emit({ type: 'error', message: err.message });
+      res.end();
+    });
+  });
+  upstream.on('error', (err) => {
+    emit({ type: 'error', message: err.message });
+    res.end();
+  });
+  upstream.on('timeout', () => {
+    upstream.destroy();
+    emit({ type: 'error', message: 'upstream timeout' });
+    res.end();
+  });
+  upstream.write(body);
+  upstream.end();
 });
 
 // Serve static files from the Angular build

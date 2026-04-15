@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap, map, first } from 'rxjs/operators';
 import { SubscriptionTier, SubscriptionStatus } from '../entites/Subscription';
 import { AnalyticsService } from './analytics.service';
-import * as firebase from 'firebase/app';
-import 'firebase/functions';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +21,7 @@ export class SubscriptionService {
   constructor(
     private afs: AngularFirestore,
     private afAuth: AngularFireAuth,
+    private http: HttpClient,
     private analytics: AnalyticsService
   ) {
     this.initSubscriptionListener();
@@ -69,43 +69,66 @@ export class SubscriptionService {
   }
 
   /**
-   * Calls the createCheckoutSession Cloud Function and redirects to Stripe Checkout.
+   * Calls /api/stripe/checkout and redirects to Stripe Checkout.
+   * Server uses STRIPE_SECRET_KEY + STRIPE_PRICE_PRO_MONTHLY; webhook updates
+   * the user's subscription_tier when the session completes.
    */
   async startProSubscription(): Promise<void> {
     const user = await this.afAuth.authState.pipe(first()).toPromise();
     if (!user) {
       throw new Error('User must be logged in to subscribe');
     }
-
-    const callable = firebase.functions().httpsCallable('createCheckoutSession');
-    const result: any = await callable({
+    const resp: any = await this.http.post('/api/stripe/checkout', {
+      kind: 'pro_subscription',
+      uid: user.uid,
       successUrl: window.location.origin + '/profile?subscription=success',
       cancelUrl: window.location.origin + '/profile?subscription=cancelled'
-    });
+    }).toPromise();
 
-    if (result.data && result.data.url) {
-      window.location.href = result.data.url;
+    if (resp && resp.url) {
+      window.location.href = resp.url;
     } else {
-      throw new Error('Failed to create checkout session');
+      throw new Error(resp && resp.error ? resp.error : 'Failed to create checkout session');
     }
   }
 
   /**
-   * Opens the Stripe Customer Portal for self-service billing management.
+   * Creates a Stripe Employer License checkout (B2B). tier = 'starter' ($500/yr)
+   * or 'pro' ($1500/yr). Webhook updates employers/{employerId}/license_status.
+   */
+  async startEmployerLicense(employerId: string, tier: 'starter' | 'pro' = 'starter'): Promise<void> {
+    const resp: any = await this.http.post('/api/stripe/checkout', {
+      kind: 'employer_license',
+      employerId,
+      tier,
+      successUrl: window.location.origin + '/employer/dashboard?license=active',
+      cancelUrl: window.location.origin + '/employer/dashboard?license=cancel'
+    }).toPromise();
+    if (resp && resp.url) {
+      window.location.href = resp.url;
+    } else {
+      throw new Error(resp && resp.error ? resp.error : 'Failed to start employer license');
+    }
+  }
+
+  /**
+   * Opens the Stripe Customer Portal. Requires the user's stripe_customer_id
+   * to be persisted via the webhook handler.
    */
   async openBillingPortal(): Promise<void> {
     const user = await this.afAuth.authState.pipe(first()).toPromise();
-    if (!user) {
-      throw new Error('User must be logged in');
+    if (!user) { throw new Error('User must be logged in'); }
+    const userDoc: any = await this.afs.doc(`utilisateurs/${user.uid}`).valueChanges().pipe(first()).toPromise();
+    const customerId = userDoc && userDoc.stripe_customer_id;
+    if (!customerId) {
+      throw new Error('No Stripe customer on file yet — subscribe first.');
     }
-
-    const callable = firebase.functions().httpsCallable('createPortalSession');
-    const result: any = await callable({
+    const resp: any = await this.http.post('/api/stripe/portal', {
+      customerId,
       returnUrl: window.location.origin + '/settings'
-    });
-
-    if (result.data && result.data.url) {
-      window.location.href = result.data.url;
+    }).toPromise();
+    if (resp && resp.url) {
+      window.location.href = resp.url;
     }
   }
 
@@ -133,10 +156,16 @@ export class SubscriptionService {
   }
 
   /**
-   * Records a challenge submission via Cloud Function (server-side counter).
+   * Records a challenge submission directly to Firestore (server-side
+   * monthly counter will be enforced once Firestore rules are tightened).
    */
   async recordChallengeSubmission(challengeId: string): Promise<void> {
-    const callable = firebase.functions().httpsCallable('recordChallengeSubmission');
-    await callable({ challengeId });
+    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    if (!user) { return; }
+    await this.afs.collection('challenge_submissions').add({
+      uid: user.uid,
+      challengeId,
+      submitted_at: new Date()
+    });
   }
 }

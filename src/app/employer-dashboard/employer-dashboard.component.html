@@ -84,6 +84,11 @@
           <span class="ed-score-max">/100</span>
         </div>
       </div>
+      <div class="ed-competency-row" *ngIf="c.verifiedCompetencies?.length">
+        <span class="ed-competency-chip" *ngFor="let comp of c.verifiedCompetencies">
+          ✓ {{ competencyLabel(comp) }}
+        </span>
+      </div>
       <div class="ed-candidate-foot">
         <span class="ed-verified-chip">✓ Verified · {{ c.earnedAt | date:'longDate' }}</span>
         <button type="button" class="ed-request-btn" (click)="requestIntroduction(c, $event)">
@@ -102,6 +107,9 @@
     <p>
       <strong>Pilot access.</strong> Introductions are held for review until your employer license is active.
       Contact <a href="mailto:emmanuel3kaldjob@gmail.com">emmanuel3kaldjob@gmail.com</a> to activate a Starter ($500/yr · 50 profile views/mo) or Pro ($1,500/yr · unlimited) license.
+    </p>
+    <p>
+      Want branded talent discovery? <a [routerLink]="['/sponsor']">Sponsor a Richblok challenge ($500)</a> — your logo on every badge earned, top performers enter your pipeline.
     </p>
   </footer>
 </div>

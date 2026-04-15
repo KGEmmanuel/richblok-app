@@ -1,11 +1,34 @@
-<div *ngFor="let item of challenge">
+<div class="el-filterbar">
+    <div class="el-filterbar-label">Filter by behavioral competency</div>
+    <div class="el-chip-row">
+        <button type="button" class="el-chip" [class.active]="!competencyFilter" (click)="setCompetencyFilter('')">
+            All challenges
+        </button>
+        <button type="button" class="el-chip"
+                *ngFor="let c of competencyOptions"
+                [class.active]="competencyFilter === c.tag"
+                (click)="setCompetencyFilter(c.tag)">
+            {{ c.label }}
+        </button>
+    </div>
+    <div class="el-filter-meta" *ngIf="competencyFilter || slugFilter">
+        Showing {{ filtered.length }} of {{ challenge.length }}
+        <button type="button" class="el-filter-clear" (click)="clearFilters()">Clear filters</button>
+    </div>
+    <div class="el-sponsor-note">
+        Are you an employer? <a [routerLink]="['/sponsor']">Sponsor a challenge</a> to put your brand on every earned badge.
+    </div>
+</div>
+
+<div *ngFor="let item of filtered">
     <app-evaluate-item [currentChal]="item"></app-evaluate-item>
 </div>
-<div *ngIf="challenge.length === 0">
+<div *ngIf="!loading && filtered.length === 0">
     <span class="d-flex justify-content-center" style="padding-top: 5%;">
 <img src="../../../assets/imgs/demons.png" style="width: 50%;">
 </span>
     <span class="d-flex justify-content-center" style="padding-top: 5%;">
-<h5>No challenge to display. Click on the top right button to create a challenge</h5>
+<h5 *ngIf="competencyFilter">No {{ competencyLabel(competencyFilter) }} challenges yet — clear filters to see everything.</h5>
+<h5 *ngIf="!competencyFilter">No challenges to display. Click on the top right button to create a challenge.</h5>
 </span>
 </div>

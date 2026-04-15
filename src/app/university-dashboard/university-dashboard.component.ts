@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { first } from 'rxjs/operators';
 
@@ -22,6 +23,8 @@ export class UniversityDashboardComponent implements OnInit {
   loading = true;
   students: CohortStudent[] = [];
   institutionName = 'Your Institution';
+  institutionId: string | null = null;
+  isPilotPreview = false;
 
   totalStudents = 0;
   studentsWithBadges = 0;
@@ -30,28 +33,64 @@ export class UniversityDashboardComponent implements OnInit {
 
   constructor(
     private afs: AngularFirestore,
+    private afAuth: AngularFireAuth,
     private analytics: AnalyticsService
   ) {}
 
   ngOnInit() {
     this.analytics.pageView('university_dashboard');
-    // MVP: aggregate all users + badges. In production this would filter by institution_id.
+
+    this.afAuth.authState.pipe(first()).subscribe(user => {
+      if (!user) {
+        this.isPilotPreview = true;
+        this.institutionName = 'Pilot preview';
+        this.loadCohort(null);
+        return;
+      }
+      // University admins have role === 'university_admin' + institution_id
+      // stored on their user doc. Everyone else gets a pilot preview of the
+      // global cohort so the dashboard is never empty during sales demos.
+      this.afs.doc(`utilisateurs/${user.uid}`).valueChanges().pipe(first()).subscribe((u: any) => {
+        if (u && u.role === 'university_admin' && u.institution_id) {
+          this.institutionId = u.institution_id;
+          this.institutionName = u.institution_name || u.institution_id;
+          this.loadCohort(u.institution_id);
+        } else {
+          this.isPilotPreview = true;
+          this.institutionName = 'Pilot preview · your cohort';
+          this.loadCohort(null);
+        }
+      });
+    });
+  }
+
+  private loadCohort(institutionId: string | null) {
+    const studentsQuery = institutionId
+      ? this.afs.collection('utilisateurs', ref => ref.where('institution_id', '==', institutionId).limit(500))
+      : this.afs.collection('utilisateurs', ref => ref.limit(200));
+
     Promise.all([
-      this.afs.collection('utilisateurs').get().pipe(first()).toPromise(),
+      studentsQuery.get().pipe(first()).toPromise(),
       this.afs.collection('badges').get().pipe(first()).toPromise()
     ]).then(([usersSnap, badgesSnap]) => {
-      // Group badges by uid
+      const studentUids = new Set<string>(usersSnap.docs.map(d => d.id));
+
+      // Group badges by uid, filtered to students in this cohort.
       const byUser: { [uid: string]: any[] } = {};
       badgesSnap.forEach(d => {
         const data: any = d.data();
         if (!data.uid || data.uid === 'anonymous') { return; }
+        if (institutionId && !studentUids.has(data.uid)) { return; }
         (byUser[data.uid] = byUser[data.uid] || []).push({ ...data, id: d.id });
       });
 
       this.totalStudents = usersSnap.size;
-      this.totalBadges = badgesSnap.size;
+      this.totalBadges = Object.values(byUser).reduce((s, arr) => s + arr.length, 0);
       this.studentsWithBadges = Object.keys(byUser).length;
-      const allScores = badgesSnap.docs.map(d => (d.data() as any).score || 0);
+      const allScores: number[] = [];
+      for (const uid of Object.keys(byUser)) {
+        for (const b of byUser[uid]) { allScores.push(b.score || 0); }
+      }
       this.avgScore = allScores.length
         ? Math.round(allScores.reduce((s, n) => s + n, 0) / allScores.length)
         : 0;
@@ -84,10 +123,14 @@ export class UniversityDashboardComponent implements OnInit {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `richblok-cohort-${new Date().toISOString().substring(0, 10)}.csv`;
+    const prefix = (this.institutionId || 'richblok') + '-cohort';
+    a.download = `${prefix}-${new Date().toISOString().substring(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    this.analytics.track('UniversityCsvExport', { cohortSize: this.students.length });
+    this.analytics.track('UniversityCsvExport', {
+      cohortSize: this.students.length,
+      institutionId: this.institutionId
+    });
   }
 
   get activationRate(): number {
