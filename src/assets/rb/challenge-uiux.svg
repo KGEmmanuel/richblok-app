@@ -1,30 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b1220"/>
-      <stop offset="1" stop-color="#16243f"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0a0a"/>
+      <stop offset="1" stop-color="#141414"/>
     </linearGradient>
-    <radialGradient id="r" cx="50%" cy="50%" r="60%">
-      <stop offset="0" stop-color="#c084fc" stop-opacity="0.35"/>
+    <pattern id="grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.06"/>
+    </pattern>
+    <radialGradient id="glow" cx="85%" cy="15%" r="50%">
+      <stop offset="0" stop-color="#c084fc" stop-opacity="0.22"/>
       <stop offset="1" stop-color="#c084fc" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#g)"/>
-  <rect width="1200" height="630" fill="url(#r)"/>
-  <g transform="translate(600 315)">
-    <rect x="-180" y="-120" width="360" height="240" rx="20" ry="20" fill="#1e2a4a" stroke="#c084fc" stroke-width="3"/>
-    <rect x="-180" y="-120" width="360" height="40" rx="20" ry="20" fill="#c084fc" opacity="0.4"/>
-    <circle cx="-160" cy="-100" r="6" fill="#f87171"/>
-    <circle cx="-140" cy="-100" r="6" fill="#fbbf24"/>
-    <circle cx="-120" cy="-100" r="6" fill="#4ade80"/>
-    <rect x="-150" y="-60" width="100" height="16" rx="4" fill="#c084fc" opacity="0.7"/>
-    <rect x="-150" y="-30" width="200" height="10" rx="4" fill="#ffffff" opacity="0.3"/>
-    <rect x="-150" y="-10" width="160" height="10" rx="4" fill="#ffffff" opacity="0.3"/>
-    <rect x="-150" y="10" width="180" height="10" rx="4" fill="#ffffff" opacity="0.3"/>
-    <rect x="-150" y="60" width="120" height="40" rx="20" fill="#1dd1a1"/>
-    <text x="-90" y="88" font-family="system-ui,-apple-system,Segoe UI" font-weight="700" font-size="18" fill="#0b1220" text-anchor="middle">Click me</text>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <rect x="0" y="0" width="4" height="630" fill="#c084fc"/>
+
+  <g font-family="Inter, system-ui, -apple-system" fill="#71717a" font-weight="600" font-size="14" letter-spacing="3">
+    <text x="80" y="96">RICHBLOK</text>
+    <text x="196" y="96" fill="#3f3f46">·</text>
+    <text x="214" y="96">CHALLENGE</text>
   </g>
-  <text x="60" y="92" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-weight="800" font-size="28" fill="#1dd1a1" letter-spacing="2">RICHBLOK · CHALLENGE</text>
-  <text x="60" y="570" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-weight="900" font-size="72" fill="#ffffff">UI/UX &amp; Product Design</text>
-  <text x="60" y="610" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-weight="500" font-size="26" fill="#a5b4cf">20 questions · 20 minutes · Instant badge</text>
+
+  <g transform="translate(1080 72)">
+    <rect x="0" y="0" width="56" height="56" rx="12" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+    <circle cx="28" cy="28" r="14" fill="none" stroke="#c084fc" stroke-width="2.5"/>
+    <circle cx="28" cy="28" r="4" fill="#c084fc"/>
+  </g>
+
+  <text x="80" y="380" font-family="Inter, system-ui" font-weight="800" font-size="240" fill="#fafafa" letter-spacing="-10">UI / UX</text>
+  <text x="80" y="440" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="22" fill="#c084fc" letter-spacing="3">— DESIGN · A11Y · CONVERSION · MOBILE</text>
+
+  <g font-family="Inter, system-ui" fill="#a1a1aa">
+    <text x="80" y="550" font-weight="500" font-size="18">20 questions</text>
+    <text x="220" y="550" font-weight="500" font-size="18" fill="#3f3f46">/</text>
+    <text x="240" y="550" font-weight="500" font-size="18">20 minutes</text>
+    <text x="385" y="550" font-weight="500" font-size="18" fill="#3f3f46">/</text>
+    <text x="405" y="550" font-weight="500" font-size="18">Instant verified badge</text>
+  </g>
+
+  <g font-family="'JetBrains Mono', monospace" font-weight="500" font-size="11" fill="#52525b" letter-spacing="2">
+    <text x="1120" y="550" text-anchor="end">PASS 60% · 12/20</text>
+    <text x="1120" y="575" text-anchor="end">MID LEVEL</text>
+  </g>
 </svg>

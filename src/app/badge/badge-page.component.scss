@@ -1,19 +1,23 @@
-$bg: #0b1220;
-$surface: #0f1a2f;
-$surface-2: #16243f;
+$bg: #0a0a0a;
+$surface: #111113;
+$surface-2: #18181b;
 $accent: #1dd1a1;
-$accent-2: #00d4ff;
-$text: #ffffff;
-$text-muted: #a5b4cf;
-$text-dim: #6b7a99;
-$border: #223154;
+$accent-2: #22d3ee;
+$text: #fafafa;
+$text-muted: #a1a1aa;
+$text-dim: #71717a;
+$border: #27272a;
 
 :host {
   display: block;
   background: $bg;
   color: $text;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(1000px circle at 50% -200px, rgba(29, 209, 161, 0.08), transparent);
 }
 
 .bp-page { min-height: 100vh; }
@@ -84,21 +88,28 @@ $border: #223154;
 }
 
 .bp-badge-card {
-  background: linear-gradient(145deg, $surface-2, $surface);
+  background:
+    linear-gradient(180deg, rgba(24, 24, 27, 0.6), rgba(10, 10, 10, 0.8)),
+    radial-gradient(circle at 10% 10%, rgba(29, 209, 161, 0.12), transparent 60%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 28px;
+  border-radius: 24px;
+  padding: 32px 28px;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(29, 209, 161, 0.08),
+    0 40px 80px -20px rgba(0, 0, 0, 0.8),
+    0 20px 40px -10px rgba(29, 209, 161, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   &::before {
     content: '';
     position: absolute;
     inset: -1px;
-    border-radius: 20px;
+    border-radius: 24px;
     background: linear-gradient(135deg, $accent, $accent-2);
-    opacity: 0.25;
+    opacity: 0.12;
     z-index: -1;
-    filter: blur(20px);
+    filter: blur(24px);
   }
 }
 .bp-badge-topbar {
@@ -165,17 +176,19 @@ $border: #223154;
 .bp-score {
   display: inline-flex;
   align-items: baseline;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-variant-numeric: tabular-nums;
   .bp-score-num {
-    font-size: 96px;
-    font-weight: 900;
+    font-size: 110px;
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.05em;
   }
   .bp-score-max {
     font-size: 36px;
     color: $text-dim;
-    font-weight: 700;
-    margin-left: 4px;
+    font-weight: 500;
+    margin-left: 6px;
   }
 }
 .bp-percentile {
