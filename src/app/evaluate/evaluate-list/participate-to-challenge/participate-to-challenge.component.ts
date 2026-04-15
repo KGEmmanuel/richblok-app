@@ -1,7 +1,7 @@
 import { ChallengeReponse } from './../../../shared/entites/ChallengeReponses';
 import { ChallengeQuestions } from './../../../shared/entites/ChallengeQuestions';
 import { ChallengeParticipationAnswer } from './../../../shared/entites/ChallengeParticipationAnswer';
-import { ChalengeService } from './../../../shared/services/chalenge.service';
+import { ChallengeService } from './../../../shared/services/challenge.service';
 import { Component, OnInit } from '@angular/core';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
@@ -16,7 +16,7 @@ import { ChalengeParticipation } from 'src/app/shared/entites/ChallengeParticipa
 export class ParticipateToChallengeComponent implements OnInit {
 
   public etape: number;
-  constructor(private router: Router, private chalSvc: ChalengeService, private route: ActivatedRoute, ) { }
+  constructor(private router: Router, private chalSvc: ChallengeService, private route: ActivatedRoute, ) { }
   currentChal: Challenge;
   user: Utilisateur;
   show = false;

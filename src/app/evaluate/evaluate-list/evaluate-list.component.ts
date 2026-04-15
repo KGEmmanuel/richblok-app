@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Challenge } from 'src/app/shared/entites/Challenge';
-import { ChalengeService } from 'src/app/shared/services/chalenge.service';
+import { ChallengeService } from 'src/app/shared/services/challenge.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
@@ -14,14 +14,14 @@ export class EvaluateListComponent implements OnInit {
   uid;
   challenge = new Array<Challenge>();
 
-  constructor(private chalsvc: ChalengeService, private afAuth: AngularFireAuth) { }
+  constructor(private chalsvc: ChallengeService, private afAuth: AngularFireAuth) { }
 
   ngOnInit() {
 
     this.afAuth.authState.subscribe(v => {
       if (v) {
         this.uid = v.uid;
-        this.chalsvc.chalengesListOf(this.uid).onSnapshot(val => {
+        this.chalsvc.challengesListOf(this.uid).onSnapshot(val => {
           this.challenge = [];
           val.forEach(element => {
             const ex = element.data() as Challenge;

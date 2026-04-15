@@ -205,6 +205,7 @@ import { RecordDocumentItemComponent } from './record-documents/record-document-
 import { RecordDocumentFormComponent } from './record-documents/record-document-form/record-document-form.component';
 import { UploadFileComponent } from './RibComponents/upload-file/upload-file.component';
 import { DndDirective } from './RibComponents/upload-file/dnd.directive';
+import { RequiresProDirective } from './shared/directives/requires-pro.directive';
 @NgModule({
   declarations: [
     DndDirective,
@@ -393,7 +394,8 @@ import { DndDirective } from './RibComponents/upload-file/dnd.directive';
     RecordDocumentItemComponent,
     RecordDocumentsComponent,
     UploadFileComponent,
-    ProgressComponent
+    ProgressComponent,
+    RequiresProDirective
   ],
   imports: [
     BrowserModule,

@@ -3,7 +3,7 @@ import { ChallengeQuestions } from './../../shared/entites/ChallengeQuestions';
 import { Component, OnInit, Input } from '@angular/core';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { ToastrService } from 'ngx-toastr';
-import { ChalengeService } from 'src/app/shared/services/chalenge.service';
+import { ChallengeService } from 'src/app/shared/services/challenge.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -38,7 +38,7 @@ export class EvaluateFormComponent implements OnInit {
   modifcheck = false;
   nbrQuestion: number;
   uid;
-  constructor(private toastr: ToastrService, private chalSvc: ChalengeService,
+  constructor(private toastr: ToastrService, private chalSvc: ChallengeService,
               private afAuth: AngularFireAuth, public router: Router,
               private loadsvc: NgxUiLoaderService) {
 

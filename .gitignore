@@ -44,3 +44,19 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Binary archives (should not be in Git)
+*.rar
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Environment files (protect API keys)
+src/environments/environment.ts
+src/environments/environment.prod.ts
+.env
+.env.*
+
+# Firebase
+.firebase/

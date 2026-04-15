@@ -14,6 +14,9 @@ export const environment = {
     timestampsInSnapshots: true
   },
   googleKey : 'AIzaSyCD7cXCYuY2__P5Hlfvx28L-UiqO06uGmY',
+  stripe: {
+    publishableKey: 'pk_test_YOUR_STRIPE_KEY',
+  }
 };
 
 /*
