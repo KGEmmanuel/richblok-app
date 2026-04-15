@@ -1,12 +1,12 @@
 # Angular 9 → 17 + Firebase 7 → 10 Migration Plan (T01)
 
-**Status:** Stage 1 **complete** on branch `migrate-angular-17`.
-Stages 2–5 pending — each needs a dedicated session with manual smoke testing.
+**Status:** Stages 1 + 2 **complete** on branch `migrate-angular-17`.
+Stages 3–5 pending — each needs a dedicated session with manual smoke testing.
 
 | Stage | Version | Branch commit | Browser build | Server build |
 |-------|---------|---------------|---------------|--------------|
-| 1 | 9 → 10 | `migrate-angular-17` HEAD | ✅ green | ✅ green |
-| 2 | 10 → 11 | — | — | — |
+| 1 | 9 → 10 | `migrate-angular-17` | ✅ green | ✅ green |
+| 2 | 10 → 11 | `migrate-angular-17` HEAD | ✅ green | ✅ green |
 | 3 | 11 → 12 + Firebase 7 → 9 compat | — | — | — |
 | 4 | 12 → 15 | — | — | — |
 | 5 | 15 → 17 + modular Firebase SDK + lazy loading | — | — | — |
@@ -39,13 +39,30 @@ that imports from `@angular/fire` or `firebase/app`.
 - Build verified: both browser (`ng build --prod`) and server
   (`ng run Rib:server:production`) bundles compile
 
-### Stage 2 — Angular 10 → 11 (next session)
+### Stage 2 — Angular 10 → 11 ✅ DONE
 - `ng update @angular/cli@11 @angular/core@11 --allow-dirty --force`
-- Expect: ESLint migration schematic offer — decline on this stage
-- Node 12 still OK; no engine bump needed
-- Run `npm run build:ssr` to verify
+- ng schematics rewrote package.json correctly but npm-install inside the
+  update failed because `@angular-devkit/build-angular@~0.1102.19` peer-
+  requires `@angular/compiler-cli@^11.0.0`; npm errors without
+  `--legacy-peer-deps`. Workaround: let `ng update` write package.json,
+  then run `npm install --legacy-peer-deps --ignore-scripts` manually.
+- TypeScript stays at 4.0.8 (Angular 11 supports 4.0–4.1)
+- Zone.js stays at 0.10.3
+- No source changes required — our codebase compiles clean against 11
+- Build verified: both browser + server bundles green
+- **Smoke tests still pending for this stage**:
+  - [ ] Login with email+password
+  - [ ] Google OAuth
+  - [ ] Challenge submission + badge creation
+  - [ ] STAR profile generation via /api/star-map
+  - [ ] AI Coach streaming /api/coach/stream
+  - [ ] CV upload → /api/cv-extract → /api/cv-to-star
+  - [ ] Employer dashboard competency filter
+  - [ ] University dashboard pilot-preview banner
+  - [ ] Admin challenge editor CRUD
+  - [ ] Stripe checkout redirect (pro, employer, sponsor)
 
-### Stage 3 — Angular 11 → 12 + Firebase 7 → 9 compat
+### Stage 3 — Angular 11 → 12 + Firebase 7 → 9 compat (next)
 - `ng update @angular/cli@12 @angular/core@12`
 - Bump Node to 14 or 16 (CLI 12 requires >= 12.13 or 14.15)
 - `npm i firebase@9 @angular/fire@6 --save --legacy-peer-deps`
