@@ -46,6 +46,10 @@ import { BadgePageComponent } from './badge/badge-page.component';
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
+import { StarProfileComponent } from './star-profile/star-profile.component';
+import { AiCoachComponent } from './ai-coach/ai-coach.component';
+import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
+import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -92,6 +96,12 @@ const routes: Routes = [
   { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
+  { path: 'star/:id', component: StarProfileComponent, data: {title: 'STAR Profile'} },
+  { path: 'coach/:id', component: AiCoachComponent, canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },
+  { path: 'employer/dashboard', component: EmployerDashboardComponent, canActivate: [AuthGuard], data: {title: 'Employer · Talent'} },
+  { path: 'employer', redirectTo: 'employer/dashboard', pathMatch: 'full' },
+  { path: 'university/dashboard', component: UniversityDashboardComponent, canActivate: [AuthGuard], data: {title: 'University · Cohort'} },
+  { path: 'university', redirectTo: 'university/dashboard', pathMatch: 'full' },
   { path: '404', component: NotfoundComponent },
   { path: 'upload', component: UploadFileComponent },
   { path: '**', component: NotfoundComponent }

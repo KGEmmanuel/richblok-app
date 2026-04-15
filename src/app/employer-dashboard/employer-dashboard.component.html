@@ -1,0 +1,107 @@
+<div class="ed-page">
+  <header class="ed-nav">
+    <a class="ed-logo" [routerLink]="['/landing']">
+      <span class="ed-logo-mark">R</span>ichblok
+      <span class="ed-logo-tag">· Employer</span>
+    </a>
+    <div class="ed-license-chip">
+      <span class="ed-chip-dot"></span>
+      <span>Pilot preview · Starter license $500/yr</span>
+    </div>
+  </header>
+
+  <section class="ed-hero">
+    <div class="ed-eyebrow">TALENT DISCOVERY</div>
+    <h1 class="ed-h1">Verified African tech talent — not resumes.</h1>
+    <p class="ed-sub">
+      Every candidate below has completed a timed, scored Richblok challenge. Filter by skill, country, score, and behavioral competency.
+      Request introductions with one click.
+    </p>
+  </section>
+
+  <!-- Filters -->
+  <section class="ed-filters">
+    <div class="ed-filter">
+      <label>Skill</label>
+      <select [(ngModel)]="skillFilter" (change)="applyFilters()">
+        <option value="">All skills</option>
+        <option *ngFor="let s of allSkills" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+    <div class="ed-filter">
+      <label>Country</label>
+      <select [(ngModel)]="countryFilter" (change)="applyFilters()">
+        <option value="">All countries</option>
+        <option *ngFor="let c of allCountries" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+    <div class="ed-filter">
+      <label>Behavioral competency</label>
+      <select [(ngModel)]="competencyFilter" (change)="applyFilters()">
+        <option value="">All competencies</option>
+        <option *ngFor="let c of competencyOptions" [value]="c.tag">{{ c.label }}</option>
+      </select>
+    </div>
+    <div class="ed-filter ed-filter-range">
+      <label>Min score: <strong>{{ minScore }}</strong></label>
+      <input type="range" min="0" max="100" [(ngModel)]="minScore" (input)="applyFilters()">
+    </div>
+    <div class="ed-filter ed-filter-check">
+      <label>
+        <input type="checkbox" [(ngModel)]="passedOnly" (change)="applyFilters()">
+        Only passed (≥60%)
+      </label>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="ed-stats">
+    <div class="ed-stat"><strong>{{ filtered.length }}</strong><span>matches</span></div>
+    <div class="ed-stat"><strong>{{ candidates.length }}</strong><span>total verified</span></div>
+    <div class="ed-stat"><strong>{{ passRate }}%</strong><span>pass rate</span></div>
+    <div class="ed-stat"><strong>{{ allCountries.length }}</strong><span>countries</span></div>
+  </section>
+
+  <!-- Candidates grid -->
+  <section class="ed-candidates" *ngIf="!loading">
+    <div *ngIf="filtered.length === 0" class="ed-empty">
+      <div class="ed-empty-icon">🔍</div>
+      <h3>No matches with current filters</h3>
+      <p>Relax filters or expand to more skills/countries. More candidates complete challenges every day.</p>
+    </div>
+
+    <div *ngFor="let c of filtered" class="ed-candidate" (click)="viewCandidate(c)">
+      <div class="ed-candidate-head">
+        <div>
+          <div class="ed-candidate-name">{{ c.userName }}</div>
+          <div class="ed-candidate-meta">
+            <span *ngIf="c.userCountry">{{ c.userCountry }}</span>
+            <span>{{ c.skill }} · {{ c.level }}</span>
+          </div>
+        </div>
+        <div class="ed-candidate-score" [class.passed]="c.passed">
+          <span class="ed-score-num">{{ c.score }}</span>
+          <span class="ed-score-max">/100</span>
+        </div>
+      </div>
+      <div class="ed-candidate-foot">
+        <span class="ed-verified-chip">✓ Verified · {{ c.earnedAt | date:'longDate' }}</span>
+        <button type="button" class="ed-request-btn" (click)="requestIntroduction(c, $event)">
+          Request introduction →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="ed-loading" *ngIf="loading">
+    <div class="ed-spinner"></div>
+    <p>Loading verified candidates…</p>
+  </div>
+
+  <footer class="ed-footer">
+    <p>
+      <strong>Pilot access.</strong> Introductions are held for review until your employer license is active.
+      Contact <a href="mailto:emmanuel3kaldjob@gmail.com">emmanuel3kaldjob@gmail.com</a> to activate a Starter ($500/yr · 50 profile views/mo) or Pro ($1,500/yr · unlimited) license.
+    </p>
+  </footer>
+</div>

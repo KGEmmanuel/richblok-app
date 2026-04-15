@@ -5,6 +5,14 @@ const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Parse JSON bodies for API endpoints (keep limit small; STAR context is modest)
+app.use('/api', express.json({ limit: '100kb' }));
+
+// Anthropic Claude API config
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-5';
+const CLAUDE_HAIKU_MODEL = process.env.CLAUDE_HAIKU_MODEL || 'claude-haiku-4-5';
+
 // Firebase config — reads Firestore REST API (no admin SDK needed)
 const FIREBASE_PROJECT = process.env.FIREBASE_PROJECT_ID || 'richblok-app';
 
@@ -170,7 +178,245 @@ app.get('/og/badge/:id', async (req, res) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    aiConfigured: !!ANTHROPIC_API_KEY
+  });
+});
+
+/**
+ * Call Claude Messages API.
+ * Returns { content: string } or throws.
+ */
+function callClaude({ model, system, userMessage, maxTokens = 1200, temperature = 0.4 }) {
+  return new Promise((resolve, reject) => {
+    if (!ANTHROPIC_API_KEY) {
+      return reject(new Error('ANTHROPIC_API_KEY not configured on server'));
+    }
+    const body = JSON.stringify({
+      model: model || CLAUDE_MODEL,
+      max_tokens: maxTokens,
+      temperature,
+      system: system || '',
+      messages: [{ role: 'user', content: userMessage }]
+    });
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-length': Buffer.byteLength(body)
+      }
+    }, (resp) => {
+      let chunks = '';
+      resp.on('data', c => chunks += c);
+      resp.on('end', () => {
+        try {
+          const parsed = JSON.parse(chunks);
+          if (parsed.error) {
+            return reject(new Error(parsed.error.message || 'Claude API error'));
+          }
+          const content = (parsed.content && parsed.content[0] && parsed.content[0].text) || '';
+          resolve({ content, usage: parsed.usage });
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+const COMPETENCY_Q = {
+  leadership: 'Tell me about a time you led a team through a complex problem.',
+  conflict_resolution: 'Describe a time you resolved a disagreement with a teammate.',
+  pressure_performance: 'Tell me about your most stressful professional situation.',
+  learning_from_failure: 'Tell me about a time you failed at work.',
+  teamwork: 'Give an example of working with a difficult colleague.',
+  communication: 'Explain a technical concept to a non-technical stakeholder.',
+  initiative: 'Tell me about a time you showed initiative.',
+  decision_making: 'Give me an example of a decision you made with incomplete information.',
+  adaptability: 'Describe a time you had to adjust to major changes at work.',
+  feedback_reception: 'Tell me about a time you received critical feedback.'
+};
+
+const COMPETENCY_LABELS = {
+  leadership: 'Leadership',
+  conflict_resolution: 'Conflict Resolution',
+  pressure_performance: 'Pressure Performance',
+  learning_from_failure: 'Learning from Failure',
+  teamwork: 'Teamwork',
+  communication: 'Communication',
+  initiative: 'Initiative',
+  decision_making: 'Decision Making',
+  adaptability: 'Adaptability',
+  feedback_reception: 'Feedback Reception'
+};
+
+/**
+ * POST /api/star-map
+ * Body: { challengeTitle, challengeFormat, skills[], competencyTags[], score, correct, total, userName?, project? }
+ * Returns: { answers: [ { competency, question, situation, task, action, result } ], unlockedQuestions[] }
+ *
+ * Uses Claude when ANTHROPIC_API_KEY is set; otherwise returns a templated fallback.
+ */
+app.post('/api/star-map', async (req, res) => {
+  const p = req.body || {};
+  const tags = Array.isArray(p.competencyTags) && p.competencyTags.length
+    ? p.competencyTags
+    : ['pressure_performance', 'decision_making', 'learning_from_failure'];
+
+  // Fallback: structured templated STAR answers (works without Claude)
+  function fallbackAnswers() {
+    return tags.slice(0, 5).map(tag => {
+      const label = COMPETENCY_LABELS[tag] || tag;
+      const question = COMPETENCY_Q[tag] || 'Tell me about a challenging experience.';
+      return {
+        competency: tag,
+        competencyLabel: label,
+        question,
+        situation: `I completed the Richblok "${p.challengeTitle || 'skill challenge'}" — a timed assessment covering ${(p.skills || []).join(', ') || 'core engineering topics'}.`,
+        task: `My goal was to demonstrate ${label.toLowerCase()} by answering ${p.total || 20} rapid-fire questions correctly under a ${Math.round(((p.total || 20) * 60) / 60)}-minute constraint, with no opportunity to look things up.`,
+        action: `I prioritized the questions I was most confident on first to secure easy wins, then systematically worked through ambiguous ones, eliminating implausible options before committing.`,
+        result: `I scored ${p.score || 0}/100 (${p.correct || 0} of ${p.total || 20} correct), earning a verified Richblok badge. This confirmed my ${label.toLowerCase()} under real time pressure — a concrete example I can point to in interviews.`
+      };
+    });
+  }
+
+  if (!ANTHROPIC_API_KEY) {
+    return res.json({
+      mode: 'fallback',
+      answers: fallbackAnswers(),
+      unlockedQuestions: tags.map(t => COMPETENCY_Q[t]).filter(Boolean)
+    });
+  }
+
+  try {
+    const system = `You are a behavioral interview coach. Generate draft STAR (Situation, Task, Action, Result) answers for candidates based on their concrete project work. Write in first-person, past tense, be specific, avoid generic fluff. Reference real numbers (scores, question counts, durations) from the user's project. Each STAR answer must be 4 crisp sentences total. Output ONLY valid JSON — no markdown, no commentary.`;
+
+    const userPrompt = `Project completed by the user:
+- Challenge title: ${p.challengeTitle || '(unknown)'}
+- Format: ${p.challengeFormat || 'solo_capstone'}
+- Skills demonstrated: ${(p.skills || []).join(', ') || 'various'}
+- Outcome: ${p.correct || 0}/${p.total || 20} correct (score ${p.score || 0}/100)
+- Target competencies: ${tags.map(t => COMPETENCY_LABELS[t] || t).join(', ')}
+${p.project ? `- Additional project context: ${String(p.project).substring(0, 600)}` : ''}
+
+For EACH of these competencies, generate a STAR answer this user could honestly give in an interview:
+${tags.map(t => `- ${t}: ${COMPETENCY_Q[t]}`).join('\n')}
+
+Return this exact JSON shape:
+{
+  "answers": [
+    {
+      "competency": "leadership",
+      "question": "Tell me about a time you led a team through a complex problem.",
+      "situation": "...",
+      "task": "...",
+      "action": "...",
+      "result": "..."
+    }
+  ]
+}`;
+
+    const { content } = await callClaude({
+      model: CLAUDE_HAIKU_MODEL,   // fast + cheap for STAR generation
+      system,
+      userMessage: userPrompt,
+      maxTokens: 2000,
+      temperature: 0.3
+    });
+
+    // Extract JSON from response (strip markdown if any slipped through)
+    let json = content.trim();
+    const match = json.match(/\{[\s\S]*\}/);
+    if (match) json = match[0];
+    const parsed = JSON.parse(json);
+
+    // Attach labels + ensure shape
+    const answers = (parsed.answers || []).map(a => ({
+      competency: a.competency,
+      competencyLabel: COMPETENCY_LABELS[a.competency] || a.competency,
+      question: a.question || COMPETENCY_Q[a.competency] || '',
+      situation: a.situation || '',
+      task: a.task || '',
+      action: a.action || '',
+      result: a.result || ''
+    }));
+
+    res.json({
+      mode: 'ai',
+      answers,
+      unlockedQuestions: answers.map(a => a.question).filter(Boolean)
+    });
+  } catch (err) {
+    console.error('star-map error:', err.message);
+    // Always return something usable — never 500 on this critical path
+    res.json({
+      mode: 'fallback_error',
+      error: err.message,
+      answers: fallbackAnswers(),
+      unlockedQuestions: tags.map(t => COMPETENCY_Q[t]).filter(Boolean)
+    });
+  }
+});
+
+/**
+ * POST /api/coach
+ * Body: { answer: StarAnswer, userMessage: string, projectContext?: string, history?: [] }
+ * Returns: { reply: string }
+ */
+app.post('/api/coach', async (req, res) => {
+  const p = req.body || {};
+  if (!p.answer || !p.userMessage) {
+    return res.status(400).json({ error: 'answer + userMessage required' });
+  }
+  if (!ANTHROPIC_API_KEY) {
+    return res.json({
+      mode: 'fallback',
+      reply: `To make this answer land, quantify the Result more: "I scored X/100, which placed me in the top Y%." Then add one sentence about what you'd do differently next time — interviewers love self-aware candidates. Your current "Action" is too abstract; replace "I systematically worked through" with a concrete heuristic you actually used.`
+    });
+  }
+
+  try {
+    const system = `You are a sharp, warm behavioral interview coach. You help candidates turn their real project work into compelling STAR answers. Be direct, specific, practical. Point out weak spots. Suggest concrete rewrites. Keep replies under 150 words unless asked for more.`;
+
+    const userPrompt = `Candidate's draft STAR answer for "${p.answer.question}":
+
+Situation: ${p.answer.situation}
+Task: ${p.answer.task}
+Action: ${p.answer.action}
+Result: ${p.answer.result}
+
+Candidate's question/request to you: "${p.userMessage}"
+
+${p.projectContext ? `Project context: ${String(p.projectContext).substring(0, 400)}` : ''}
+
+Coach them. Be specific and actionable.`;
+
+    const { content } = await callClaude({
+      model: CLAUDE_MODEL,
+      system,
+      userMessage: userPrompt,
+      maxTokens: 600,
+      temperature: 0.6
+    });
+
+    res.json({ mode: 'ai', reply: content });
+  } catch (err) {
+    console.error('coach error:', err.message);
+    res.json({
+      mode: 'fallback_error',
+      error: err.message,
+      reply: 'I hit a temporary issue reaching my model. In the meantime, the best thing you can do is add one specific number to your Result — a score, a percentile, a date — and rewrite the Action in one sentence that starts with a verb.'
+    });
+  }
 });
 
 // Serve static files from the Angular build

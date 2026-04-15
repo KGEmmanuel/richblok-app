@@ -1,0 +1,81 @@
+<div class="ud-page">
+  <header class="ud-nav">
+    <a class="ud-logo" [routerLink]="['/landing']">
+      <span class="ud-logo-mark">R</span>ichblok
+      <span class="ud-logo-tag">· University</span>
+    </a>
+    <button type="button" class="ud-export-btn" (click)="exportCsv()" [disabled]="loading || students.length === 0">
+      ⬇ Export CSV
+    </button>
+  </header>
+
+  <section class="ud-hero">
+    <div class="ud-eyebrow">COHORT DASHBOARD</div>
+    <h1 class="ud-h1">{{ institutionName }} — Student outcomes</h1>
+    <p class="ud-sub">
+      Track challenge completion, verified competency badges, and employer engagement across your cohort.
+      Export CSV for accreditation reporting.
+    </p>
+  </section>
+
+  <section class="ud-stats">
+    <div class="ud-stat">
+      <strong>{{ totalStudents }}</strong>
+      <span>Total students</span>
+    </div>
+    <div class="ud-stat">
+      <strong>{{ studentsWithBadges }}</strong>
+      <span>Active ({{ activationRate }}%)</span>
+    </div>
+    <div class="ud-stat">
+      <strong>{{ totalBadges }}</strong>
+      <span>Badges earned</span>
+    </div>
+    <div class="ud-stat">
+      <strong>{{ avgScore }}</strong>
+      <span>Avg score</span>
+    </div>
+  </section>
+
+  <div class="ud-loading" *ngIf="loading">
+    <div class="ud-spinner"></div>
+  </div>
+
+  <section class="ud-table-wrap" *ngIf="!loading && students.length > 0">
+    <table class="ud-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Challenges</th>
+          <th>Badges</th>
+          <th>Top score</th>
+          <th>Last active</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of students" [class.engaged]="s.challengesCompleted > 0">
+          <td>{{ s.name }}</td>
+          <td class="ud-num">{{ s.challengesCompleted }}</td>
+          <td class="ud-num">{{ s.badgesEarned }}</td>
+          <td class="ud-num" [class.high]="s.topScore >= 80">
+            {{ s.topScore > 0 ? s.topScore : '—' }}
+          </td>
+          <td>{{ s.lastActive?.toDate() | date:'shortDate' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="ud-empty" *ngIf="!loading && students.length === 0">
+    <h3>No students enrolled yet</h3>
+    <p>Share the Richblok invite link with your cohort to get started.</p>
+  </div>
+
+  <footer class="ud-footer">
+    <p>
+      Want to activate a university license? Email
+      <a href="mailto:emmanuel3kaldjob@gmail.com">emmanuel3kaldjob@gmail.com</a> —
+      pilot semester is free; renewal $3K–$10K/yr.
+    </p>
+  </footer>
+</div>

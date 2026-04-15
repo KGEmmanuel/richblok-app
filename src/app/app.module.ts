@@ -215,6 +215,10 @@ import { BadgePageComponent } from './badge/badge-page.component';
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
+import { StarProfileComponent } from './star-profile/star-profile.component';
+import { AiCoachComponent } from './ai-coach/ai-coach.component';
+import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
+import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -411,7 +415,11 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     BadgePageComponent,
     AdminSeedComponent,
     AdminDashboardComponent,
-    UserResolverComponent
+    UserResolverComponent,
+    StarProfileComponent,
+    AiCoachComponent,
+    EmployerDashboardComponent,
+    UniversityDashboardComponent
   ],
   imports: [
     BrowserModule,

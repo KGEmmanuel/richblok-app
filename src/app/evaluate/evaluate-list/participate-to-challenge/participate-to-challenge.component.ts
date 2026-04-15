@@ -8,6 +8,8 @@ import { ChalengeParticipation } from 'src/app/shared/entites/ChallengeParticipa
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AnalyticsService } from 'src/app/shared/services/analytics.service';
+import { StarMapperService } from 'src/app/shared/services/star-mapper.service';
+import { CompetencyTag } from 'src/app/shared/entites/Challenge';
 import * as firebase from 'firebase/app';
 import { first } from 'rxjs/operators';
 
@@ -32,7 +34,8 @@ export class ParticipateToChallengeComponent implements OnInit {
     private route: ActivatedRoute,
     private afs: AngularFirestore,
     private afAuth: AngularFireAuth,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private starMapper: StarMapperService
   ) {}
 
   ngOnInit() {
@@ -169,8 +172,41 @@ export class ParticipateToChallengeComponent implements OnInit {
         this.analytics.track('Lead', { source: 'challenge_complete', skill: primarySkill, score });
       }
 
-      // Redirect to public badge page
-      this.router.navigate(['/badge', badgeId]);
+      // PRD v3 — STAR COMPETENCY MAPPING: generate behavioral interview answers
+      // from this completed challenge. Navigate to the STAR result page.
+      if (user) {
+        const competencyTags: CompetencyTag[] =
+          ((this.currentChal as any).competencyTags && (this.currentChal as any).competencyTags.length)
+            ? (this.currentChal as any).competencyTags
+            : ['pressure_performance', 'decision_making', 'learning_from_failure'];
+
+        this.starMapper.generateAndSave({
+          uid: user.uid,
+          challengeId: this.currentChal.id,
+          challengeTitle: this.currentChal.titre,
+          challengeFormat: (this.currentChal as any).challengeFormat || 'solo_capstone',
+          skills: this.currentChal.skills || [],
+          competencyTags,
+          score,
+          correct,
+          total: totalQuestions,
+          badgeId,
+          project: this.currentChal.description
+        }).subscribe(profile => {
+          this.analytics.track('StarProfileGenerated', {
+            profileId: profile.id,
+            answerCount: profile.answers.length,
+            challenge: this.currentChal.titre
+          });
+          this.router.navigate(['/star', profile.id], { queryParams: { fromChallenge: 1 } });
+        }, err => {
+          // eslint-disable-next-line no-console
+          console.warn('STAR generation failed; redirecting to badge page.', err);
+          this.router.navigate(['/badge', badgeId]);
+        });
+      } else {
+        this.router.navigate(['/badge', badgeId]);
+      }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Failed to record badge', err);

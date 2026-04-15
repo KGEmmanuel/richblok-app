@@ -35,6 +35,10 @@ interface SeedChallenge {
   note: number;
   questions: SeedQuestion[];
   image: string;
+  // v3 additions
+  competencyTags?: string[];
+  challengeFormat?: 'solo_capstone' | 'team' | 'hackathon' | 'pivot' | 'review' | 'oss';
+  estimatedDuration?: string;
 }
 
 const D = 60;             // default 60s per question
@@ -705,7 +709,10 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: REACT_JS,
-    image: '/assets/rb/challenge-react.svg'
+    image: '/assets/rb/challenge-react.svg',
+    competencyTags: ['pressure_performance', 'decision_making', 'learning_from_failure', 'adaptability'],
+    challengeFormat: 'solo_capstone',
+    estimatedDuration: '20 minutes'
   },
   {
     slug: 'python-backend',
@@ -722,7 +729,10 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: PYTHON,
-    image: '/assets/rb/challenge-python.svg'
+    image: '/assets/rb/challenge-python.svg',
+    competencyTags: ['decision_making', 'pressure_performance', 'communication', 'teamwork'],
+    challengeFormat: 'solo_capstone',
+    estimatedDuration: '20 minutes'
   },
   {
     slug: 'sql-data',
@@ -739,7 +749,10 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: SQL,
-    image: '/assets/rb/challenge-sql.svg'
+    image: '/assets/rb/challenge-sql.svg',
+    competencyTags: ['decision_making', 'adaptability', 'communication'],
+    challengeFormat: 'solo_capstone',
+    estimatedDuration: '20 minutes'
   },
   {
     slug: 'ui-ux-design',
@@ -756,7 +769,10 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: UX,
-    image: '/assets/rb/challenge-uiux.svg'
+    image: '/assets/rb/challenge-uiux.svg',
+    competencyTags: ['communication', 'feedback_reception', 'decision_making', 'teamwork'],
+    challengeFormat: 'review',
+    estimatedDuration: '20 minutes'
   },
   {
     slug: 'product-thinking',
@@ -773,6 +789,9 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: PRODUCT,
-    image: '/assets/rb/challenge-product.svg'
+    image: '/assets/rb/challenge-product.svg',
+    competencyTags: ['leadership', 'decision_making', 'learning_from_failure', 'initiative'],
+    challengeFormat: 'solo_capstone',
+    estimatedDuration: '20 minutes'
   }
 ];

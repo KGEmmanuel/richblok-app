@@ -1,0 +1,124 @@
+$bg: #0a0a0a;
+$surface: #111113;
+$surface-2: #18181b;
+$accent: #1dd1a1;
+$accent-2: #22d3ee;
+$text: #fafafa;
+$text-muted: #a1a1aa;
+$text-dim: #71717a;
+$border: #27272a;
+$border-hi: #3f3f46;
+
+:host {
+  display: block;
+  background: $bg;
+  color: $text;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-feature-settings: 'cv02','cv03','cv04','cv11';
+  -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(1000px circle at 50% -200px, rgba(34, 211, 238, 0.06), transparent);
+}
+
+.ud-page { padding-bottom: 64px; }
+
+.ud-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px; border-bottom: 1px solid $border;
+  background: rgba(10,10,10,0.8); backdrop-filter: blur(16px);
+  position: sticky; top: 0; z-index: 10;
+}
+.ud-logo {
+  color: $text; text-decoration: none; font-weight: 700; font-size: 20px;
+  display: inline-flex; align-items: center;
+  .ud-logo-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, $accent, $accent-2);
+    color: $bg; font-weight: 900;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-right: 6px;
+  }
+  .ud-logo-tag { color: $text-dim; font-weight: 500; margin-left: 4px; font-size: 16px; }
+}
+.ud-export-btn {
+  background: transparent; border: 1px solid $border; color: $text;
+  padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;
+  &:hover:not(:disabled) { border-color: $accent; color: $accent; }
+  &:disabled { opacity: .4; cursor: not-allowed; }
+}
+
+.ud-hero { max-width: 1200px; margin: 0 auto; padding: 40px 24px 16px; }
+.ud-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; color: $accent-2;
+  font-weight: 600; margin-bottom: 10px;
+}
+.ud-h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 10px; line-height: 1.1; }
+.ud-sub { color: $text-muted; font-size: 15px; margin: 0; max-width: 680px; line-height: 1.6; }
+
+.ud-stats {
+  max-width: 1200px; margin: 24px auto; padding: 0 24px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+}
+.ud-stat {
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0));
+  border: 1px solid $border; border-radius: 12px; padding: 16px;
+  strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px; font-weight: 700; letter-spacing: -0.03em;
+    line-height: 1; color: $text; display: block;
+    font-variant-numeric: tabular-nums;
+  }
+  span {
+    font-size: 11px; color: $text-dim;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600; margin-top: 4px; display: block;
+  }
+}
+
+.ud-table-wrap {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  overflow-x: auto;
+}
+.ud-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: $surface; border: 1px solid $border;
+  border-radius: 12px; overflow: hidden;
+  th, td { padding: 12px 16px; text-align: left; font-size: 14px; }
+  thead th {
+    background: $surface-2; color: $text-dim;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700; border-bottom: 1px solid $border;
+  }
+  tbody tr { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:not(.engaged) td:first-child { color: $text-dim; }
+  tbody tr.engaged td:first-child { color: $text; font-weight: 500; }
+  .ud-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+  .ud-num.high { color: $accent; font-weight: 700; }
+}
+
+.ud-empty, .ud-loading {
+  text-align: center; padding: 60px 20px; color: $text-muted;
+  h3 { color: $text; font-size: 20px; margin: 0 0 8px; }
+}
+.ud-spinner {
+  width: 40px; height: 40px; margin: 0 auto 16px;
+  border: 3px solid rgba(29, 209, 161, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: ud-spin 1s linear infinite;
+}
+@keyframes ud-spin { to { transform: rotate(360deg); } }
+
+.ud-footer {
+  max-width: 880px; margin: 40px auto 0; padding: 32px 24px;
+  text-align: center; color: $text-dim;
+  font-size: 14px; line-height: 1.65;
+  border-top: 1px solid $border;
+  a { color: $accent; }
+}
+
+@media (min-width: 640px) {
+  .ud-stats { grid-template-columns: repeat(4, 1fr); }
+}

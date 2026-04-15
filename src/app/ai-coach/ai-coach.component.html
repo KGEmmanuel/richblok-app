@@ -1,0 +1,91 @@
+<div class="ac-page">
+  <header class="ac-nav">
+    <a class="ac-logo" [routerLink]="['/landing']">
+      <span class="ac-logo-mark">R</span>ichblok
+    </a>
+    <div class="ac-nav-right">
+      <a *ngIf="profile?.id" [routerLink]="['/star', profile.id]" class="ac-nav-ghost">← All STAR answers</a>
+    </div>
+  </header>
+
+  <div class="ac-loading" *ngIf="loading">
+    <div class="ac-spinner"></div>
+  </div>
+
+  <ng-container *ngIf="profile && !loading">
+    <!-- Left: answer picker -->
+    <div class="ac-layout">
+      <aside class="ac-sidebar">
+        <div class="ac-side-head">
+          <div class="ac-eyebrow">STAR ANSWERS</div>
+          <div class="ac-title">{{ profile.challengeTitle }}</div>
+        </div>
+        <div class="ac-answer-list">
+          <button type="button"
+                  *ngFor="let a of profile.answers; let i = index"
+                  class="ac-answer-pick"
+                  [class.active]="i === activeAnswerIndex"
+                  (click)="switchAnswer(i)">
+            <span class="ac-pick-chip">{{ a.competencyLabel }}</span>
+            <span class="ac-pick-q">{{ a.question }}</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right: coaching chat -->
+      <main class="ac-chat">
+        <div class="ac-answer-preview" *ngIf="activeAnswer">
+          <div class="ac-preview-chip">{{ activeAnswer.competencyLabel }}</div>
+          <div class="ac-preview-q">"{{ activeAnswer.question }}"</div>
+          <details class="ac-preview-details">
+            <summary>View your STAR draft</summary>
+            <div class="ac-preview-block"><strong>S</strong> {{ activeAnswer.situation }}</div>
+            <div class="ac-preview-block"><strong>T</strong> {{ activeAnswer.task }}</div>
+            <div class="ac-preview-block"><strong>A</strong> {{ activeAnswer.action }}</div>
+            <div class="ac-preview-block"><strong>R</strong> {{ activeAnswer.result }}</div>
+          </details>
+        </div>
+
+        <div class="ac-messages">
+          <div *ngFor="let m of messages"
+               class="ac-msg"
+               [class.coach]="m.role === 'coach'"
+               [class.user]="m.role === 'user'">
+            <div class="ac-msg-avatar">
+              {{ m.role === 'coach' ? '🤖' : 'You' }}
+            </div>
+            <div class="ac-msg-bubble">{{ m.text }}</div>
+          </div>
+          <div *ngIf="sending" class="ac-msg coach">
+            <div class="ac-msg-avatar">🤖</div>
+            <div class="ac-msg-bubble ac-typing"><span></span><span></span><span></span></div>
+          </div>
+          <div #scrollAnchor></div>
+        </div>
+
+        <div class="ac-suggestions" *ngIf="messages.length <= 2">
+          <span>Try:</span>
+          <button type="button"
+                  *ngFor="let p of suggestedPrompts"
+                  class="ac-suggestion"
+                  (click)="usePrompt(p)">
+            {{ p }}
+          </button>
+        </div>
+
+        <form class="ac-input-row" (ngSubmit)="send()">
+          <input type="text"
+                 class="ac-input"
+                 [(ngModel)]="input"
+                 name="coachInput"
+                 placeholder="Ask the coach anything..."
+                 [disabled]="sending"
+                 autocomplete="off">
+          <button type="submit" class="ac-send-btn" [disabled]="sending || !input">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </main>
+    </div>
+  </ng-container>
+</div>

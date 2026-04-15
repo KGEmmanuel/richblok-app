@@ -1,0 +1,105 @@
+<div class="sp-page">
+  <header class="sp-nav">
+    <a class="sp-logo" [routerLink]="['/landing']">
+      <span class="sp-logo-mark">R</span>ichblok
+    </a>
+    <button type="button" class="sp-nav-ghost" *ngIf="profile?.badgeId" (click)="viewBadge()">View badge →</button>
+  </header>
+
+  <div class="sp-loading" *ngIf="loading">
+    <div class="sp-spinner"></div>
+    <p>Generating your STAR answers…</p>
+  </div>
+
+  <div class="sp-error" *ngIf="error && !loading">
+    <h2>{{ error }}</h2>
+    <a [routerLink]="['/evaluate']">Take a challenge →</a>
+  </div>
+
+  <ng-container *ngIf="profile && !loading">
+    <!-- Celebration hero (only shown right after challenge completion) -->
+    <section class="sp-hero" *ngIf="fromChallenge">
+      <div class="sp-celebration">🎉</div>
+      <h1 class="sp-h1">You just unlocked {{ profile.answers.length }} behavioral interview stories</h1>
+      <p class="sp-sub">From your "{{ profile.challengeTitle }}" result ({{ profile.score }}/100), Richblok generated STAR answers you can use in real interviews — grounded in your actual work.</p>
+      <div class="sp-cta-row">
+        <button type="button" class="sp-cta-primary" (click)="coach(0)">
+          Practice with AI Coach
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <button type="button" class="sp-cta-ghost" (click)="share()">Share on WhatsApp</button>
+      </div>
+    </section>
+
+    <section class="sp-header" *ngIf="!fromChallenge">
+      <div class="sp-eyebrow">STAR PROFILE</div>
+      <h1 class="sp-h1">{{ profile.challengeTitle }}</h1>
+      <p class="sp-sub">{{ profile.answers.length }} behavioral interview answers generated from your verified project.</p>
+    </section>
+
+    <!-- Answers list -->
+    <section class="sp-answers">
+      <div class="sp-answer"
+           *ngFor="let a of profile.answers; let i = index"
+           [class.open]="expanded[i]">
+        <button type="button" class="sp-answer-head" (click)="toggle(i)">
+          <div class="sp-answer-head-left">
+            <span class="sp-chip">{{ a.competencyLabel }}</span>
+            <span class="sp-q">"{{ a.question }}"</span>
+          </div>
+          <span class="sp-answer-toggle">{{ expanded[i] ? '−' : '+' }}</span>
+        </button>
+        <div class="sp-answer-body" *ngIf="expanded[i]">
+          <div class="sp-star-row">
+            <div class="sp-star-label">S<span>ituation</span></div>
+            <p>{{ a.situation }}</p>
+          </div>
+          <div class="sp-star-row">
+            <div class="sp-star-label">T<span>ask</span></div>
+            <p>{{ a.task }}</p>
+          </div>
+          <div class="sp-star-row">
+            <div class="sp-star-label">A<span>ction</span></div>
+            <p>{{ a.action }}</p>
+          </div>
+          <div class="sp-star-row">
+            <div class="sp-star-label">R<span>esult</span></div>
+            <p>{{ a.result }}</p>
+          </div>
+          <div class="sp-answer-actions">
+            <button type="button" class="sp-action-btn" (click)="coach(i)">
+              🤖 Practice with AI Coach
+            </button>
+            <button type="button" class="sp-action-btn sp-action-ghost" (click)="copyAnswer(a)">
+              📋 Copy answer
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Accountability pod (PRD v3 F12) — shown after challenge completion -->
+    <section class="sp-pod-card" *ngIf="fromChallenge">
+      <div class="sp-pod-icon">👥</div>
+      <div class="sp-pod-body">
+        <div class="sp-pod-title">Join a 4–6 person accountability pod</div>
+        <div class="sp-pod-sub">
+          Research shows community-driven cohorts have 25%+ Day 30 retention vs. 2% solo.
+          Invite peers on WhatsApp to form your pod.
+        </div>
+      </div>
+      <button type="button" class="sp-pod-cta" (click)="invitePod()">
+        Invite via WhatsApp →
+      </button>
+    </section>
+
+    <!-- Footer card -->
+    <section class="sp-footer-card">
+      <div>
+        <div class="sp-footer-title">Unlocked {{ profile.unlockedQuestions?.length || profile.answers.length }} interview questions</div>
+        <div class="sp-footer-sub">Keep completing challenges to unlock more competencies and deepen your story library.</div>
+      </div>
+      <a [routerLink]="['/evaluate']" class="sp-footer-cta">Take another challenge →</a>
+    </section>
+  </ng-container>
+</div>
