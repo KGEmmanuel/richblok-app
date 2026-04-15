@@ -1002,9 +1002,18 @@ app.get('/api/pods/nudge', async (req, res) => {
       const d = doc.data();
       const last = d.lastNudgeAt && d.lastNudgeAt.toDate ? d.lastNudgeAt.toDate() : d.lastNudgeAt;
       if (last && last > sevenDaysAgo) continue;
+      // Fetch the challenge title so the delivery message can reference it
+      // without another round-trip in the worker.
+      let challengeTitle = null;
+      try {
+        const chSnap = await db.collection('challenges').doc(d.challengeId).get();
+        if (chSnap.exists) { challengeTitle = (chSnap.data() || {}).titre || null; }
+      } catch (_) { /* non-fatal */ }
+
       await db.collection('pod_nudges').add({
         podId: doc.id,
         challengeId: d.challengeId,
+        challengeTitle,
         memberUids: (d.members || []).map(m => m.uid),
         emittedAt: admin.firestore.FieldValue.serverTimestamp(),
         delivered: false
@@ -1017,6 +1026,194 @@ app.get('/api/pods/nudge', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+/* =========================================================================
+ * Pods: delivery worker (Twilio WhatsApp Business API)
+ *
+ * Reads undelivered pod_nudges docs, resolves each member's phone via
+ * utilisateurs/{uid}.phone, sends via Twilio WA, marks delivered=true.
+ *
+ * Env vars (all optional; missing any = worker logs + skips cleanly):
+ *   TWILIO_ACCOUNT_SID   — e.g. AC...
+ *   TWILIO_AUTH_TOKEN    — e.g. ...
+ *   TWILIO_WA_FROM       — your approved WA sender, e.g. "whatsapp:+14155238886"
+ *   PODS_CRON_SECRET     — shared secret with the cron caller (reused here)
+ *
+ * Endpoint: GET /api/pods/deliver?secret=...&limit=20
+ *
+ * Call this on a separate cron tick (e.g. every 30 min) OR chain it after
+ * /api/pods/nudge. Delivery is idempotent — any nudge doc with delivered=true
+ * is skipped; failures set deliveryError and leave delivered=false for retry.
+ * ========================================================================= */
+app.get('/api/pods/deliver', async (req, res) => {
+  if (process.env.PODS_CRON_SECRET && req.query.secret !== process.env.PODS_CRON_SECRET) {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+  if (!admin || !admin.apps.length) {
+    return res.json({ delivered: 0, skipped: 0, mode: 'no_admin_sdk' });
+  }
+
+  const twilioConfigured = !!(
+    process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_AUTH_TOKEN &&
+    process.env.TWILIO_WA_FROM
+  );
+
+  try {
+    const db = admin.firestore();
+    const limit = Math.min(50, parseInt(req.query.limit, 10) || 20);
+    const snap = await db.collection('pod_nudges')
+      .where('delivered', '==', false)
+      .limit(limit)
+      .get();
+
+    let delivered = 0;
+    let skipped = 0;
+    let errors = 0;
+    const attempted = [];
+
+    for (const nudgeDoc of snap.docs) {
+      const nudge = nudgeDoc.data();
+      const podId = nudge.podId;
+      const memberUids = nudge.memberUids || [];
+      if (!memberUids.length) {
+        await nudgeDoc.ref.update({ delivered: true, deliveryNote: 'no_members' });
+        skipped++;
+        continue;
+      }
+
+      // Resolve each member's phone via users/{uid}. Skip members without phone.
+      const phones = [];
+      for (const uid of memberUids) {
+        const u = await db.collection('utilisateurs').doc(uid).get();
+        if (!u.exists) { continue; }
+        const d = u.data();
+        const phone = d && (d.phone || d.phoneNumber || d.telephone);
+        if (phone) { phones.push({ uid, phone: normalizePhone(phone) }); }
+      }
+
+      if (!phones.length) {
+        await nudgeDoc.ref.update({
+          delivered: true,
+          deliveryNote: 'no_phones_on_file',
+          deliveredAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        skipped++;
+        continue;
+      }
+
+      // Compose message — keep it specific + actionable per PRD §7.2
+      const message = buildPodNudgeMessage(nudge);
+      const results = [];
+
+      if (!twilioConfigured) {
+        // Dry run — record what we would have sent, but don't mark delivered
+        // so once Twilio is configured the worker picks up where it left off.
+        await nudgeDoc.ref.update({
+          dryRunAt: admin.firestore.FieldValue.serverTimestamp(),
+          dryRunMessage: message,
+          dryRunRecipients: phones.map(p => p.phone)
+        });
+        attempted.push({ podId, recipients: phones.length, mode: 'dry_run' });
+        continue;
+      }
+
+      for (const p of phones) {
+        try {
+          const sid = await twilioSendWhatsApp(p.phone, message);
+          results.push({ uid: p.uid, phone: p.phone, sid, ok: true });
+        } catch (err) {
+          results.push({ uid: p.uid, phone: p.phone, error: err.message, ok: false });
+          errors++;
+        }
+      }
+
+      const anySuccess = results.some(r => r.ok);
+      await nudgeDoc.ref.update({
+        delivered: anySuccess,
+        deliveryResults: results,
+        deliveredAt: anySuccess ? admin.firestore.FieldValue.serverTimestamp() : null,
+        lastAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      if (anySuccess) { delivered++; } else { errors++; }
+      attempted.push({ podId, recipients: phones.length, ok: anySuccess });
+    }
+
+    res.json({
+      twilioConfigured,
+      delivered,
+      skipped,
+      errors,
+      total: snap.size,
+      attempted
+    });
+  } catch (err) {
+    console.error('pods deliver error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+function normalizePhone(raw) {
+  // Strip spaces/dashes; ensure leading +. Twilio requires E.164.
+  let p = String(raw || '').replace(/[\s\-()]/g, '');
+  if (!p.startsWith('+')) {
+    // Heuristic: if looks African (starts with country code digits), prefix +
+    if (/^\d{8,15}$/.test(p)) { p = '+' + p; }
+  }
+  return p;
+}
+
+function buildPodNudgeMessage(nudge) {
+  const progress = Math.max(1, (nudge.memberUids || []).length);
+  const challenge = nudge.challengeTitle || nudge.challengeId || 'your Richblok challenge';
+  return (
+    `Hey! Your Richblok accountability pod (${progress} people) is still running.\n\n` +
+    `This week's check-in: Where are you on "${challenge}"?\n` +
+    `Reply with a short status — even "stuck on question 7" helps your pod stay motivated.\n\n` +
+    `Keep going. 25% of community-driven learners complete. 2% of solo ones do.\n` +
+    `richblok.app`
+  );
+}
+
+function twilioSendWhatsApp(toPhone, message) {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const from = process.env.TWILIO_WA_FROM;
+  const to = toPhone.startsWith('whatsapp:') ? toPhone : 'whatsapp:' + toPhone;
+
+  return new Promise((resolve, reject) => {
+    const body = new URLSearchParams({ From: from, To: to, Body: message }).toString();
+    const req = https.request({
+      hostname: 'api.twilio.com',
+      path: `/2010-04-01/Accounts/${sid}/Messages.json`,
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'authorization': 'Basic ' + Buffer.from(`${sid}:${token}`).toString('base64'),
+        'content-length': Buffer.byteLength(body)
+      },
+      timeout: 15000
+    }, (resp) => {
+      let buf = '';
+      resp.on('data', c => buf += c);
+      resp.on('end', () => {
+        try {
+          const parsed = JSON.parse(buf);
+          if (resp.statusCode >= 300 || parsed.code) {
+            return reject(new Error(parsed.message || `Twilio HTTP ${resp.statusCode}`));
+          }
+          resolve(parsed.sid);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.on('timeout', () => { req.destroy(new Error('twilio timeout')); });
+    req.write(body);
+    req.end();
+  });
+}
 
 /* =========================================================================
  * Admin: challenge CRUD (Firestore-backed). Auth is Firebase ID token in
@@ -1189,11 +1386,57 @@ Coach them. Be specific and actionable.`;
   upstream.end();
 });
 
-// Serve static files from the Angular build
-app.use(express.static(path.join(__dirname, 'dist')));
+/* =========================================================================
+ * SSR (Angular Universal) — opt-in runtime rendering for marketing routes.
+ *
+ * The server bundle (dist-server/main.js) is built by `ng run Rib:server`.
+ * If present AND `ENABLE_SSR=1`, we render these routes server-side so crawlers
+ * and first-paint users get fully-populated HTML. Everything else falls back
+ * to the SPA — no hybrid hell, just a clean split.
+ *
+ * Routes we SSR today: landing ("/", "/landing"), sponsor, terms, policy,
+ * contact. These are content-heavy, login-free, and benefit most from SEO.
+ * ========================================================================= */
+const SSR_ENABLED = process.env.ENABLE_SSR === '1';
+const SSR_ROUTES = ['/', '/landing', '/sponsor', '/terms', '/policy', '/contact'];
+let ssrEngine = null;
 
-// Handle Angular routing - send all non-static, non-og requests to index.html
+try {
+  if (SSR_ENABLED) {
+    const serverBundle = path.join(__dirname, 'dist-server', 'main.js');
+    if (require('fs').existsSync(serverBundle)) {
+      const { ngExpressEngine } = require('@nguniversal/express-engine');
+      const bundle = require(serverBundle);
+      ssrEngine = ngExpressEngine({ bootstrap: bundle.AppServerModule });
+      app.engine('html', ssrEngine);
+      app.set('view engine', 'html');
+      app.set('views', path.join(__dirname, 'dist'));
+      console.log('[ssr] Universal engine active for routes:', SSR_ROUTES.join(', '));
+    } else {
+      console.log('[ssr] ENABLE_SSR=1 but dist-server/main.js missing — falling back to SPA');
+    }
+  }
+} catch (e) {
+  console.warn('[ssr] init failed (non-fatal, serving SPA):', e.message);
+  ssrEngine = null;
+}
+
+// Serve static files from the Angular build
+app.use(express.static(path.join(__dirname, 'dist'), { index: false }));
+
+// Handle Angular routing — Universal for marketing routes when available,
+// otherwise serve the SPA index.html.
 app.use((req, res) => {
+  if (ssrEngine && SSR_ROUTES.indexOf(req.path) >= 0) {
+    return res.render('index', { req, res }, (err, html) => {
+      if (err) {
+        console.warn('[ssr] render error, falling back to SPA:', err.message);
+        return res.sendFile(path.join(__dirname, 'dist/index.html'));
+      }
+      res.set('Cache-Control', 'public, max-age=60, s-maxage=300');
+      res.send(html);
+    });
+  }
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 

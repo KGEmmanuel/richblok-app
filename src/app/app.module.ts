@@ -429,7 +429,7 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     SponsorChallengeComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'richblok-app' }),
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
@@ -461,7 +461,7 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     NgCircleProgressModule.forRoot({
     }),
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: (window as any).location.hostname !== 'localhost'
+      enabled: typeof window !== 'undefined' && (window as any).location.hostname !== 'localhost'
     }),
 
 

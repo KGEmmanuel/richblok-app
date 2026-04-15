@@ -2,7 +2,8 @@ import { Title, Meta } from '@angular/platform-browser';
 import { UtilisateurService } from './../shared/services/utilisateur.service';
 import { SeoService } from './../shared/services/seo.service';
 import { AnalyticsService } from './../shared/services/analytics.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase/app';
 import { Router } from '@angular/router';
@@ -128,24 +129,29 @@ export class LandingComponent implements OnInit {
     private title: Title,
     private meta: Meta,
     private seo: SeoService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
+
+  get isBrowser(): boolean { return isPlatformBrowser(this.platformId); }
 
   ngOnInit() {
     this.seo.reset();
     this.detectLang();
-    this.analytics.track('PageView', { page: 'landing' });
-
-    // Live counter: count all challenge submissions (or total badges)
-    this.afs.collection('challenge_submissions').get().subscribe(
-      snap => {
-        const base = 847; // seed so it doesn't show 0 on Day 1
-        this.badgeCount = base + (snap ? snap.size : 0);
-      },
-      () => {
-        this.badgeCount = 847;
-      }
-    );
+    if (this.isBrowser) {
+      this.analytics.track('PageView', { page: 'landing' });
+      // Live counter: count all challenge submissions. Skipped on SSR so the
+      // page renders fast + deterministic for crawlers; client hydrates it.
+      this.afs.collection('challenge_submissions').get().subscribe(
+        snap => {
+          const base = 847;
+          this.badgeCount = base + (snap ? snap.size : 0);
+        },
+        () => { this.badgeCount = 847; }
+      );
+    } else {
+      this.badgeCount = 847;
+    }
   }
 
   t(key: string): string {
@@ -157,6 +163,7 @@ export class LandingComponent implements OnInit {
   }
 
   private detectLang() {
+    if (!this.isBrowser) { return; }
     try {
       const nav = navigator.language || 'en';
       const stored = localStorage.getItem('richblok_lang') as Lang;
@@ -170,21 +177,20 @@ export class LandingComponent implements OnInit {
 
   setLang(l: Lang) {
     this.lang = l;
-    try { localStorage.setItem('richblok_lang', l); } catch { /* ignore */ }
-    this.analytics.track('LanguageChange', { language: l });
+    if (this.isBrowser) {
+      try { localStorage.setItem('richblok_lang', l); } catch { /* ignore */ }
+      this.analytics.track('LanguageChange', { language: l });
+    }
   }
 
   primaryCta() {
-    // New CV-first primary path. Anonymous users can upload before registering;
-    // their pending STAR draft is stashed in localStorage and auto-claimed on register.
     this.analytics.track('LandingCtaClick', { cta: 'primary_hero_upload_cv' });
     this.router.navigate(['/onboard']);
   }
 
   secondaryCta() {
-    // "Or start with a challenge" — kept available for users who prefer challenge-first.
     this.analytics.track('LandingCtaClick', { cta: 'secondary_hero_challenge' });
-    const user = firebase.auth().currentUser;
+    const user = this.isBrowser ? firebase.auth().currentUser : null;
     if (user) {
       this.router.navigate(['/evaluate']);
     } else {
@@ -200,7 +206,7 @@ export class LandingComponent implements OnInit {
   goUpgrade() {
     this.analytics.track('LandingCtaClick', { cta: 'pricing_pro' });
     this.analytics.track('InitiateCheckout', { plan: this.annualBilling ? 'pro_annual' : 'pro_monthly' });
-    const user = firebase.auth().currentUser;
+    const user = this.isBrowser ? firebase.auth().currentUser : null;
     if (user) {
       this.router.navigate(['/settings'], { queryParams: { upgrade: 1 } });
     } else {
