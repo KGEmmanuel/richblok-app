@@ -35,9 +35,9 @@ export class UtilisateurService {
   readonly competencePath = 'competences';
   readonly postpath = 'posts';
   readonly participationpath = 'participants';
-  readonly archiveFormationBaseurl = 'https://us-central1-richblock-aebe5.cloudfunctions.net/archveFormation';
-  readonly archiveCompetenceBaseurl = 'https://us-central1-richblock-aebe5.cloudfunctions.net/archveCompetence';
-  readonly archiveExperienceBaseurl = 'https://us-central1-richblock-aebe5.cloudfunctions.net/archveExperience';
+  readonly archiveFormationBaseurl = 'https://us-central1-richblok-app.cloudfunctions.net/archveFormation';
+  readonly archiveCompetenceBaseurl = 'https://us-central1-richblok-app.cloudfunctions.net/archveCompetence';
+  readonly archiveExperienceBaseurl = 'https://us-central1-richblok-app.cloudfunctions.net/archveExperience';
   items: Observable<Utilisateur[]>;
   formations: Observable<Formation[]>;
   formationsArray: Formation[];
