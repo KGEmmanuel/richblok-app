@@ -60,3 +60,6 @@ src/environments/environment.prod.ts
 
 # Firebase
 .firebase/
+
+# Claude Code local
+.claude/
