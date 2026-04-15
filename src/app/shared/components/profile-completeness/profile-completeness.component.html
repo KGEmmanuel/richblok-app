@@ -1,0 +1,21 @@
+<div class="profile-completeness" *ngIf="score">
+  <div class="header" (click)="toggle()">
+    <div class="info">
+      <div class="label">Profile completeness</div>
+      <div class="status" [style.color]="progressColor">{{ statusLabel }} — {{ score.total }}%</div>
+    </div>
+    <div class="toggle-icon">{{ expanded ? '▲' : '▼' }}</div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" [style.width.%]="score.total" [style.background]="progressColor"></div>
+  </div>
+
+  <div class="sections" *ngIf="expanded">
+    <div class="section" *ngFor="let s of score.sections" [class.done]="s.completed">
+      <span class="check">{{ s.completed ? '✓' : '○' }}</span>
+      <span class="name">{{ s.name }}</span>
+      <span class="points">+{{ s.maxScore }}</span>
+    </div>
+  </div>
+</div>

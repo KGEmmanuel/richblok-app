@@ -1,0 +1,80 @@
+.profile-completeness {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+
+    .info {
+      .label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .status {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 2px;
+      }
+    }
+    .toggle-icon {
+      color: #999;
+      font-size: 12px;
+    }
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 12px;
+
+    .progress-fill {
+      height: 100%;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+  }
+
+  .sections {
+    margin-top: 16px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+
+    .section {
+      display: flex;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #999;
+
+      &.done {
+        color: #333;
+        .check { color: #4caf50; }
+      }
+
+      .check {
+        width: 20px;
+        font-weight: 700;
+        color: #ccc;
+      }
+      .name {
+        flex: 1;
+      }
+      .points {
+        font-size: 12px;
+        color: #999;
+        font-weight: 600;
+      }
+    }
+  }
+}

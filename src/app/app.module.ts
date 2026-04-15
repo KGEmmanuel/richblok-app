@@ -1,7 +1,9 @@
 import { ProgressComponent } from './RibComponents/progress/progress.component';
-import { HttpClient, HttpHandler, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpHandler, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
+import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
+import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
@@ -206,6 +208,7 @@ import { RecordDocumentFormComponent } from './record-documents/record-document-
 import { UploadFileComponent } from './RibComponents/upload-file/upload-file.component';
 import { DndDirective } from './RibComponents/upload-file/dnd.directive';
 import { RequiresProDirective } from './shared/directives/requires-pro.directive';
+import { ProfileCompletenessComponent } from './shared/components/profile-completeness/profile-completeness.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -395,7 +398,8 @@ import { RequiresProDirective } from './shared/directives/requires-pro.directive
     RecordDocumentsComponent,
     UploadFileComponent,
     ProgressComponent,
-    RequiresProDirective
+    RequiresProDirective,
+    ProfileCompletenessComponent
   ],
   imports: [
     BrowserModule,
@@ -435,6 +439,8 @@ import { RequiresProDirective } from './shared/directives/requires-pro.directive
   providers: [
     ApiService,
     PostService,
+    { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 

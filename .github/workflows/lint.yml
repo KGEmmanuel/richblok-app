@@ -1,0 +1,21 @@
+name: Lint & Typecheck
+
+on:
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '14' }
+      - name: Install
+        run: npm install --legacy-peer-deps --ignore-scripts
+      - name: Typecheck
+        run: npx tsc --noEmit -p tsconfig.app.json
+        continue-on-error: true
+      - name: Lint
+        run: npx ng lint
+        continue-on-error: true

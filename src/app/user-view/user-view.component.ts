@@ -16,6 +16,7 @@ import { UtilisateurService } from '../shared/services/utilisateur.service';
 import { Title, Meta } from '@angular/platform-browser';
 import { ExperienceService } from '../shared/services/experience.service';
 import { Experience } from '../shared/entites/Experience';
+import { SeoService } from '../shared/services/seo.service';
 @Component({
   selector: 'app-user-view',
   templateUrl: './user-view.component.html',
@@ -36,7 +37,8 @@ export class UserViewComponent implements OnInit {
               private afs: AngularFirestore, private userSvc: UtilisateurService, private route: ActivatedRoute,
               private title: Title, private meta : Meta,
               private expSvc: ExperienceService, private trainSvc: FormationService,
-              private skillSvc: SkillsService, private realSvc: PortfolioService) {
+              private skillSvc: SkillsService, private realSvc: PortfolioService,
+              private seo: SeoService) {
 
   }
   form = false;
@@ -48,6 +50,7 @@ export class UserViewComponent implements OnInit {
       const id = routeParams.id;
       this.userSvc.get(id).subscribe(v => {
         this.currentUser = v;
+        this.seo.setProfileTags(this.currentUser, id);
         this.expSvc.listExperiences(this.currentUser.id).onSnapshot(val => {
           this.experiences = [];
           val.forEach(element => {

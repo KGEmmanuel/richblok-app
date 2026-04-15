@@ -4,6 +4,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap, map, first } from 'rxjs/operators';
 import { SubscriptionTier, SubscriptionStatus } from '../entites/Subscription';
+import * as firebase from 'firebase/app';
+import 'firebase/functions';
 
 @Injectable({
   providedIn: 'root'
@@ -52,33 +54,51 @@ export class SubscriptionService {
     return this.tierSubject.value === 'pro' || this.tierSubject.value === 'team';
   }
 
-  startProSubscription(): void {
-    this.afAuth.authState.pipe(first()).subscribe(user => {
-      if (!user) {
-        console.error('User must be logged in to subscribe');
-        return;
-      }
+  /**
+   * Calls the createCheckoutSession Cloud Function and redirects to Stripe Checkout.
+   */
+  async startProSubscription(): Promise<void> {
+    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    if (!user) {
+      throw new Error('User must be logged in to subscribe');
+    }
 
-      // Create a Stripe Checkout session via Firestore trigger
-      this.afs.collection('stripe_checkout_sessions').add({
-        uid: user.uid,
-        price: 'price_pro_monthly',
-        success_url: window.location.origin + '/profile?subscription=success',
-        cancel_url: window.location.origin + '/profile?subscription=cancelled',
-      });
+    const callable = firebase.functions().httpsCallable('createCheckoutSession');
+    const result: any = await callable({
+      successUrl: window.location.origin + '/profile?subscription=success',
+      cancelUrl: window.location.origin + '/profile?subscription=cancelled'
     });
+
+    if (result.data && result.data.url) {
+      window.location.href = result.data.url;
+    } else {
+      throw new Error('Failed to create checkout session');
+    }
   }
 
-  openBillingPortal(): void {
-    this.afAuth.authState.pipe(first()).subscribe(user => {
-      if (!user) {
-        console.error('User must be logged in');
-        return;
-      }
-      console.log('Stripe billing portal session creation initiated');
+  /**
+   * Opens the Stripe Customer Portal for self-service billing management.
+   */
+  async openBillingPortal(): Promise<void> {
+    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    if (!user) {
+      throw new Error('User must be logged in');
+    }
+
+    const callable = firebase.functions().httpsCallable('createPortalSession');
+    const result: any = await callable({
+      returnUrl: window.location.origin + '/settings'
     });
+
+    if (result.data && result.data.url) {
+      window.location.href = result.data.url;
+    }
   }
 
+  /**
+   * Checks if a free user has remaining challenge submissions this month (limit 3).
+   * Pro users always return true.
+   */
   checkChallengeLimit(): Observable<boolean> {
     return this.afAuth.authState.pipe(
       first(),
@@ -96,5 +116,13 @@ export class SubscriptionService {
         );
       })
     );
+  }
+
+  /**
+   * Records a challenge submission via Cloud Function (server-side counter).
+   */
+  async recordChallengeSubmission(challengeId: string): Promise<void> {
+    const callable = firebase.functions().httpsCallable('recordChallengeSubmission');
+    await callable({ challengeId });
   }
 }

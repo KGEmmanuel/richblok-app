@@ -1,5 +1,6 @@
 import { Title, Meta } from '@angular/platform-browser';
 import { UtilisateurService } from './../shared/services/utilisateur.service';
+import { SeoService } from './../shared/services/seo.service';
 import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase';
@@ -17,12 +18,11 @@ import { Router } from '@angular/router';
 export class LandingComponent implements OnInit {
 
   constructor(private route: Router, private toastr: ToastrService, private userSvc: UtilisateurService,
-              private title: Title, private meta: Meta ) { }
+              private title: Title, private meta: Meta, private seo: SeoService ) { }
 form = false;
 email: string;
   ngOnInit() {
-    this.title.setTitle('RichBlok | Landing');
-    this.meta.updateTag({ name: 'description', content: 'RichBlok landing page describing you our process and services' });
+    this.seo.reset();
   }
   gotoTop() {
     window.scroll({

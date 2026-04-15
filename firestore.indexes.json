@@ -1,0 +1,53 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "challenge_submissions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "uid", "order": "ASCENDING" },
+        { "fieldPath": "submitted_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "abonnees", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "owner", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "notifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "abonnees", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "challenges",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "creatorRef", "order": "ASCENDING" },
+        { "fieldPath": "dateCreation", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "utilisateurs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "subscription_tier", "order": "ASCENDING" },
+        { "fieldPath": "nom", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
