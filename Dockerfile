@@ -3,7 +3,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Install only express for serving (lightweight)
-RUN npm init -y && npm install express
+RUN npm init -y && npm install express@4.18.2
 
 # Copy pre-built Angular dist files
 COPY dist ./dist

@@ -12,8 +12,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Handle Angular routing - send all requests to index.html
-app.get('/*', (req, res) => {
+// Handle Angular routing - send all non-static requests to index.html
+// Express 4 uses '*', Express 5 uses named wildcards
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
