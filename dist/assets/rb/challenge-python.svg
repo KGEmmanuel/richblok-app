@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#16243f"/>
+    </linearGradient>
+    <radialGradient id="r" cx="30%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#3776ab" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#3776ab" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="py1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3776ab"/>
+      <stop offset="1" stop-color="#1e5a8a"/>
+    </linearGradient>
+    <linearGradient id="py2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd43b"/>
+      <stop offset="1" stop-color="#e5b80b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <rect width="1200" height="630" fill="url(#r)"/>
+  <g transform="translate(600 315)">
+    <path d="M -80 -120 Q -80 -160 -40 -160 L 40 -160 Q 80 -160 80 -120 L 80 -40 L -40 -40 Q -80 -40 -80 0 L -80 80 L -120 80 Q -160 80 -160 40 L -160 -80 Q -160 -120 -120 -120 Z" fill="url(#py1)"/>
+    <path d="M 80 120 Q 80 160 40 160 L -40 160 Q -80 160 -80 120 L -80 40 L 40 40 Q 80 40 80 0 L 80 -80 L 120 -80 Q 160 -80 160 -40 L 160 80 Q 160 120 120 120 Z" fill="url(#py2)"/>
+    <circle cx="-30" cy="-120" r="10" fill="#ffffff"/>
+    <circle cx="30" cy="120" r="10" fill="#0b1220"/>
+  </g>
+  <text x="60" y="92" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-weight="800" font-size="28" fill="#1dd1a1" letter-spacing="2">RICHBLOK · CHALLENGE</text>
+  <text x="60" y="570" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-weight="900" font-size="72" fill="#ffffff">Python &amp; Backend</text>
+  <text x="60" y="610" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-weight="500" font-size="26" fill="#a5b4cf">20 questions · 20 minutes · Instant badge</text>
+</svg>

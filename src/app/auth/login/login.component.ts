@@ -1,6 +1,7 @@
 import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { I18nService } from 'src/app/shared/services/i18n.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
     private AuthSvc: AuthService,
     private route: ActivatedRoute,
     private title: Title,
-    private meta: Meta
+    private meta: Meta,
+    public i18n: I18nService
   ) {}
 
   ngOnInit() {
@@ -38,18 +40,17 @@ export class LoginComponent implements OnInit {
 
   login() {
     if (!this.mail || !this.pass) {
-      this.errorMessage = 'Please enter both email and password.';
+      this.errorMessage = this.i18n.t('signin_validation', 'Please enter both email and password.');
       return;
     }
     this.errorMessage = '';
     this.loading = true;
     this.AuthSvc.SignIn(this.mail, this.pass)
       .then(() => {
-        this.successMessage = 'Connected';
+        this.successMessage = this.i18n.t('signin_success', 'Connected');
       })
       .catch(() => {
-        // Toastr shown by AuthService — don't double-alert here
-        this.errorMessage = 'Sign-in failed. Check the notification for details.';
+        this.errorMessage = this.i18n.t('signin_failed', 'Sign-in failed. Check the notification for details.');
       })
       .then(() => { this.loading = false; });
   }

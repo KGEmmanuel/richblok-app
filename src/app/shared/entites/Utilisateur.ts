@@ -16,10 +16,8 @@ export class Utilisateur  extends IBaseEntity {
   entreprises?: Array<string>;
   firstconexion? = true;
   // tslint:disable-next-line: max-line-length
-  imageprofil?: string = 'https://firebasestorage.googleapis.com/v0/b/richblock-aebe5.appspot.com/o/backgroundimage%2Fprofil.svg.png?alt=media&token=630dae2c-f13e-409f-9659-1ac9ed161ea0';
-  imagecouv?: string = 'https?://firebasestorage.googleapis.com/v0/b/' +
-    'richblock-aebe5.appspot.com/o/cover%2Ffbcover.jpg?alt=media&token=' +
-    '10c4b199-0214-4ddd-a862-76094565bc02';
+  imageprofil?: string = '/assets/rb/avatar-default.svg';
+  imagecouv?: string = '/assets/rb/cover-default.svg';
   poste?: string;
   lieu?: string;
   abonnees?: Array<string> = new Array<string>();

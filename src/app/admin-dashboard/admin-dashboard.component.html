@@ -1,0 +1,67 @@
+<div class="ad-page">
+  <header class="ad-header">
+    <div>
+      <h1>📊 Richblok · Admin dashboard</h1>
+      <p class="ad-meta">Last refreshed {{ lastRefresh | date:'medium' }}</p>
+    </div>
+    <button type="button" class="ad-refresh" (click)="refresh()" [disabled]="loading">
+      {{ loading ? 'Loading…' : '↻ Refresh' }}
+    </button>
+  </header>
+
+  <section class="ad-cards">
+    <div *ngFor="let c of cards" class="ad-card">
+      <div class="ad-card-label">{{ c.label }}</div>
+      <div class="ad-card-value">{{ c.value }}</div>
+      <div class="ad-card-hint" *ngIf="c.hint">{{ c.hint }}</div>
+    </div>
+  </section>
+
+  <section class="ad-panel">
+    <h2>Conversion funnel</h2>
+    <div class="ad-funnel">
+      <div *ngFor="let step of funnel; let i = index" class="ad-funnel-step">
+        <div class="ad-funnel-name">{{ step.name }}</div>
+        <div class="ad-funnel-count">{{ step.count }}</div>
+        <div class="ad-funnel-bar">
+          <div class="ad-funnel-fill"
+               [style.width.%]="funnel[0].count > 0 ? (step.count / funnel[0].count * 100) : 0"></div>
+        </div>
+        <div class="ad-funnel-conv" *ngIf="step.conversion !== undefined">
+          {{ step.conversion }}% from {{ funnel[i - 1]?.name }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ad-two-col">
+    <section class="ad-panel">
+      <h2>Top challenge skills</h2>
+      <div *ngIf="topSkills.length === 0" class="ad-empty">No badges earned yet.</div>
+      <div *ngFor="let s of topSkills" class="ad-skill">
+        <span>{{ s.skill }}</span>
+        <span class="ad-skill-count">{{ s.count }}</span>
+      </div>
+    </section>
+
+    <section class="ad-panel">
+      <h2>Recent badges</h2>
+      <div *ngIf="recentBadges.length === 0" class="ad-empty">No badges yet.</div>
+      <a *ngFor="let b of recentBadges"
+         [routerLink]="['/badge', b.id]"
+         class="ad-recent-row"
+         [class.passed]="b.passed">
+        <div class="ad-recent-name">{{ b.userName }}</div>
+        <div class="ad-recent-meta">
+          {{ b.skill }} · <strong>{{ b.score }}/100</strong>
+          <span *ngIf="b.passed" class="ad-chip-pass">✓ passed</span>
+        </div>
+        <div class="ad-recent-time">{{ b.earnedAt | date:'short' }}</div>
+      </a>
+    </section>
+  </div>
+
+  <footer class="ad-footer">
+    <p>Target: 100 paying users = $1,000 MRR by Day 30. Currently at <strong>{{ d30TargetProgress }}%</strong> of that target.</p>
+  </footer>
+</div>

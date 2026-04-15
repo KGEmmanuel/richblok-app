@@ -8,7 +8,7 @@ export class Challenge extends IBaseEntity {
   objectifEtape: string;
   dateDeb;
   dateFin;
-  image?: string = "https://firebasestorage.googleapis.com/v0/b/richblock-aebe5.appspot.com/o/backgroundimage%2Fillustration-concept-questions_114360-1523.jpg?alt=media&token=9ef990cf-18a9-4bbf-a092-291cc73acaef";
+  image?: string = '/assets/rb/og-default.svg';
   description: string;
   conditionValidaation: string;
   question: string;

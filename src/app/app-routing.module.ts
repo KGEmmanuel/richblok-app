@@ -44,6 +44,8 @@ import { SearchComponent } from './search/search.component';
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
 import { BadgePageComponent } from './badge/badge-page.component';
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { UserResolverComponent } from './user-resolver/user-resolver.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -87,7 +89,8 @@ const routes: Routes = [
   { path: 'create-challenge', component: EvaluateFormComponent, canActivate: [AuthGuard]},
   { path: 'search', component: SearchComponent},
   { path: 'badge/:id', component: BadgePageComponent, data: {title: 'Verified Badge'} },
-  { path: 'u/:id', redirectTo: 'profile/:id', pathMatch: 'full'},
+  { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
+  { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
   { path: '404', component: NotfoundComponent },
   { path: 'upload', component: UploadFileComponent },

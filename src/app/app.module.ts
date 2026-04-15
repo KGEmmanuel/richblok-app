@@ -213,6 +213,8 @@ import { UpgradeModalComponent } from './shared/components/upgrade-modal/upgrade
 import { ReferralWidgetComponent } from './shared/components/referral-widget/referral-widget.component';
 import { BadgePageComponent } from './badge/badge-page.component';
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { UserResolverComponent } from './user-resolver/user-resolver.component';
 @NgModule({
   declarations: [
     DndDirective,
@@ -407,7 +409,9 @@ import { AdminSeedComponent } from './admin-seed/admin-seed.component';
     UpgradeModalComponent,
     ReferralWidgetComponent,
     BadgePageComponent,
-    AdminSeedComponent
+    AdminSeedComponent,
+    AdminDashboardComponent,
+    UserResolverComponent
   ],
   imports: [
     BrowserModule,

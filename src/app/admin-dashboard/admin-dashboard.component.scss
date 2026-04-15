@@ -1,0 +1,194 @@
+$bg: #0b1220;
+$surface: #16243f;
+$surface-2: #1e2a4a;
+$accent: #1dd1a1;
+$accent-2: #00d4ff;
+$text: #ffffff;
+$text-muted: #a5b4cf;
+$text-dim: #6b7a99;
+$border: #223154;
+
+:host {
+  display: block;
+  background: $bg;
+  color: $text;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 32px 20px;
+}
+.ad-page { max-width: 1200px; margin: 0 auto; }
+
+.ad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 800; letter-spacing: -0.01em; }
+}
+.ad-meta { color: $text-dim; font-size: 13px; margin: 0; }
+.ad-refresh {
+  background: transparent;
+  border: 1px solid $border;
+  color: $text;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover { border-color: $accent; }
+  &:disabled { opacity: .5; cursor: wait; }
+}
+
+.ad-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.ad-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color .15s ease, transform .15s ease;
+  &:hover { border-color: rgba(29, 209, 161, 0.4); transform: translateY(-1px); }
+}
+.ad-card-label {
+  color: $text-dim;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.ad-card-value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.ad-card-hint {
+  color: $accent;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.ad-panel {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: $text;
+  }
+}
+
+.ad-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ad-funnel-step {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+.ad-funnel-name {
+  font-weight: 600;
+  color: $text;
+  min-width: 140px;
+}
+.ad-funnel-count {
+  font-size: 22px;
+  font-weight: 800;
+  min-width: 60px;
+  text-align: right;
+}
+.ad-funnel-bar {
+  background: $surface-2;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  grid-column: 1 / -1;
+  margin-top: 4px;
+}
+.ad-funnel-fill {
+  background: linear-gradient(90deg, $accent, $accent-2);
+  height: 100%;
+  transition: width .4s ease;
+}
+.ad-funnel-conv {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: $text-dim;
+  margin-top: -6px;
+}
+
+.ad-two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.ad-skill {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: $text-muted;
+  &:last-child { border-bottom: none; }
+}
+.ad-skill-count {
+  color: $accent;
+  font-weight: 800;
+}
+
+.ad-recent-row {
+  display: block;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-decoration: none;
+  color: $text;
+  transition: opacity .15s ease;
+  &:hover { opacity: .8; }
+  &:last-child { border-bottom: none; }
+  &.passed .ad-recent-name { color: $accent; }
+}
+.ad-recent-name { font-weight: 700; }
+.ad-recent-meta { font-size: 13px; color: $text-muted; margin-top: 2px; }
+.ad-recent-time { font-size: 11px; color: $text-dim; margin-top: 2px; }
+.ad-chip-pass {
+  background: rgba(29, 209, 161, 0.15);
+  color: $accent;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ad-empty { color: $text-dim; font-size: 14px; text-align: center; padding: 24px; }
+
+.ad-footer {
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  color: $text-dim;
+  font-size: 14px;
+  border-top: 1px solid $border;
+  strong { color: $accent; }
+}
+
+@media (min-width: 640px) {
+  .ad-cards { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 1024px) {
+  .ad-two-col { grid-template-columns: 1fr 1fr; }
+}

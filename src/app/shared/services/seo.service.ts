@@ -15,7 +15,7 @@ export interface SeoTags {
 const DEFAULTS: Required<Omit<SeoTags, 'keywords' | 'author'>> & { keywords: string[]; author: string } = {
   title: 'RichBlok — Verified Skills, Hired Globally',
   description: 'Get hired globally by proving your skills — not just listing them. RichBlok verifies your coding, design, and professional skills through live challenges, so recruiters trust your profile from day one.',
-  image: 'https://richblok-app-production-86b6.up.railway.app/assets/og-image.png',
+  image: 'https://richblok-app-production-86b6.up.railway.app/assets/rb/og-default.svg',
   url: 'https://richblok-app-production-86b6.up.railway.app',
   type: 'website',
   twitterCard: 'summary_large_image',

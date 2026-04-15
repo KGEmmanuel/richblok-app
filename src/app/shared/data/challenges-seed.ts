@@ -705,7 +705,7 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: REACT_JS,
-    image: 'https://richblok-app.firebasestorage.app/o/challenge-react.jpg?alt=media'
+    image: '/assets/rb/challenge-react.svg'
   },
   {
     slug: 'python-backend',
@@ -722,7 +722,7 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: PYTHON,
-    image: 'https://richblok-app.firebasestorage.app/o/challenge-python.jpg?alt=media'
+    image: '/assets/rb/challenge-python.svg'
   },
   {
     slug: 'sql-data',
@@ -739,7 +739,7 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: SQL,
-    image: 'https://richblok-app.firebasestorage.app/o/challenge-sql.jpg?alt=media'
+    image: '/assets/rb/challenge-sql.svg'
   },
   {
     slug: 'ui-ux-design',
@@ -756,7 +756,7 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: UX,
-    image: 'https://richblok-app.firebasestorage.app/o/challenge-uiux.jpg?alt=media'
+    image: '/assets/rb/challenge-uiux.svg'
   },
   {
     slug: 'product-thinking',
@@ -773,6 +773,6 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     duree: D * 20,
     note: 12,
     questions: PRODUCT,
-    image: 'https://richblok-app.firebasestorage.app/o/challenge-product.jpg?alt=media'
+    image: '/assets/rb/challenge-product.svg'
   }
 ];

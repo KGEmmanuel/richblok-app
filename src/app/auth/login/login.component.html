@@ -5,22 +5,22 @@
                 <div class="col-md-4 mx-auto">
                     <div class="osahan-login py-4">
                         <div class="text-center mb-4">
-                            <a href=""><img src="../../../assets/img/log.png" alt="" style="max-height: 100px;"></a>
-                            <h5 class="font-weight-bold mt-3">Welcome Back</h5>
-                            <p class="text-muted">Don't miss your next opportunity. Sign in to stay updated on your professional world.</p>
+                            <a href=""><img src="/assets/img/log.png" alt="" style="max-height: 100px;" onerror="this.src='/assets/rb/avatar-default.svg'"></a>
+                            <h5 class="font-weight-bold mt-3">{{ i18n.t('signin_title') }}</h5>
+                            <p class="text-muted">{{ i18n.t('signin_sub') }}</p>
                         </div>
                         <label *ngIf="errorMessage" class="mb-1 d-block" style="color: red!important;">{{errorMessage}}</label>
                         <label *ngIf="successMessage" class="mb-1 d-block" style="color: green!important;">{{successMessage}}</label>
                         <form #loginForm="ngForm" (ngSubmit)="login()">
                             <div class="form-group">
-                                <label class="mb-1">Email</label>
+                                <label class="mb-1">{{ i18n.t('signin_email') }}</label>
                                 <div class="position-relative icon-form-control">
                                     <i class="feather-user position-absolute"></i>
                                     <input required type="email" name="email" class="form-control" [(ngModel)]="mail">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="mb-1">Password</label>
+                                <label class="mb-1">{{ i18n.t('signin_password') }}</label>
                                 <div class="position-relative icon-form-control">
                                     <i class="fa position-absolute" [ngClass]="{
                             'fa-eye-slash': !fieldTextType,
@@ -31,14 +31,14 @@
                             </div>
                             <div class="custom-control custom-checkbox mb-3">
                                 <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                <label class="custom-control-label" for="customCheck1">Remember password</label>
+                                <label class="custom-control-label" for="customCheck1">{{ i18n.t('signin_remember') }}</label>
                             </div>
                             <button class="btn btn-primary btn-block text-uppercase" type="submit" [disabled]="loading">
-                              <span *ngIf="!loading">Sign in</span>
-                              <span *ngIf="loading">Signing in...</span>
+                              <span *ngIf="!loading">{{ i18n.t('signin_submit') }}</span>
+                              <span *ngIf="loading">{{ i18n.t('signin_loading') }}</span>
                             </button>
                             <div class="text-center mt-3 border-bottom pb-3">
-                                <p class="small text-muted">Or login with</p>
+                                <p class="small text-muted">{{ i18n.t('signin_or') }}</p>
                                 <div class="row">
                                     <div class="col-12">
                                         <button type="button" class="btn btn-sm btn-outline-instagram btn-block" (click)="loginWithGoogle()"><i class="fe-google"></i> Google</button>
@@ -46,8 +46,8 @@
                                 </div>
                             </div>
                             <div class="py-3 d-flex align-item-center">
-                                <a [routerLink]="['/forgot-password']">Forgot password?</a>
-                                <span class="ml-auto"> New to RichBlok? <a class="font-weight-bold" [routerLink]="['/register']">Join now</a></span>
+                                <a [routerLink]="['/forgot-password']">{{ i18n.t('signin_forgot') }}</a>
+                                <span class="ml-auto"> {{ i18n.t('signin_new_q') }} <a class="font-weight-bold" [routerLink]="['/register']">{{ i18n.t('signin_new_join') }}</a></span>
                             </div>
                         </form>
                     </div>

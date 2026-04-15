@@ -99,6 +99,37 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Badges — publicly readable (core viral surface); write by owner only.
+    // score / verificationHash / percentile are immutable after creation.
+    match /badges/{badgeId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      allow update: if isAuthenticated()
+                    && resource.data.uid == request.auth.uid
+                    && !('score' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('percentile' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('verificationHash' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('earnedAt' in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false; // immutable audit trail
+    }
+
+    // Challenge participations — per-user audit
+    match /challenge_participations/{id} {
+      allow read: if isAuthenticated() && resource.data.participant == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.participant == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Referrals — users can read only their own outgoing + incoming
+    match /referrals/{refId} {
+      allow read: if isAuthenticated() &&
+                  (resource.data.referrerUid == request.auth.uid ||
+                   resource.data.referredUid == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.referrerUid == request.auth.uid;
+      allow update: if false;
+      allow delete: if false;
+    }
+
     // Job offers
     match /offresEmploi/{jobId} {
       allow read: if true;

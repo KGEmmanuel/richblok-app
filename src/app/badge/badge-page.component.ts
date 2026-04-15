@@ -87,13 +87,17 @@ export class BadgePageComponent implements OnInit {
     const name = this.badge.userName || 'A Richblok member';
     const title = `${name} scored ${this.badge.score}/100 on ${this.badge.skill} (${this.capitalize(this.badge.level)}) — Richblok`;
     const description = `Verified skill badge earned on Richblok. ${name} scored ${this.badge.score}/100 on the ${this.badge.skill} ${this.capitalize(this.badge.level)} challenge${this.badge.percentile ? `, beating ${this.badge.percentile}% of candidates` : ''}.`;
-    const url = `https://richblok-app-production-86b6.up.railway.app/badge/${this.badge.id}`;
+    const origin = 'https://richblok-app-production-86b6.up.railway.app';
+    const url = `${origin}/badge/${this.badge.id}`;
+    const ogImage = `${origin}/og/badge/${this.badge.id}`;
     this.seo.setTags({
       title,
       description,
       url,
+      image: ogImage,
       type: 'article',
-      author: name
+      author: name,
+      twitterCard: 'summary_large_image'
     });
   }
 
