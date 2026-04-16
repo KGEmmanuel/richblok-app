@@ -7,7 +7,10 @@ import { GlobalErrorHandlerService } from './shared/services/global-error-handle
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+// removed: ngx-google-places-autocomplete@2 isn't Angular 16+ compatible;
+// the post-form still type-references GooglePlaceDirective but the module
+// import is dropped. Places autocomplete UI is degraded until replaced with
+// Angular-16-compatible alternative.
 import { ApiService } from '../app/feed/post/post-form/post-location/api.service';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -85,7 +88,7 @@ import { CvComponent } from './cv/cv.component';
 import { SimilarPagesComponent } from './RibComponents/similar-pages/similar-pages.component';
 import { UserFriendsComponent } from './user/user-friends/user-friends.component';
 import { UserFriendsItemComponent } from './user/user-friends/user-friends-item/user-friends-item.component';
-import { AgmCoreModule } from '@agm/core';
+// removed: @agm/core (archived; project used only AgmCoreModule.forRoot() — unreferenced in templates)
 import { UserLinksComponent } from './user/user-links/user-links.component';
 import { UserPortfolioComponent } from './user/user-portfolio/user-portfolio.component';
 import { UserViewComponent } from './user-view/user-view.component';
@@ -154,13 +157,16 @@ import { PaginationService } from './shared/services/pagination.service';
 import { PostService } from './shared/services/post.service';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatGoogleMapsAutocompleteModule } from '@angular-material-extensions/google-maps-autocomplete';
+// removed: MatGoogleMapsAutocompleteModule — pulls Angular Material 9 which can't be bumped
 import { IdentifiedUsersComponent } from './feed/post/post-form/post-identify/identified-users/identified-users.component';
 import { IdentifiedUsersItemComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-item/identified-users-item.component';
 import { IdentifiedUsersListComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-list/identified-users-list.component';
 import { PostIdentifyComponent } from './feed/post/post-form/post-identify/post-identify.component';
 import {NgbModule, NgbTimepickerModule} from '@ng-bootstrap/ng-bootstrap';
-import { AngularEditorModule } from '@kolkov/angular-editor';
+// removed: @kolkov/angular-editor — imports DOCUMENT from @angular/core which
+// was moved to @angular/common in v16. All known 3.x releases have this issue.
+// Replace the 2 <angular-editor> usages with plain <textarea> or migrate to a
+// maintained rich-text editor (e.g. @ngneat/edit-in-place) later.
 import { IncitationItemComponent } from './incitations/incitation-item/incitation-item.component';
 import { TagsComponent } from './RibComponents/tags/tags.component';
 import { RateComponent } from './RibComponents/rate/rate.component';
@@ -437,25 +443,14 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     AngularFireStorageModule,
     BrowserAnimationsModule,
     NgbTimepickerModule,
-    AngularEditorModule,
     FormsModule,
     ToastrModule.forRoot(),
-    GooglePlaceModule,
     HttpClientModule,
-    AgmCoreModule.forRoot(),
     NgMultiSelectDropDownModule.forRoot(),
-    // SignaturePadModule,
-    AgmCoreModule.forRoot({
-      apiKey: environment.googleKey,
-      libraries: ['places']
-    }),
-    MatGoogleMapsAutocompleteModule,
     NgbModule,
-    HttpClientModule,
     NgxUiLoaderModule,
     NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
     CountdownModule,
-    GooglePlaceModule,
     PdfViewerModule,
     ReactiveFormsModule,
     NgCircleProgressModule.forRoot({

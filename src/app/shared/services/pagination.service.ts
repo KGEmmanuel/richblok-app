@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/take';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { take, tap, scan } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { QueryConfig } from './QueryConfig';
-import { take, scan } from 'rxjs/operators';
 
 @Injectable()
 export class PaginationService {
@@ -147,26 +145,28 @@ export class PaginationService {
 
     // Map snapshot with doc ref (needed for cursor)
     return col.snapshotChanges()
-      .do(arr => {
-        let values = arr.map(snap => {
-          const data = snap.payload.doc.data();
-          const doc = snap.payload.doc;
-          return { ...data, doc };
-        });
+      .pipe(
+        tap(arr => {
+          let values = arr.map(snap => {
+            const data = snap.payload.doc.data();
+            const doc = snap.payload.doc;
+            return { ...data, doc };
+          });
 
-        // If prepending, reverse the batch order
-        values = this.query.prepend ? values.reverse() : values
+          // If prepending, reverse the batch order
+          values = this.query.prepend ? values.reverse() : values;
 
-        // update source with new values, done loading
-        this._data.next(values)
-        this._loading.next(false)
+          // update source with new values, done loading
+          this._data.next(values);
+          this._loading.next(false);
 
-        // no more values, mark done
-        if (!values.length) {
-          this._done.next(true)
-        }
-      })
-      .take(1)
+          // no more values, mark done
+          if (!values.length) {
+            this._done.next(true);
+          }
+        }),
+        take(1)
+      )
       .subscribe();
 
   }

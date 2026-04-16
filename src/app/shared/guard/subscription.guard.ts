@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { SubscriptionService } from '../services/subscription.service';
@@ -7,7 +7,7 @@ import { SubscriptionService } from '../services/subscription.service';
 @Injectable({
   providedIn: 'root'
 })
-export class SubscriptionGuard implements CanActivate {
+export class SubscriptionGuard  {
 
   constructor(
     private subscriptionService: SubscriptionService,

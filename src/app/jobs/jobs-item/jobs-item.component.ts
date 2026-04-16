@@ -6,7 +6,6 @@ import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
-import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 
 @Component({
