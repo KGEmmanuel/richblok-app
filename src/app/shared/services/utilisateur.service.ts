@@ -16,7 +16,6 @@ import { Participant } from '../entites/Participant';
 import { async } from 'q';
 import { HttpClient } from '@angular/common/http';
 import { Certification } from '../entites/Certification';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Block } from '../entites/block';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
