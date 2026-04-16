@@ -2,8 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Utilisateur } from '../../../shared/entites/Utilisateur';
 import { Post } from '../../../shared/entites/Post';
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
-import * as firebase from 'firebase/app';
-import { AngularFireAuth } from '@angular/fire/auth';
+import firebase from 'firebase/compat/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { PostService } from '../../../shared/services/post.service';
 import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -35,7 +35,7 @@ export class PostItemComponent implements OnInit {
 
   ngOnInit() {
 
-    this.afAuth.auth.onAuthStateChanged(val => {
+    this.afAuth.onAuthStateChanged(val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(u => {
           this.currentuser = u.data() as Utilisateur;

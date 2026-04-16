@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JobApplication } from '../entites/JobApplication';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BaseService } from './BasetService.service';
 
 @Injectable({

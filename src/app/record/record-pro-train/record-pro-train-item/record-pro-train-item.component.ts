@@ -3,7 +3,7 @@ import { Formation } from 'src/app/shared/entites/Formation';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { FormationService } from 'src/app/shared/services/formation.service';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-record-pro-train-item',

@@ -18,7 +18,7 @@ import { Experience } from 'src/app/shared/entites/Experience';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
   selector: 'app-job-process',
@@ -73,7 +73,7 @@ export class JobProcessComponent implements OnInit {
             this.user.id = us.id;
           })
         }
-        this.afAuth.auth.onAuthStateChanged(val => {
+        this.afAuth.onAuthStateChanged(val => {
           if (val) {
             this.userSvc.getDocRef(val.uid).onSnapshot(u => {
               this.currentUser = u.data() as Utilisateur;

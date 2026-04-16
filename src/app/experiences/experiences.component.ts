@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { Experience } from 'src/app/shared/entites/Experience';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 @Component({
   selector: 'app-experiences',
   templateUrl: './experiences.component.html',

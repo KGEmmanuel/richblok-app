@@ -17,7 +17,9 @@ import { ToastrService } from 'ngx-toastr';
 import { DemonstrateService } from 'src/app/shared/services/demonstrate.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { Media } from 'src/app/shared/entites/Media';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 @Component({
   selector: 'app-demonstrate-form',

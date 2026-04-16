@@ -2,7 +2,7 @@ import { Document } from './../../shared/entites/Document';
 import { Component, OnInit } from '@angular/core';
 import { Experience } from 'src/app/shared/entites/Experience';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormationService } from 'src/app/shared/services/formation.service';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { ToastrService } from 'ngx-toastr';

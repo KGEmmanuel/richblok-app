@@ -2,7 +2,9 @@ import { Component, OnInit, ɵConsole, EventEmitter, Output, Input } from '@angu
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
 import { Skill } from '../../../shared/entites/Skill';
 import { SkillsService } from '../../../shared/services/skills.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

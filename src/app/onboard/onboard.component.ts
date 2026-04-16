@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { StarMapperService } from '../shared/services/star-mapper.service';
 import { first } from 'rxjs/operators';

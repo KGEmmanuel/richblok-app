@@ -1,13 +1,13 @@
 # Angular 9 → 17 + Firebase 7 → 10 Migration Plan (T01)
 
-**Status:** Stages 1 + 2 **complete** on branch `migrate-angular-17`.
-Stages 3–5 pending — each needs a dedicated session with manual smoke testing.
+**Status:** Stages 1 + 2 + 3 **complete** on branch `migrate-angular-17`.
+Stages 4–5 pending — each needs a dedicated session with manual smoke testing.
 
 | Stage | Version | Branch commit | Browser build | Server build |
 |-------|---------|---------------|---------------|--------------|
 | 1 | 9 → 10 | `migrate-angular-17` | ✅ green | ✅ green |
-| 2 | 10 → 11 | `migrate-angular-17` HEAD | ✅ green | ✅ green |
-| 3 | 11 → 12 + Firebase 7 → 9 compat | — | — | — |
+| 2 | 10 → 11 | `migrate-angular-17` | ✅ green | ✅ green |
+| 3 | 11 → 12 + Firebase 7 → 9 compat | `migrate-angular-17` HEAD | ✅ green | ✅ green |
 | 4 | 12 → 15 | — | — | — |
 | 5 | 15 → 17 + modular Firebase SDK + lazy loading | — | — | — |
 
@@ -62,21 +62,62 @@ that imports from `@angular/fire` or `firebase/app`.
   - [ ] Admin challenge editor CRUD
   - [ ] Stripe checkout redirect (pro, employer, sponsor)
 
-### Stage 3 — Angular 11 → 12 + Firebase 7 → 9 compat (next)
-- `ng update @angular/cli@12 @angular/core@12`
-- Bump Node to 14 or 16 (CLI 12 requires >= 12.13 or 14.15)
-- `npm i firebase@9 @angular/fire@6 --save --legacy-peer-deps`
-- Replace every `import * as firebase from 'firebase/app'` with
-  `import firebase from 'firebase/compat/app'`; similarly for
-  `firebase/auth` → `firebase/compat/auth`, `firebase/firestore` →
-  `firebase/compat/firestore`. This is a mechanical ~80-site change.
-- AngularFire 5 stays (name-compatible with v6 in compat mode).
+### Stage 3 — Angular 11 → 12 + Firebase 7 → 9 compat + @angular/fire 5 → 7 ✅ DONE
+Done as 3 checkpoint commits so each can be inspected / rolled back:
 
-### Stage 2 — Firebase 7 → 9 compat layer
-- Upgrade `firebase` to v9 using the `compat` imports first:
-  - `firebase/compat/app`, `firebase/compat/firestore`, `firebase/compat/auth`.
-- Keep `@angular/fire@6` (the last version compatible with our v9-compat style).
-- Run full regression — login, Firestore reads/writes, guards.
+**3A — Angular core only**
+- `ng update @angular/cli@12 @angular/core@12 --allow-dirty --force`
+- typescript 4.0.8 → 4.3.5, zone.js 0.10.3 → 0.11.8
+- Firebase still at 7.x — build passes, proves the Angular jump is clean
+  in isolation from Firebase risk
+
+**3B — deps bump**
+- `firebase: 7.9.1 → 9.6.0` (pinned exact — later 9.x ship inline-type
+  imports in .d.ts which break TS 4.3 parser; 9.6.0 is the last safe
+  release for our TS range)
+- `@angular/fire: 5.4.2 → 7.6.1`
+
+**3C — Compat import rewrites (151 sites across 75 files)**
+Used a Python script to do mechanical, bulk regex rewrites — see commit.
+
+| From | To | Sites |
+|------|----|----|
+| `import * as firebase from 'firebase/app'` | `import firebase from 'firebase/compat/app'` | 11 |
+| `import * as firebase from 'firebase'` | `import firebase from 'firebase/compat/app'` + compat/auth + compat/firestore side-effects | 42 |
+| `from 'firebase/<mod>'` | `from 'firebase/compat/<mod>'` | 98 |
+| `from '@angular/fire'`, `/auth`, `/firestore`, `/storage`, etc. | `@angular/fire/compat` + subpath | 109 |
+| `this.afAuth.auth.X(...)` | `this.afAuth.X(...)` | ~15 (AF7 compat re-exposes Auth methods directly on AngularFireAuth) |
+| `@angular/fire/firestore/interfaces` | `@angular/fire/compat/firestore` | 1 (path removed in AF7) |
+
+Manual one-off fixes:
+- `auth.service.ts SendVerificationMail`: `.currentUser` is now `Promise<User>` in AF7 compat → converted to async/await
+- Two files had stray `FirebaseAuth` imports from `@angular/fire/compat` — removed (not exported there)
+- Added `firebase/compat/firestore` side-effect imports where `firebase.firestore.X` is used as a type (pagination.service, BasetService)
+- `tsconfig.json`: added `"skipLibCheck": true` (safety net for legacy d.ts files)
+
+Dependency hoisting gotcha:
+- `@angular/fire@7.6.1` peer-installs its own nested firebase at 9.23 which
+  pulls in inline-type-import .d.ts that break TS 4.3 *as syntax errors*
+  (skipLibCheck doesn't help — these are parser errors)
+- `overrides` + `$firebase` alias in package.json didn't work in the
+  installed npm version
+- **Fix**: `postinstall` hook that deletes `node_modules/@angular/fire/node_modules`
+  after every install. Node's normal resolution then falls back to the
+  root firebase@9.6.0 — all types reconcile.
+
+Build verified: both browser + server bundles green.
+
+**Smoke tests STILL PENDING for this stage** (same 10-flow checklist as Stage 2):
+- [ ] Login with email+password
+- [ ] Google OAuth
+- [ ] Challenge submission + badge creation
+- [ ] STAR profile generation
+- [ ] AI Coach streaming
+- [ ] CV upload → STAR draft
+- [ ] Employer dashboard competency filter
+- [ ] University dashboard pilot-preview
+- [ ] Admin challenge editor CRUD
+- [ ] Stripe checkout redirects
 
 ### Stage 3 — Angular 12 → 15
 - `ng update @angular/core@13` → 14 → 15 in sequence.

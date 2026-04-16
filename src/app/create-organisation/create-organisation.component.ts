@@ -4,7 +4,9 @@ import { ActivatedRoute, Router, } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { Entreprise } from '../shared/entites/Entreprise';
 import { OrganisationService } from '../shared/services/organisation.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

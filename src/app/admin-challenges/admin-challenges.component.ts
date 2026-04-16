@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
 import { CompetencyTag } from '../shared/entites/Challenge';

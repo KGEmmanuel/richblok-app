@@ -7,7 +7,7 @@ import PlaceResult = google.maps.places.PlaceResult;
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

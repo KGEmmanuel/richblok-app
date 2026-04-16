@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../shared/services/auth.service';
 import { Utilisateur } from '../shared/entites/Utilisateur';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/services/user.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';

@@ -1,12 +1,14 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { Media } from 'src/app/shared/entites/Media';
 import { finalize } from 'rxjs/operators';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 

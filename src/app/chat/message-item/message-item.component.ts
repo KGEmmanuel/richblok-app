@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Message } from '../../shared/entites/Message';
 import { UtilisateurService } from '../../shared/services/utilisateur.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 @Component({
   selector: 'app-message-item',

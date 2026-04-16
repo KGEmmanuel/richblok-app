@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, from, of } from 'rxjs';
 import { map, catchError, switchMap, first } from 'rxjs/operators';
 import { StarAnswer, StarProfile, COMPETENCY_LABELS, COMPETENCY_QUESTIONS } from '../entites/StarProfile';
 import { CompetencyTag, Challenge } from '../entites/Challenge';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 
 export interface StarMapInput {
   uid: string;

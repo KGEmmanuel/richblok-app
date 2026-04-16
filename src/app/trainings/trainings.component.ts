@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Formation } from '../shared/entites/Formation';
 import { FormationService } from '../shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-trainings',

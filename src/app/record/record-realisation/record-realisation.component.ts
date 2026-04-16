@@ -1,9 +1,11 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import * as firebase from 'firebase';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFireStorage } from '@angular/fire/storage';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 @Component({
   selector: 'app-record-realisation',
   templateUrl: './record-realisation.component.html',

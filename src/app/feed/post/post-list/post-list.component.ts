@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { Post } from '../../../shared/entites/Post';
 import { PaginationService } from '../../../shared/services/pagination.service';
 import { PostService } from '../../../shared/services/post.service';

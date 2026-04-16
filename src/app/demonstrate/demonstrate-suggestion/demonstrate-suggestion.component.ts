@@ -4,7 +4,9 @@ import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { SkillsService } from 'src/app/shared/services/skills.service';
 import { FormationService } from 'src/app/shared/services/formation.service';
 import { Skill } from 'src/app/shared/entites/Skill';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 @Component({
   selector: 'app-demonstrate-suggestion',

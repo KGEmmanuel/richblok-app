@@ -1,8 +1,8 @@
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Component, OnInit } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
 import { AuthService } from '../shared/services/auth.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../shared/services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
@@ -42,7 +42,7 @@ export class JobsItemComponent implements OnInit {
       }
     }
 
-    this.afAuth.auth.onAuthStateChanged(val => {
+    this.afAuth.onAuthStateChanged(val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(us => {
           this.currentUser = us.data() as Utilisateur;

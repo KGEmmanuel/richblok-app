@@ -3,7 +3,7 @@ import { ExperienceService } from '../shared/services/experience.service';
 import { FormationService } from '../shared/services/formation.service';
 import { LanguageService } from '../shared/services/language.service';
 import { SkillsService } from '../shared/services/skills.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Meta, Title } from '@angular/platform-browser';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { first } from 'rxjs/operators';
 

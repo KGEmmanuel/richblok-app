@@ -4,7 +4,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { Post } from 'src/app/shared/entites/Post';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 @Component({
   selector: 'app-evaluate-item',

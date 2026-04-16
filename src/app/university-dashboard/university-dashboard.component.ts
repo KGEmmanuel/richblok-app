@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { first } from 'rxjs/operators';
 

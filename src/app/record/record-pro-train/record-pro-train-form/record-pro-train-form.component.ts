@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

@@ -1,9 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
-import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/compat/firestore';
 import { Utilisateur } from '../entites/Utilisateur';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TagsService } from './tags.service';
@@ -74,7 +74,7 @@ export class AuthService {
    * Sign in with email/password. Returns the user or throws a friendly error.
    */
   SignIn(email: string, password: string) {
-    return this.afAuth.auth.signInWithEmailAndPassword(email, password)
+    return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.SetUserData(result.user).catch(err => {
           // Non-fatal: user is authenticated even if doc write fails
@@ -97,7 +97,7 @@ export class AuthService {
    * Create a new account with email/password.
    */
   SignUp(email: string, password: string) {
-    return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
+    return this.afAuth.createUserWithEmailAndPassword(email, password)
       .catch((error) => {
         const msg = this.friendlyAuthError(error);
         this.toastr.error(msg, 'Sign-up failed');
@@ -105,19 +105,19 @@ export class AuthService {
       });
   }
 
-  SendVerificationMail() {
-    return this.afAuth.auth.currentUser.sendEmailVerification()
-      .then(() => {
-        this.toastr.success('Verification email sent. Check your inbox.', 'Email sent');
-        this.router.navigate(['forgot-password']);
-      });
+  async SendVerificationMail() {
+    const user = await this.afAuth.currentUser;
+    if (!user) { throw new Error('Not signed in'); }
+    await user.sendEmailVerification();
+    this.toastr.success('Verification email sent. Check your inbox.', 'Email sent');
+    this.router.navigate(['forgot-password']);
   }
 
   /**
    * Send password reset email.
    */
   ForgotPassword(passwordResetEmail: string) {
-    return this.afAuth.auth.sendPasswordResetEmail(passwordResetEmail)
+    return this.afAuth.sendPasswordResetEmail(passwordResetEmail)
       .then(() => {
         this.toastr.success('Password reset email sent. Check your inbox (and spam folder).', 'Email sent');
       })
@@ -142,7 +142,7 @@ export class AuthService {
   }
 
   AuthLogin(provider: firebase.auth.AuthProvider) {
-    return this.afAuth.auth.signInWithPopup(provider)
+    return this.afAuth.signInWithPopup(provider)
       .then((result) => {
         this.SetUserData(result.user).catch(err => {
           // eslint-disable-next-line no-console
@@ -182,7 +182,7 @@ export class AuthService {
   }
 
   SignOut() {
-    return this.afAuth.auth.signOut().then(() => {
+    return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
       this.router.navigate(['sign-in']);
     }).catch(err => {

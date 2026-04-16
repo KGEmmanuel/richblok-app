@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { SeoService } from '../shared/services/seo.service';
 import { ShareService } from '../shared/services/share.service';
 import { AnalyticsService } from '../shared/services/analytics.service';

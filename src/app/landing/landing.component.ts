@@ -4,8 +4,8 @@ import { SeoService } from './../shared/services/seo.service';
 import { AnalyticsService } from './../shared/services/analytics.service';
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { AngularFirestore } from '@angular/fire/firestore';
-import * as firebase from 'firebase/app';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 import { Router } from '@angular/router';
 
 type Lang = 'en' | 'fr';

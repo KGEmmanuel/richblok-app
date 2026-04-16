@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ng build --prod || true"
+    "postinstall": "node -e \"try{require('fs').rmSync('node_modules/@angular/fire/node_modules',{recursive:true,force:true})}catch(e){}\" && ng build --prod || true"
   },
   "private": true,
   "engines": {
@@ -41,7 +41,7 @@
     "@types/googlemaps": "^3.39.2",
     "command-line-args": "^5.1.1",
     "express": "^4.18.2",
-    "firebase": "^9.23.0",
+    "firebase": "9.6.0",
     "stripe": "^14.25.0",
     "firebase-admin": "^11.11.1",
     "geolib": "^3.2.1",
@@ -83,5 +83,11 @@
     "ts-node": "~7.0.0",
     "tslint": "~6.1.3",
     "typescript": "~4.3.5"
+  },
+  "overrides": {
+    "firebase": "$firebase",
+    "@angular/fire": {
+      "firebase": "9.6.0"
+    }
   }
 }

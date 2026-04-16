@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/take';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { QueryConfig } from './QueryConfig';
 import { take, scan } from 'rxjs/operators';
 

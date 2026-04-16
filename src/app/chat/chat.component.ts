@@ -4,7 +4,9 @@ import { Utilisateur } from '../shared/entites/Utilisateur';
 import { ChatService } from '../shared/services/chat.service';
 import { ActivatedRoute } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { ChatRoom } from '../shared/entites/ChatRoom';
 import { Message } from '../shared/entites/Message';
 

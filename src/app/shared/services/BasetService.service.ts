@@ -1,7 +1,9 @@
 import { IBaseService } from './IBaseService.service';
-import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 import { IBaseEntity } from '../entites/IBaseEntity.class';
 export abstract class BaseService<T extends IBaseEntity> implements IBaseService<T> {
 

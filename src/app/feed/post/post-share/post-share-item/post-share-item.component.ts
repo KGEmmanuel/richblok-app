@@ -2,8 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Utilisateur } from '../../../../shared/entites/Utilisateur';
 import { Post } from '../../../../shared/entites/Post';
 import { UtilisateurService } from '../../../../shared/services/utilisateur.service';
-import * as firebase from 'firebase/app';
-import { AngularFireAuth } from '@angular/fire/auth';
+import firebase from 'firebase/compat/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { PostService } from '../../../../shared/services/post.service';
 @Component({
   selector: 'app-post-share-item',
@@ -28,7 +28,7 @@ export class PostShareItemComponent implements OnInit {
 
   ngOnInit() {
     this.currentPost = new Post();
-    this.afAuth.auth.onAuthStateChanged(val => {
+    this.afAuth.onAuthStateChanged(val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(u => {
           this.currentuser = u.data() as Utilisateur;
