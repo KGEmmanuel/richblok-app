@@ -4,9 +4,12 @@ import { Utilisateur } from '../../shared/entites/Utilisateur';
 import { AuthService } from '../../shared/services/auth.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../../shared/services/user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-card',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.scss']
 })

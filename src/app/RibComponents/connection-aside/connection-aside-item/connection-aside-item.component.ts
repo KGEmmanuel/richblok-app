@@ -3,9 +3,12 @@ import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-connection-aside-item',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './connection-aside-item.component.html',
   styleUrls: ['./connection-aside-item.component.scss']
 })

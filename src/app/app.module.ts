@@ -262,15 +262,11 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     OrganisationComponent,
     OrganisationProfileComponent,
     OrganisationsListComponent,
-    UserCardComponent,
     UserAboutComponent,
     LandingTestimanialsComponent,
     PremiumComponent,
     ConnectionAsideComponent,
-    ConnectionAsideItemComponent,
     JobAsideComponent,
-    JobAsideItemComponent,
-    RibSolutionsComponent,
     ViewedProfileComponent,
     ViewedProfileItemComponent,
     JobsComponent,
@@ -362,7 +358,6 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     IdentifiedUsersItemComponent,
     IdentifiedUsersListComponent,
     PostIdentifyComponent,
-    IncitationItemComponent,
     TagsComponent,
     RateComponent,
     PostShareComponent,
@@ -396,7 +391,6 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     UserslistInlineComponent,
     UserslistInlineItemComponent,
     JobProcessComponent,
-    FollowOrgsComponent,
     SearchComponent,
     VideosComponent,
     ChatContentComponent,
@@ -443,9 +437,16 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     }),
 
     // Standalone shared components — exposed to every NgModule-declared
-    // component that uses <app-header> / <app-footer> in its template.
+    // component that uses <app-header>, <app-footer>, or any aside/card
+    // widget in its template.
     HeaderComponent,
     FooterComponent,
+    UserCardComponent,
+    RibSolutionsComponent,
+    FollowOrgsComponent,
+    IncitationItemComponent,
+    ConnectionAsideItemComponent,
+    JobAsideItemComponent,
 
   ],
   providers: [

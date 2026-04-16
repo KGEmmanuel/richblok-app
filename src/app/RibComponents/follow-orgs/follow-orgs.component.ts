@@ -5,9 +5,12 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from 'src/app/shared/services/user.service';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-follow-orgs',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './follow-orgs.component.html',
   styleUrls: ['./follow-orgs.component.scss']
 })
