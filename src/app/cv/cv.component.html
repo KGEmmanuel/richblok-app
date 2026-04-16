@@ -154,7 +154,7 @@
                                 <hr>
                                 <div>
                                     <div *ngFor="let item of items" class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
-                                        <h3>{{item?.libelle}} <span>@{{item?.entreprise}}</span></h3>
+                                        <h3>{{item?.libelle}} <span>&#64;{{item?.entreprise}}</span></h3>
                                         <span>({{item?.debut | date : 'short'}} - {{item?.fin | date : 'short'}}) </span>
                                         <p>{{item?.description}}</p>
                                     </div>
@@ -178,14 +178,14 @@
                                 <hr>
                                 <div *ngIf="accformationList">
                                     <div *ngFor="let f of accformationList" class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
-                                        <h3>{{f.libelle}}<span>@{{f.etablissement}}</span></h3>
+                                        <h3>{{f.libelle}}<span>&#64;{{f.etablissement}}</span></h3>
                                         <span>{{f.datedeb}} - {{f.datefin}}</span>
                                         <p>{{f.description}} </p>
                                     </div>
                                 </div>
                                 <div *ngIf="!accformationList">
                                     <div class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
-                                        <h3>Bot<span>@RichBlok</span></h3>
+                                        <h3>Bot<span>&#64;RichBlok</span></h3>
                                         <span></span>
                                         <p>No traning to display </p>
                                     </div>
@@ -203,14 +203,14 @@
                                 <hr>
                                 <div *ngIf="proformationList">
                                     <div *ngFor="let f of proformationList" class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
-                                        <h3>{{f.libelle}}<span>@{{f.etablissement}}</span></h3>
+                                        <h3>{{f.libelle}}<span>&#64;{{f.etablissement}}</span></h3>
                                         <span>{{f.datedeb}} - {{f.datefin}}</span>
                                         <p>{{f.description}} </p>
                                     </div>
                                 </div>
                                 <div *ngIf="!proformationList">
                                     <div class="custom-content-wrapper wow fadeIn a2" data-wow-delay="0.2s">
-                                        <h3>Bot<span>@RichBlok</span></h3>
+                                        <h3>Bot<span>&#64;RichBlok</span></h3>
                                         <span></span>
                                         <p>No traning to display </p>
                                     </div>

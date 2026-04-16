@@ -115,7 +115,7 @@
                         <h5 class="font-weight-bold text-dark mb-1 mt-0" *ngIf="user"><a [routerLink]="['/profile/'+user.id]" style="color: white;">{{user.nom}} {{user.prenom}}</a></h5>
                         <p class="mb-0 text-muted" *ngIf="org">{{org.pays}}
                         </p>
-                        <p class="mb-0 text-muted" *ngIf="user">{{user.poste}} @ {{user.lieu}}
+                        <p class="mb-0 text-muted" *ngIf="user">{{user.poste}} &#64; {{user.lieu}}
                         </p>
                     </div>
                     <div class="p-3">
