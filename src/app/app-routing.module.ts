@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { ResetComponent } from './auth/reset/reset.component';
-import { FeedComponent } from './feed/feed.component';
+// FeedComponent lazy-loaded (V5 Sprint 0 standalone migration)
 import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 import { SecureInnerPagesGuard } from './shared/guard/secure-inner-pages.guard.ts.guard';
 import { AuthGuard } from './shared/guard/auth.guard';
@@ -58,7 +58,7 @@ const routes: Routes = [
 
   { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Create Account'} },
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Register'} },
-  { path: 'feed', component: FeedComponent, canActivate: [AuthGuard], data: {title: 'Feed'} },
+  { path: 'feed', loadComponent: () => import('./feed/feed.component').then(m => m.FeedComponent), canActivate: [AuthGuard], data: {title: 'Dashboard'} },
   { path: 'profile', component: UserComponent, canActivate: [AuthGuard], data: {title: 'Profile'}},
   { path: 'profile/:id', component: UserViewComponent},
   { path: 'organisation/:id', component: OrganisationProfileComponent},

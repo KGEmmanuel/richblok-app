@@ -18,7 +18,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ResetComponent } from './auth/reset/reset.component';
 import { SignupComponent } from './auth/signup/signup.component';
-import { FeedComponent } from './feed/feed.component';
+// FeedComponent is standalone (V5 Sprint 0) — loaded via the route definition
 import { PostItemComponent } from './feed/post/post-item/post-item.component';
 import { PostFormComponent } from './feed/post/post-form/post-form.component';
 import { RecordComponent } from './record/record.component';
@@ -235,7 +235,6 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     LoginComponent,
     ResetComponent,
     SignupComponent,
-    FeedComponent,
     PostItemComponent,
     PostFormComponent,
     RecordComponent,

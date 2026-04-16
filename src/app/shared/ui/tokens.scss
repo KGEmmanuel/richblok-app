@@ -1,0 +1,149 @@
+// Richblok V5 design tokens — the single source of truth for color, type,
+// spacing, radius, motion across the entire product. Components @use this
+// file via `@use 'src/app/shared/ui/tokens' as *;`.
+//
+// Tokens are exposed as BOTH SCSS variables (for @use in component SCSS)
+// AND CSS custom properties (for runtime theming + DevTools inspection).
+
+// ════════════════════════════════════════════════════════════════════
+// Colors
+// ════════════════════════════════════════════════════════════════════
+
+$rb-bg:          #0A0A0B;   // page background (near-black, subtle warm bias)
+$rb-surface:     #111114;   // card backgrounds, nav bars
+$rb-surface-hi:  #18181C;   // hovered card, elevated panel
+$rb-border:      #27272A;   // hairlines, input borders, dividers
+$rb-border-hi:   #3F3F46;   // focus ring, emphasized divider
+
+$rb-accent:      #1DD1A1;   // primary mint — CTAs, verified chips
+$rb-accent-2:    #22D3EE;   // cyan — logo gradient, secondary links
+$rb-accent-15:   rgba(29, 209, 161, 0.15);
+$rb-accent-25:   rgba(29, 209, 161, 0.25);
+
+$rb-text:        #FAFAFA;   // primary text, headings
+$rb-text-muted:  #A1A1AA;   // secondary text
+$rb-text-dim:    #71717A;   // metadata, captions
+
+$rb-warning:     #FACC15;   // draft chips, alerts
+$rb-warning-10:  rgba(250, 204, 21, 0.10);
+$rb-warning-25:  rgba(250, 204, 21, 0.25);
+
+$rb-danger:      #EF4444;   // errors, destructive actions
+$rb-danger-10:   rgba(239, 68, 68, 0.10);
+
+// ════════════════════════════════════════════════════════════════════
+// Typography
+// ════════════════════════════════════════════════════════════════════
+
+$rb-font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$rb-font-mono:    'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+
+// Type scale (px for clarity; components can rem-ify if needed)
+$rb-text-xs:   12px;
+$rb-text-sm:   13px;
+$rb-text-base: 15px;
+$rb-text-md:   16px;
+$rb-text-lg:   20px;
+$rb-text-xl:   24px;
+$rb-text-2xl:  32px;
+$rb-text-3xl:  40px;
+$rb-text-4xl:  56px;
+$rb-text-5xl:  72px;
+
+// Letter-spacing scale (tightens as size grows)
+$rb-tracking-tight:  -0.01em;
+$rb-tracking-tighter: -0.03em;
+$rb-tracking-display: -0.04em;
+
+// ════════════════════════════════════════════════════════════════════
+// Spacing (4px base grid)
+// ════════════════════════════════════════════════════════════════════
+
+$rb-space-1:   4px;
+$rb-space-2:   8px;
+$rb-space-3:   12px;
+$rb-space-4:   16px;
+$rb-space-5:   20px;
+$rb-space-6:   24px;
+$rb-space-8:   32px;
+$rb-space-10:  40px;
+$rb-space-12:  48px;
+$rb-space-16:  64px;
+$rb-space-20:  80px;
+$rb-space-24:  96px;
+
+// ════════════════════════════════════════════════════════════════════
+// Radius
+// ════════════════════════════════════════════════════════════════════
+
+$rb-radius-sm:   8px;
+$rb-radius-md:   12px;
+$rb-radius-lg:   16px;
+$rb-radius-pill: 999px;
+
+// ════════════════════════════════════════════════════════════════════
+// Motion
+// ════════════════════════════════════════════════════════════════════
+
+$rb-ease-out: cubic-bezier(0.22, 1, 0.36, 1);   // expo out (entrances)
+$rb-ease-in:  cubic-bezier(0.64, 0, 0.78, 0);   // quart in (exits)
+$rb-duration-micro: 150ms;
+$rb-duration-macro: 250ms;
+$rb-duration-celebration: 400ms;
+
+// ════════════════════════════════════════════════════════════════════
+// Shadows (used sparingly; dark surfaces prefer border elevation)
+// ════════════════════════════════════════════════════════════════════
+
+$rb-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+$rb-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+$rb-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+// ════════════════════════════════════════════════════════════════════
+// CSS custom properties mirror — importable in global styles.scss so
+// components can read via var(--rb-*) in plain CSS or Angular style
+// bindings. Also makes DevTools color-pickers work naturally.
+// ════════════════════════════════════════════════════════════════════
+
+:root {
+  --rb-bg:           #{$rb-bg};
+  --rb-surface:      #{$rb-surface};
+  --rb-surface-hi:   #{$rb-surface-hi};
+  --rb-border:       #{$rb-border};
+  --rb-border-hi:    #{$rb-border-hi};
+  --rb-accent:       #{$rb-accent};
+  --rb-accent-2:     #{$rb-accent-2};
+  --rb-accent-15:    #{$rb-accent-15};
+  --rb-accent-25:    #{$rb-accent-25};
+  --rb-text:         #{$rb-text};
+  --rb-text-muted:   #{$rb-text-muted};
+  --rb-text-dim:     #{$rb-text-dim};
+  --rb-warning:      #{$rb-warning};
+  --rb-warning-10:   #{$rb-warning-10};
+  --rb-warning-25:   #{$rb-warning-25};
+  --rb-danger:       #{$rb-danger};
+  --rb-danger-10:    #{$rb-danger-10};
+  --rb-font-display: #{$rb-font-display};
+  --rb-font-mono:    #{$rb-font-mono};
+  --rb-radius-sm:    #{$rb-radius-sm};
+  --rb-radius-md:    #{$rb-radius-md};
+  --rb-radius-lg:    #{$rb-radius-lg};
+  --rb-ease-out:     #{$rb-ease-out};
+  --rb-ease-in:      #{$rb-ease-in};
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Utility: focus ring (used across every interactive atom)
+// ════════════════════════════════════════════════════════════════════
+
+@mixin rb-focus-ring {
+  outline: 2px solid $rb-accent-25;
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+@mixin rb-focus-visible {
+  &:focus-visible {
+    @include rb-focus-ring;
+  }
+}

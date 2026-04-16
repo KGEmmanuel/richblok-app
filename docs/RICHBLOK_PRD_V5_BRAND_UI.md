@@ -922,5 +922,80 @@ codebase, it needs rewriting to match column B.
 
 ---
 
+## Appendix D — Sprint 0 + Sprint 1 shortcut execution log (April 2026)
+
+This section records what actually shipped in the first session of V5
+implementation, to keep the PRD honest about what's plan vs what's code.
+
+### Done on branch `v5-sprint-0-ui-kit`
+
+**Sprint 0 (UI kit foundation)**:
+- `src/app/shared/ui/tokens.scss` — complete design token file (§Appendix A)
+- `lucide-angular` installed and integrated
+- **Atoms**: `<rb-icon>`, `<rb-button>` (4 variants × 3 sizes), `<rb-input>`
+  (with ControlValueAccessor), `<rb-card>` + `<rb-card-title>` + `<rb-eyebrow>`,
+  `<rb-chip>` (6 variants)
+- **Molecules**: `<rb-stat>`, `<rb-empty-state>`
+- Barrel export at `src/app/shared/ui/index.ts`
+
+**Sprint 1 shortcut (`/feed` rewrite as proof-of-concept)**:
+- Full rewrite from 2019 Bootstrap social-feed template to a premium personal
+  dashboard
+- Uses the new UI kit exclusively — zero Bootstrap classes
+- Standalone component, lazy-loaded via `loadComponent`
+- Shows: weekly stats (challenges/badges/stars/top score), recent activity
+  (last 6 badges + STAR profiles), suggested next challenge, CV upload CTA
+- Added skeleton loader using the kit tokens
+- AppModule declaration removed; route switched to `loadComponent`
+
+**Asset purge**:
+- 63 unreferenced Osahan template images + 3 committed PSDs deleted
+- 158 image assets remaining in `src/assets/` (target per §4.2 is <30,
+  reached as legacy pages migrate in Sprints 1-3)
+
+### Decision point after this session
+
+With the UI kit landed and `/feed` proving the migration pattern works,
+the next sessions face this choice:
+
+1. **Continue solo** — migrate the remaining 32 legacy pages at the same
+   cadence. ~6 more weeks of focused solo work. Risk: design consistency
+   drifts without a second pair of eyes.
+
+2. **Pause V5 execution, hire or pair a designer** — the UI kit + `/feed`
+   demonstrate the pattern clearly enough to hand off. A designer paired
+   with the founder-engineer can finish Sprints 1-3 in ~3 weeks instead
+   of 6. Higher fidelity, more consistent polish.
+
+3. **Hybrid**: migrate the 6 load-bearing Tier-1 pages solo (feed ✓,
+   record, evaluate, jobs, profile, participate-to-challenge) — the ones
+   90% of users hit daily — then pause. This locks in the biggest UX
+   win without committing to the full migration.
+
+**Recommendation**: option 3. The marginal user impact from migrating
+`/settings`, `/friends`, `/cv`, etc. is small — those are once-per-month
+surfaces. But a premium `/feed`, `/record`, and `/evaluate` is what every
+user experiences every session. Ship those and pause to observe.
+
+### Branch status
+
+- `master`: production, Angular 17, PRD v4/v5 docs. Unchanged by this session.
+- `v5-sprint-0-ui-kit`: UI kit + new `/feed` shipped. Ready to merge after
+  Railway preview smoke test.
+
+### Quantified deltas from this session
+
+| Metric | Before | After |
+|---|---|---|
+| Raster image assets | 221 | 158 |
+| PSDs tracked in git | 3 | 0 |
+| UI kit components | 0 | 7 (atoms + molecules) |
+| Design tokens centralized | 0 (inline in 12 components) | 1 `tokens.scss` |
+| Lazy-loaded routes | 6 | 7 (adds `/feed`) |
+| Legacy `<app-header>`+`<app-footer>` pages | 33 | 32 (feed no longer uses them) |
+| Bootstrap class count in `/feed` | ~40 | 0 |
+
+---
+
 *End PRD v5.*
 *Co-authored by the Richblok founding team and Claude (Anthropic).*

@@ -1,0 +1,39 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+.rb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $rb-space-12 $rb-space-6;
+  gap: $rb-space-3;
+}
+
+.rb-empty-icon {
+  color: $rb-text-dim;
+  margin-bottom: $rb-space-2;
+}
+
+.rb-empty-heading {
+  margin: 0;
+  font-family: $rb-font-display;
+  font-size: $rb-text-lg;
+  font-weight: 700;
+  color: $rb-text;
+  letter-spacing: $rb-tracking-tight;
+}
+
+.rb-empty-sub {
+  margin: 0;
+  max-width: 420px;
+  font-family: $rb-font-display;
+  font-size: $rb-text-base;
+  color: $rb-text-muted;
+  line-height: 1.6;
+}
+
+.rb-empty-cta {
+  margin-top: $rb-space-4;
+  &:empty { display: none; }
+}
