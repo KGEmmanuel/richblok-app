@@ -102,12 +102,15 @@ export class FeedComponent implements OnInit {
   private loadDashboard(uid: string) {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-    // Parallel fetch: user profile, badges, star profiles, challenge catalog
+    // Parallel fetch. Firestore queries intentionally use only
+    // `where('uid','==',uid)` with no composite orderBy so they don't need
+    // a custom Firestore composite index per project. We sort client-side
+    // after the fetch (limits are small — 50 badges + 20 profiles).
     Promise.all([
       this.afs.doc(`utilisateurs/${uid}`).valueChanges().pipe(first()).toPromise(),
-      this.afs.collection('badges', ref => ref.where('uid', '==', uid).orderBy('earnedAt', 'desc').limit(20))
+      this.afs.collection('badges', ref => ref.where('uid', '==', uid).limit(50))
         .get().pipe(first()).toPromise(),
-      this.afs.collection('star_profiles', ref => ref.where('uid', '==', uid).orderBy('createdAt', 'desc').limit(10))
+      this.afs.collection('star_profiles', ref => ref.where('uid', '==', uid).limit(20))
         .get().pipe(first()).toPromise(),
       this.afs.collection('challenges', ref => ref.where('creatorType', '==', 'SYS').limit(10))
         .get().pipe(first()).toPromise(),
@@ -116,10 +119,15 @@ export class FeedComponent implements OnInit {
       this.userName = [u.prenom, u.nom].filter(Boolean).join(' ') || u.email || '';
       this.userFirstName = u.prenom || (this.userName.split(' ')[0] || 'there');
 
-      // Badges
+      // Badges — sort client-side by earnedAt DESC
       const badges: any[] = (badgesSnap?.docs || []).map((d: any) => ({
         id: d.id, ...d.data()
       }));
+      badges.sort((a, b) => {
+        const ta = a.earnedAt?.toDate?.()?.getTime?.() ?? 0;
+        const tb = b.earnedAt?.toDate?.()?.getTime?.() ?? 0;
+        return tb - ta;
+      });
       this.totalBadges = badges.length;
       const recentBadges = badges.filter(b => {
         const d = b.earnedAt?.toDate?.();
