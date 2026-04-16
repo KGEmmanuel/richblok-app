@@ -1,7 +1,6 @@
 # Angular 9 → 17 + Firebase 7 → 10 Migration Plan (T01)
 
-**Status:** Stages 1 + 2 + 3 + 4 **complete** on branch `migrate-angular-17`.
-Stage 5 (15 → 17 + modular Firebase SDK + lazy loading) is the final step.
+**Status: ✅ COMPLETE on branch `migrate-angular-17`.** Angular 9 → 17 + TypeScript 3.7 → 5.4 + Firebase 7 → 9 (compat) + @angular/fire 5 → 7 (compat) + initial lazy loading. Smoke testing still required before merging to master.
 
 | Stage | Version | Browser build | Server build |
 |-------|---------|---------------|--------------|
@@ -11,11 +10,14 @@ Stage 5 (15 → 17 + modular Firebase SDK + lazy loading) is the final step.
 | 4A | 12 → 13 (Ivy-only, single bundle) | ✅ green | — |
 | 4B | 13 → 14 (typed forms, ES2020 target) | ✅ green | — |
 | 4C | 14 → 15 (TS 4.9.5, ES2022 target) | ✅ green | ✅ green |
-| 5 | 15 → 17 + modular Firebase + lazy loading | — | — |
+| 5A | 15 → 16 + lib bumps (ng-bootstrap, toastr, cdk) + RxJS 7 | ✅ green | ✅ green |
+| 5B | 16 → 17 (TS 5.4, zone 0.14) | ✅ green | ✅ green |
+| 5C | 6 standalone lazy-loaded routes | ✅ 3.48 MB initial | ✅ green |
 
-This is a deliberate, multi-day migration that should own its own session
-per stage; it touches ~100+ files and every guard, interceptor, and service
-that imports from `@angular/fire` or `firebase/app`.
+This was a deliberate, multi-stage migration across 15 checkpoint commits that
+touched ~100 files. Final modernization of the Firebase SDK to full modular
+(tree-shakeable `firebase/*` imports instead of `firebase/compat/*`) and full
+lazy loading of all 50+ routes are tracked as follow-up work.
 
 ## Why it's expensive
 - AngularFire v5 (`AngularFireAuth`, `AngularFirestore`) is incompatible with

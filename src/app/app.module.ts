@@ -53,7 +53,7 @@ import { FormsModule } from '@angular/forms';
 import { UserCardComponent } from './user/user-card/user-card.component';
 import { HeaderComponent } from './header/header.component';
 import { UserAboutComponent } from './user/user-about/user-about.component';
-import { LandingComponent } from './landing/landing.component';
+// LandingComponent is standalone + lazy-loaded via router — not declared here
 import { LandingTestimanialsComponent } from './landing/landing-testimanials/landing-testimanials.component';
 import { PremiumComponent } from './RibComponents/premium/premium.component';
 import { ConnectionAsideComponent } from './RibComponents/connection-aside/connection-aside.component';
@@ -218,17 +218,16 @@ import { RequiresProDirective } from './shared/directives/requires-pro.directive
 import { ProfileCompletenessComponent } from './shared/components/profile-completeness/profile-completeness.component';
 import { UpgradeModalComponent } from './shared/components/upgrade-modal/upgrade-modal.component';
 import { ReferralWidgetComponent } from './shared/components/referral-widget/referral-widget.component';
-import { BadgePageComponent } from './badge/badge-page.component';
+// BadgePageComponent is standalone + lazy-loaded
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
-import { StarProfileComponent } from './star-profile/star-profile.component';
-import { AiCoachComponent } from './ai-coach/ai-coach.component';
+// StarProfileComponent + AiCoachComponent are standalone + lazy-loaded
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
-import { OnboardComponent } from './onboard/onboard.component';
+// OnboardComponent is standalone + lazy-loaded
 import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
-import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge.component';
+// SponsorChallengeComponent is standalone + lazy-loaded
 @NgModule({
   declarations: [
     DndDirective,
@@ -266,7 +265,6 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     UserCardComponent,
     HeaderComponent,
     UserAboutComponent,
-    LandingComponent,
     LandingTestimanialsComponent,
     PremiumComponent,
     ConnectionAsideComponent,
@@ -422,17 +420,12 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     ProfileCompletenessComponent,
     UpgradeModalComponent,
     ReferralWidgetComponent,
-    BadgePageComponent,
     AdminSeedComponent,
     AdminDashboardComponent,
     UserResolverComponent,
-    StarProfileComponent,
-    AiCoachComponent,
     EmployerDashboardComponent,
     UniversityDashboardComponent,
-    OnboardComponent,
-    AdminChallengesComponent,
-    SponsorChallengeComponent
+    AdminChallengesComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'richblok-app' }),

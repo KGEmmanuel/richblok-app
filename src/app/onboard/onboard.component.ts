@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { StarMapperService } from '../shared/services/star-mapper.service';
@@ -18,6 +20,8 @@ type Step = 'upload' | 'extracting' | 'preview' | 'generating' | 'error';
 
 @Component({
   selector: 'app-onboard',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './onboard.component.html',
   styleUrls: ['./onboard.component.scss']
 })

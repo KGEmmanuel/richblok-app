@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StarMapperService } from '../shared/services/star-mapper.service';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { ShareService } from '../shared/services/share.service';
@@ -18,6 +19,8 @@ interface SuggestedChallenge {
 
 @Component({
   selector: 'app-star-profile',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './star-profile.component.html',
   styleUrls: ['./star-profile.component.scss']
 })
