@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-record-pro-train-form',
@@ -16,13 +16,13 @@ export class RecordProTrainFormComponent implements OnInit {
   currentTraining: Formation;
   uid;
   onIt = true;
-  trainForm: FormGroup;
+  trainForm: UntypedFormGroup;
 submitted = false;
   @Output()
   trainingSaved = new EventEmitter<boolean>();
 
   constructor(private formationSvc: FormationService, private afAuth: AngularFireAuth,
-              private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
+              private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
 
   }
 

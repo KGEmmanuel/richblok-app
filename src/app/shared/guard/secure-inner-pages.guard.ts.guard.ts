@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 /**
  * Redirects already-authenticated users AWAY from auth pages (sign-in, register, forgot-password)
@@ -11,7 +11,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 @Injectable({
   providedIn: 'root'
 })
-export class SecureInnerPagesGuard implements CanActivate {
+export class SecureInnerPagesGuard  {
 
   constructor(
     private afAuth: AngularFireAuth,

@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { Experience } from 'src/app/shared/entites/Experience';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-record-experiences-form',
   templateUrl: './record-experiences-form.component.html',
@@ -19,10 +19,10 @@ export class RecordExperiencesFormComponent implements OnInit {
 
   currentOnIt = false;
   uid;
-  expForm: FormGroup;
+  expForm: UntypedFormGroup;
 submitted = false;
   constructor(private expeSvc: ExperienceService, private afAuth: AngularFireAuth,
-    private toastr: ToastrService, private laodsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
+    private toastr: ToastrService, private laodsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
     this.afAuth.authState.subscribe(val => {
       if (val) {
         this.uid = val.uid;

@@ -54,7 +54,6 @@
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,
-                            "extractCss": true,
                             "namedChunks": false,
                             "aot": true,
                             "extractLicenses": true,
@@ -78,11 +77,11 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "Rib:build"
+                      "buildTarget": "Rib:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "Rib:build:production"
+                          "buildTarget": "Rib:build:production"
                         }
                     }
                 },
@@ -93,7 +92,8 @@
                         "main": "src/main.server.ts",
                         "tsConfig": "tsconfig.server.json",
                         "sourceMap": false,
-                        "optimization": false
+                        "optimization": false,
+                        "buildOptimizer": false
                     },
                     "configurations": {
                         "production": {
@@ -103,14 +103,15 @@
                             }],
                             "optimization": true,
                             "sourceMap": false,
-                            "extractLicenses": true
+                            "extractLicenses": true,
+                            "buildOptimizer": true
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "Rib:build"
+                      "buildTarget": "Rib:build"
                     }
                 },
                 "test": {
@@ -156,19 +157,6 @@
                         ]
                     }
                 },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "tsconfig.app.json",
-                            "tsconfig.spec.json",
-                            "e2e/tsconfig.json"
-                        ],
-                        "exclude": [
-                            "/node_modules/"
-                        ]
-                    }
-                },
                 "e2e": {
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
@@ -184,7 +172,6 @@
             }
         }
     },
-    "defaultProject": "Rib",
     "cli": {
         "analytics": "f2bbbfc8-2143-44de-8ef7-7d803718bdaa"
     }

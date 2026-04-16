@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 
 @Component({

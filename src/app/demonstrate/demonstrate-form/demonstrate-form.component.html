@@ -94,8 +94,9 @@
                     Type the Rich content of your demonstration<small style="color: grey;">(Not the demonstration
                       content)</small>
                   </label>
-                  <angular-editor id="content" [placeholder]="'Enter text here...'" [(ngModel)]="currentDemonst.content"
-                    [spellcheck]="true"></angular-editor>
+                  <textarea id="content" name="content" rows="8" class="form-control"
+                    placeholder="Enter text here..." spellcheck="true"
+                    [(ngModel)]="currentDemonst.content"></textarea>
                 </div>
                 <div style="display: flex; float: right !important; margin-right: 1%;">
 

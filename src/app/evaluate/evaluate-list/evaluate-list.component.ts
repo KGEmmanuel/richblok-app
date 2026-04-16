@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Challenge, CompetencyTag } from 'src/app/shared/entites/Challenge';
 import { COMPETENCY_LABELS } from 'src/app/shared/entites/StarProfile';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { AnalyticsService } from 'src/app/shared/services/analytics.service';
 import { first } from 'rxjs/operators';

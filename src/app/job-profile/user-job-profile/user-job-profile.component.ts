@@ -1,6 +1,5 @@
 import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
-import { Route } from '@angular/compiler/src/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
@@ -19,7 +18,7 @@ import { Experience } from 'src/app/shared/entites/Experience';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
@@ -70,7 +69,7 @@ export class UserJobProfileComponent implements OnInit {
             this.user.id = us.id;
           })
         }
-        this.afAuth.auth.onAuthStateChanged(val => {
+        this.afAuth.onAuthStateChanged(val => {
           if (val) {
             this.userSvc.getDocRef(val.uid).onSnapshot(u => {
               this.currentUser = u.data() as Utilisateur;

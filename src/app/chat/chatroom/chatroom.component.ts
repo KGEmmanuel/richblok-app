@@ -3,7 +3,9 @@ import { ChatRoom } from '../../shared/entites/ChatRoom';
 import { ChatService } from '../../shared/services/chat.service';
 import { Utilisateur } from '../../shared/entites/Utilisateur';
 import { UtilisateurService } from '../../shared/services/utilisateur.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 @Component({
   selector: 'app-chatroom',
   templateUrl: './chatroom.component.html',

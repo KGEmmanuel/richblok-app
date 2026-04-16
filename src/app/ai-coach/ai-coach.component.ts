@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { StarMapperService } from '../shared/services/star-mapper.service';
 import { AnalyticsService } from '../shared/services/analytics.service';
@@ -14,6 +16,8 @@ interface ChatMessage {
 
 @Component({
   selector: 'app-ai-coach',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './ai-coach.component.html',
   styleUrls: ['./ai-coach.component.scss']
 })

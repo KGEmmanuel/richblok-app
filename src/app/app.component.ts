@@ -1,5 +1,5 @@
 import { Component, OnInit  } from '@angular/core';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { environment } from 'src/environments/environment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Title } from '@angular/platform-browser';

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-record-pro-train',

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { SeoService } from '../shared/services/seo.service';
 import { ShareService } from '../shared/services/share.service';
 import { AnalyticsService } from '../shared/services/analytics.service';
@@ -23,6 +24,8 @@ interface BadgeRecord {
 
 @Component({
   selector: 'app-badge-page',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './badge-page.component.html',
   styleUrls: ['./badge-page.component.scss']
 })

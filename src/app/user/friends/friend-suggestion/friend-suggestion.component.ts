@@ -2,9 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable } from 'rxjs';
 import { UserService } from 'src/app/shared/services/user.service';
 
@@ -25,7 +27,7 @@ export class FriendSuggestionComponent implements OnInit {
   constructor(private usvc: UtilisateurService, private afAuth: AngularFireAuth, private userSvc: UserService) { }
 
   ngOnInit() {
-    this.afAuth.auth.onAuthStateChanged(v => {
+    this.afAuth.onAuthStateChanged(v => {
       // alert('tes test detjhsdf')
       if (v) {
         this.uid = v.uid;

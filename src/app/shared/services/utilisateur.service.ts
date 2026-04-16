@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Utilisateur } from '../entites/Utilisateur';
-import { DocumentReference, QueryFn, DocumentSnapshot, Query } from '@angular/fire/firestore/interfaces';
+import { DocumentReference, QueryFn, DocumentSnapshot, Query } from '@angular/fire/compat/firestore';
 import { Observable, from, Subject } from 'rxjs';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { AuthService } from './auth.service';
 import { finalize, map, switchMap, filter } from 'rxjs/operators';
 import { Formation } from '../entites/Formation';
 import { Experience } from '../entites/Experience';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { Notification } from '../entites/Notification';
 import { Post } from '../entites/Post';
 import { Participant } from '../entites/Participant';
 import { async } from 'q';
 import { HttpClient } from '@angular/common/http';
 import { Certification } from '../entites/Certification';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Block } from '../entites/block';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Injectable({
   providedIn: 'root'

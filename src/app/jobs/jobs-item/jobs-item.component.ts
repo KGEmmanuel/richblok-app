@@ -1,12 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
-import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 
 @Component({
@@ -42,7 +41,7 @@ export class JobsItemComponent implements OnInit {
       }
     }
 
-    this.afAuth.auth.onAuthStateChanged(val => {
+    this.afAuth.onAuthStateChanged(val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(us => {
           this.currentUser = us.data() as Utilisateur;

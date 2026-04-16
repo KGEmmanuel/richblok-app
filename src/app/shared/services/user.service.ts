@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { IBaseService } from './IBaseService.service';
 import { BaseService } from './BasetService.service';
 import { Utilisateur } from '../entites/Utilisateur';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Injectable({
   providedIn: 'root'

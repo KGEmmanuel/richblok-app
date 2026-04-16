@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { Observable } from 'rxjs';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-connection-aside',
@@ -19,7 +19,7 @@ export class ConnectionAsideComponent implements OnInit {
 
   ngOnInit() {
 
-    this.afAuth.auth.onAuthStateChanged(v=>{
+    this.afAuth.onAuthStateChanged(v=>{
       // alert('tes test detjhsdf')
       if (v) {
         this.uid = v.uid;

@@ -2,10 +2,12 @@ import { Component, OnInit, ɵConsole, EventEmitter, Output, Input } from '@angu
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
 import { Skill } from '../../../shared/entites/Skill';
 import { SkillsService } from '../../../shared/services/skills.service';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-record-skills-form',
@@ -21,7 +23,7 @@ export class RecordSkillsFormComponent implements OnInit {
 
   loading = false;
 
-  skillForm: FormGroup;
+  skillForm: UntypedFormGroup;
 submitted = false;
   @Input()
   set currentSkill(sk: Skill) {
@@ -38,7 +40,7 @@ submitted = false;
   owner;
   skillpropositions = [];
   constructor(private userSvc: UtilisateurService, private skillSvc: SkillsService,
-              private tostSvc: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
+              private tostSvc: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
 
   }
 

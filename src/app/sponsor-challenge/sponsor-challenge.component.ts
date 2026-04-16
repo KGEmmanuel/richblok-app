@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { first } from 'rxjs/operators';
 
@@ -15,6 +17,8 @@ interface ChallengePick {
 
 @Component({
   selector: 'app-sponsor-challenge',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './sponsor-challenge.component.html',
   styleUrls: ['./sponsor-challenge.component.scss']
 })

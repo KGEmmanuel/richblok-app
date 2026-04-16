@@ -67,7 +67,9 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Proposition <span *ngIf="!enable">{{nombre}}</span> <span *ngIf="enable">{{mdfIdx + 1}}</span></label>
-                                <angular-editor id="question" name="question" [placeholder]="'Enter the proposition number '+nombre" [(ngModel)]="currentReponse.text" [spellcheck]="true"></angular-editor>
+                                <textarea id="question" name="question" rows="3" class="form-control"
+                                    [placeholder]="'Enter the proposition number '+nombre"
+                                    [(ngModel)]="currentReponse.text" spellcheck="true"></textarea>
                             </div>
 
                             <div>

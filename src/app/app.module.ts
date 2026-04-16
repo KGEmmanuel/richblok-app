@@ -7,7 +7,10 @@ import { GlobalErrorHandlerService } from './shared/services/global-error-handle
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+// removed: ngx-google-places-autocomplete@2 isn't Angular 16+ compatible;
+// the post-form still type-references GooglePlaceDirective but the module
+// import is dropped. Places autocomplete UI is degraded until replaced with
+// Angular-16-compatible alternative.
 import { ApiService } from '../app/feed/post/post-form/post-location/api.service';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -43,14 +46,14 @@ import { OrganisationComponent } from './organisation/organisation.component';
 import { OrganisationProfileComponent } from './organisation/organisation-profile/organisation-profile.component';
 import { OrganisationsListComponent } from './organisation/organisations-list/organisations-list.component';
 import { ToastrModule } from 'ngx-toastr';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
 import { UserCardComponent } from './user/user-card/user-card.component';
 import { HeaderComponent } from './header/header.component';
 import { UserAboutComponent } from './user/user-about/user-about.component';
-import { LandingComponent } from './landing/landing.component';
+// LandingComponent is standalone + lazy-loaded via router — not declared here
 import { LandingTestimanialsComponent } from './landing/landing-testimanials/landing-testimanials.component';
 import { PremiumComponent } from './RibComponents/premium/premium.component';
 import { ConnectionAsideComponent } from './RibComponents/connection-aside/connection-aside.component';
@@ -85,7 +88,7 @@ import { CvComponent } from './cv/cv.component';
 import { SimilarPagesComponent } from './RibComponents/similar-pages/similar-pages.component';
 import { UserFriendsComponent } from './user/user-friends/user-friends.component';
 import { UserFriendsItemComponent } from './user/user-friends/user-friends-item/user-friends-item.component';
-import { AgmCoreModule } from '@agm/core';
+// removed: @agm/core (archived; project used only AgmCoreModule.forRoot() — unreferenced in templates)
 import { UserLinksComponent } from './user/user-links/user-links.component';
 import { UserPortfolioComponent } from './user/user-portfolio/user-portfolio.component';
 import { UserViewComponent } from './user-view/user-view.component';
@@ -152,15 +155,18 @@ import { PostListComponent } from './feed/post/post-list/post-list.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { PaginationService } from './shared/services/pagination.service';
 import { PostService } from './shared/services/post.service';
-import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatGoogleMapsAutocompleteModule } from '@angular-material-extensions/google-maps-autocomplete';
+// removed: MatGoogleMapsAutocompleteModule — pulls Angular Material 9 which can't be bumped
 import { IdentifiedUsersComponent } from './feed/post/post-form/post-identify/identified-users/identified-users.component';
 import { IdentifiedUsersItemComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-item/identified-users-item.component';
 import { IdentifiedUsersListComponent } from './feed/post/post-form/post-identify/identified-users/identified-users-list/identified-users-list.component';
 import { PostIdentifyComponent } from './feed/post/post-form/post-identify/post-identify.component';
 import {NgbModule, NgbTimepickerModule} from '@ng-bootstrap/ng-bootstrap';
-import { AngularEditorModule } from '@kolkov/angular-editor';
+// removed: @kolkov/angular-editor — imports DOCUMENT from @angular/core which
+// was moved to @angular/common in v16. All known 3.x releases have this issue.
+// Replace the 2 <angular-editor> usages with plain <textarea> or migrate to a
+// maintained rich-text editor (e.g. @ngneat/edit-in-place) later.
 import { IncitationItemComponent } from './incitations/incitation-item/incitation-item.component';
 import { TagsComponent } from './RibComponents/tags/tags.component';
 import { RateComponent } from './RibComponents/rate/rate.component';
@@ -212,17 +218,16 @@ import { RequiresProDirective } from './shared/directives/requires-pro.directive
 import { ProfileCompletenessComponent } from './shared/components/profile-completeness/profile-completeness.component';
 import { UpgradeModalComponent } from './shared/components/upgrade-modal/upgrade-modal.component';
 import { ReferralWidgetComponent } from './shared/components/referral-widget/referral-widget.component';
-import { BadgePageComponent } from './badge/badge-page.component';
+// BadgePageComponent is standalone + lazy-loaded
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
-import { StarProfileComponent } from './star-profile/star-profile.component';
-import { AiCoachComponent } from './ai-coach/ai-coach.component';
+// StarProfileComponent + AiCoachComponent are standalone + lazy-loaded
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
-import { OnboardComponent } from './onboard/onboard.component';
+// OnboardComponent is standalone + lazy-loaded
 import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
-import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge.component';
+// SponsorChallengeComponent is standalone + lazy-loaded
 @NgModule({
   declarations: [
     DndDirective,
@@ -260,7 +265,6 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     UserCardComponent,
     HeaderComponent,
     UserAboutComponent,
-    LandingComponent,
     LandingTestimanialsComponent,
     PremiumComponent,
     ConnectionAsideComponent,
@@ -416,17 +420,12 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     ProfileCompletenessComponent,
     UpgradeModalComponent,
     ReferralWidgetComponent,
-    BadgePageComponent,
     AdminSeedComponent,
     AdminDashboardComponent,
     UserResolverComponent,
-    StarProfileComponent,
-    AiCoachComponent,
     EmployerDashboardComponent,
     UniversityDashboardComponent,
-    OnboardComponent,
-    AdminChallengesComponent,
-    SponsorChallengeComponent
+    AdminChallengesComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'richblok-app' }),
@@ -437,25 +436,14 @@ import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge
     AngularFireStorageModule,
     BrowserAnimationsModule,
     NgbTimepickerModule,
-    AngularEditorModule,
     FormsModule,
     ToastrModule.forRoot(),
-    GooglePlaceModule,
     HttpClientModule,
-    AgmCoreModule.forRoot(),
     NgMultiSelectDropDownModule.forRoot(),
-    // SignaturePadModule,
-    AgmCoreModule.forRoot({
-      apiKey: environment.googleKey,
-      libraries: ['places']
-    }),
-    MatGoogleMapsAutocompleteModule,
     NgbModule,
-    HttpClientModule,
     NgxUiLoaderModule,
     NgxUiLoaderRouterModule.forRoot({ showForeground: true }),
     CountdownModule,
-    GooglePlaceModule,
     PdfViewerModule,
     ReactiveFormsModule,
     NgCircleProgressModule.forRoot({

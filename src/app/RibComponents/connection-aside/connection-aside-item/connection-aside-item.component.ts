@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -18,7 +18,7 @@ export class ConnectionAsideItemComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.afAuth.auth.onAuthStateChanged(v=>{
+    this.afAuth.onAuthStateChanged(v=>{
       this.uid = v.uid;
     });
 

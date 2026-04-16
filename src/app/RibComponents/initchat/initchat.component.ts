@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ChatService } from 'src/app/shared/services/chat.service';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 @Component({
   selector: 'app-initchat',

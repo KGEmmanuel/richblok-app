@@ -3,8 +3,7 @@ import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { JobApplication } from 'src/app/shared/entites/JobApplication';
-import { FirebaseAuth } from '@angular/fire';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-jobs-applied',
@@ -19,7 +18,7 @@ export class JobsAppliedComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.afAuthSvc.auth.onAuthStateChanged(u => {
+    this.afAuthSvc.onAuthStateChanged(u => {
       if (u) {
         this.uid = u.uid;
         this.jobapplicationSvc.findBy('userRef',this.uid,'dateCreation').ref.onSnapshot(v=>{

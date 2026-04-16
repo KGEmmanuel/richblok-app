@@ -4,7 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { ToastrService } from 'ngx-toastr';
 import { ChallengeService } from 'src/app/shared/services/challenge.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({

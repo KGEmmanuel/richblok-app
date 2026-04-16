@@ -9,7 +9,7 @@ import { VerifyEmailComponent } from './auth/verify-email/verify-email.component
 import { SecureInnerPagesGuard } from './shared/guard/secure-inner-pages.guard.ts.guard';
 import { AuthGuard } from './shared/guard/auth.guard';
 import { UserComponent } from './user/user.component';
-import { LandingComponent } from './landing/landing.component';
+// LandingComponent now loaded lazily (standalone component)
 import { RecordComponent } from './record/record.component';
 import { JobsComponent } from './jobs/jobs.component';
 import { ChatComponent } from './chat/chat.component';
@@ -42,17 +42,16 @@ import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.co
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { SearchComponent } from './search/search.component';
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
-import { BadgePageComponent } from './badge/badge-page.component';
+// BadgePageComponent lazy-loaded (standalone)
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
-import { StarProfileComponent } from './star-profile/star-profile.component';
-import { AiCoachComponent } from './ai-coach/ai-coach.component';
+// StarProfileComponent + AiCoachComponent lazy-loaded (standalone)
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
-import { OnboardComponent } from './onboard/onboard.component';
+// OnboardComponent lazy-loaded (standalone)
 import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
-import { SponsorChallengeComponent } from './sponsor-challenge/sponsor-challenge.component';
+// SponsorChallengeComponent lazy-loaded (standalone)
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -71,7 +70,7 @@ const routes: Routes = [
   { path: 'friends', component: FriendsComponent, canActivate: [AuthGuard], data: {title: 'Connections'}},
   { path: 'settings', component: UserSettingsComponent, canActivate: [AuthGuard], data: {title: 'Settings'}},
   { path: 'cv', component: CvComponent, canActivate: [AuthGuard], data: {title: 'CV'}},
-  { path: 'landing', component: LandingComponent, data: {title: 'Landing'}},
+  { path: 'landing', loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent), data: {title: 'Landing'}},
   { path: 'forgot-password', component: ResetComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'verify-email-address', component: VerifyEmailComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'demonstrate', component: DemonstrateComponent, canActivate: [AuthGuard], data: {title: 'Demonstrate'}},
@@ -95,15 +94,15 @@ const routes: Routes = [
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent, canActivate: [AuthGuard] },
   { path: 'create-challenge', component: EvaluateFormComponent, canActivate: [AuthGuard]},
   { path: 'search', component: SearchComponent},
-  { path: 'badge/:id', component: BadgePageComponent, data: {title: 'Verified Badge'} },
+  { path: 'badge/:id', loadComponent: () => import('./badge/badge-page.component').then(m => m.BadgePageComponent), data: {title: 'Verified Badge'} },
   { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
   { path: 'admin/challenges', component: AdminChallengesComponent, canActivate: [AuthGuard], data: {title: 'Admin · Challenges'}},
-  { path: 'sponsor', component: SponsorChallengeComponent, data: {title: 'Sponsor a challenge'}},
-  { path: 'onboard', component: OnboardComponent, data: {title: 'Upload your CV'} },
-  { path: 'star/:id', component: StarProfileComponent, data: {title: 'STAR Profile'} },
-  { path: 'coach/:id', component: AiCoachComponent, canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },
+  { path: 'sponsor', loadComponent: () => import('./sponsor-challenge/sponsor-challenge.component').then(m => m.SponsorChallengeComponent), data: {title: 'Sponsor a challenge'}},
+  { path: 'onboard', loadComponent: () => import('./onboard/onboard.component').then(m => m.OnboardComponent), data: {title: 'Upload your CV'} },
+  { path: 'star/:id', loadComponent: () => import('./star-profile/star-profile.component').then(m => m.StarProfileComponent), data: {title: 'STAR Profile'} },
+  { path: 'coach/:id', loadComponent: () => import('./ai-coach/ai-coach.component').then(m => m.AiCoachComponent), canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },
   { path: 'employer/dashboard', component: EmployerDashboardComponent, canActivate: [AuthGuard], data: {title: 'Employer · Talent'} },
   { path: 'employer', redirectTo: 'employer/dashboard', pathMatch: 'full' },
   { path: 'university/dashboard', component: UniversityDashboardComponent, canActivate: [AuthGuard], data: {title: 'University · Cohort'} },

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DemonstrateService } from 'src/app/shared/services/demonstrate.service';
-import { FirebaseAuth } from '@angular/fire';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Demonstration } from 'src/app/shared/entites/demonstration';
 
 @Component({
@@ -21,7 +20,7 @@ export class DemonstrateDashboardComponent implements OnInit {
 
   ngOnInit() {
 
-    this.authSvc.auth.onAuthStateChanged(v=>{
+    this.authSvc.onAuthStateChanged(v=>{
       if(v){
         this.uid = v.uid;
         this.demoSvc.get(this.uid).onSnapshot(st=>{

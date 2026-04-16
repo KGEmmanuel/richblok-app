@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ReferralService } from '../../services/referral.service';
 import { ShareService } from '../../services/share.service';
 import { AnalyticsService } from '../../services/analytics.service';

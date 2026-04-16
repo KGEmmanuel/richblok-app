@@ -5,13 +5,13 @@ import { Challenge } from 'src/app/shared/entites/Challenge';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChalengeParticipation } from 'src/app/shared/entites/ChallengeParticipation';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AnalyticsService } from 'src/app/shared/services/analytics.service';
 import { StarMapperService } from 'src/app/shared/services/star-mapper.service';
 import { CompetencyTag } from 'src/app/shared/entites/Challenge';
 import { HttpClient } from '@angular/common/http';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { first } from 'rxjs/operators';
 
 @Component({

@@ -7,8 +7,8 @@ import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Component({
   selector: 'app-realisation',

@@ -3,15 +3,17 @@ import { UtilisateurService } from './../shared/services/utilisateur.service';
 import { SeoService } from './../shared/services/seo.service';
 import { AnalyticsService } from './../shared/services/analytics.service';
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { AngularFirestore } from '@angular/fire/firestore';
-import * as firebase from 'firebase/app';
-import { Router } from '@angular/router';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
+import { Router, RouterLink } from '@angular/router';
 
 type Lang = 'en' | 'fr';
 
 @Component({
   selector: 'app-landing',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })

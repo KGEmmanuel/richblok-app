@@ -1,7 +1,9 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ChatService } from '../../shared/services/chat.service';
 import { ChatRoom } from 'src/app/shared/entites/ChatRoom';
-import * as firebase from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 @Component({
   selector: 'app-chat-list',
   templateUrl: './chat-list.component.html',

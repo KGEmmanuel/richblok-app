@@ -1,7 +1,7 @@
 import { Title, Meta } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { OffreEmploiService } from '../shared/services/offre-emploi.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { SkillsService } from '../shared/services/skills.service';
 import { Skill } from '../shared/entites/Skill';
 import { OffresEmploi } from '../shared/entites/OffresEmploi';
@@ -39,7 +39,7 @@ export class JobsComponent implements OnInit {
           this.allJobs.push(job);
         });
     });
-    this.afAuth.auth.onAuthStateChanged(v=>{
+    this.afAuth.onAuthStateChanged(v=>{
       if(v){
         this.userSvc.getDocRef(v.uid).onSnapshot(u=>{
           this.currentuser = u.data() as Utilisateur;

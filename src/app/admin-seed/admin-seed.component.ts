@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { CHALLENGES_SEED } from '../shared/data/challenges-seed';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { first } from 'rxjs/operators';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 
 interface SeedStatus {
   slug: string;
