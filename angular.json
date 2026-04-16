@@ -170,7 +170,6 @@
             }
         }
     },
-    "defaultProject": "Rib",
     "cli": {
         "analytics": "f2bbbfc8-2143-44de-8ef7-7d803718bdaa"
     }

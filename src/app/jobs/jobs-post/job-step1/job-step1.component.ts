@@ -10,7 +10,7 @@ import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-job-step1',
   templateUrl: './job-step1.component.html',
@@ -23,7 +23,7 @@ export class JobStep1Component implements OnInit {
   offres: OffresEmploi;
   mode: string;
   numberSkills: number;
-  jobForm: FormGroup;
+  jobForm: UntypedFormGroup;
   submitted = false;
   numberdiploma: number;
   diplome: EmploiFormation;
@@ -31,7 +31,7 @@ export class JobStep1Component implements OnInit {
   uid: string;
   step = 1;
   constructor(private toastr: ToastrService, private orgSvc: OrganisationService, private offreSvc: OffreEmploiService,
-    private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService, private formBuilder: FormBuilder) { }
+    private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit() {
     this.step = 1;

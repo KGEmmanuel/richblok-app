@@ -10,7 +10,7 @@ import { Media } from 'src/app/shared/entites/Media';
 import { finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 
 @Component({
@@ -30,10 +30,10 @@ export class RecordRealisationFormComponent implements OnInit {
   image = [];
   files: File[] = [];
   outil: string;
-  realForm: FormGroup;
+  realForm: UntypedFormGroup;
 submitted = false;
   constructor(private realSvc: PortfolioService, private afStorage: AngularFireStorage, private afAuth: AngularFireAuth,
-              private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: FormBuilder) {
+              private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
     this.afAuth.authState.subscribe(val => {
       if (val) {
         this.uid = val.uid;

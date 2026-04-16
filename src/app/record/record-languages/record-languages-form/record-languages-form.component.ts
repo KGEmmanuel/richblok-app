@@ -4,7 +4,7 @@ import { Langue } from 'src/app/shared/entites/Langue';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { ToastrService } from 'ngx-toastr';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-record-languages-form',
@@ -16,10 +16,10 @@ export class RecordLanguagesFormComponent implements OnInit {
   currentLang: Langue;
   uid;
   langSaved = new EventEmitter<boolean>();
-  lanForm: FormGroup;
+  lanForm: UntypedFormGroup;
 submitted = false;
   constructor(private langSvc: LanguageService, private toastrSvc: ToastrService,
-              private agAuth: AngularFireAuth, private formBuilder: FormBuilder,
+              private agAuth: AngularFireAuth, private formBuilder: UntypedFormBuilder,
               private loadSvc: NgxUiLoaderService) { }
 
   ngOnInit() {
