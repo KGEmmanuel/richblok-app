@@ -2,9 +2,12 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-userslist-inline-item',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './userslist-inline-item.component.html',
   styleUrls: ['./userslist-inline-item.component.scss']
 })

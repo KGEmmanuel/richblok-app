@@ -6,9 +6,13 @@ import { Skill } from '../../shared/entites/Skill';
 import { OffresEmploi } from '../../shared/entites/OffresEmploi';
 import { Utilisateur } from '../../shared/entites/Utilisateur';
 import { UtilisateurService } from '../../shared/services/utilisateur.service';
+import { CommonModule } from '@angular/common';
+import { JobsItemComponent } from 'src/app/jobs/jobs-item/jobs-item.component';
 
 @Component({
   selector: 'app-job-aside',
+  standalone: true,
+  imports: [CommonModule, JobsItemComponent],
   templateUrl: './job-aside.component.html',
   styleUrls: ['./job-aside.component.scss']
 })

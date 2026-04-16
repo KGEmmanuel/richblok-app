@@ -7,9 +7,14 @@ import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { UserslistInlineComponent } from 'src/app/users/userslist-inline/userslist-inline.component';
 
 @Component({
   selector: 'app-jobs-item',
+  standalone: true,
+  imports: [CommonModule, RouterLink, UserslistInlineComponent],
   templateUrl: './jobs-item.component.html',
   styleUrls: ['./jobs-item.component.scss']
 })

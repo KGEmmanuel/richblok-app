@@ -3,9 +3,13 @@ import { UtilisateurService } from 'src/app/shared/services/utilisateur.service'
 import { Observable } from 'rxjs';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { CommonModule } from '@angular/common';
+import { ConnectionAsideItemComponent } from './connection-aside-item/connection-aside-item.component';
 
 @Component({
   selector: 'app-connection-aside',
+  standalone: true,
+  imports: [CommonModule, ConnectionAsideItemComponent],
   templateUrl: './connection-aside.component.html',
   styleUrls: ['./connection-aside.component.scss']
 })

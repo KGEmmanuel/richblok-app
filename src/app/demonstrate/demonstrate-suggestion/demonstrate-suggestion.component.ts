@@ -7,9 +7,13 @@ import { Skill } from 'src/app/shared/entites/Skill';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import { CommonModule } from '@angular/common';
+import { IncitationItemComponent } from 'src/app/incitations/incitation-item/incitation-item.component';
 
 @Component({
   selector: 'app-demonstrate-suggestion',
+  standalone: true,
+  imports: [CommonModule, IncitationItemComponent],
   templateUrl: './demonstrate-suggestion.component.html',
   styleUrls: ['./demonstrate-suggestion.component.scss']
 })
