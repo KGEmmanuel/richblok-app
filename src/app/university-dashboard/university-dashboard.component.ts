@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AnalyticsService } from '../shared/services/analytics.service';
@@ -15,6 +17,8 @@ interface CohortStudent {
 
 @Component({
   selector: 'app-university-dashboard',
+  standalone: true,
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './university-dashboard.component.html',
   styleUrls: ['./university-dashboard.component.scss']
 })

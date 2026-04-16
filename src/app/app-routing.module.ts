@@ -44,13 +44,13 @@ import { SearchComponent } from './search/search.component';
 // NotfoundComponent lazy-loaded (standalone)
 // BadgePageComponent lazy-loaded (standalone)
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+// AdminDashboardComponent lazy-loaded (standalone)
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
 // StarProfileComponent + AiCoachComponent lazy-loaded (standalone)
-import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
-import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
+// EmployerDashboardComponent lazy-loaded (standalone)
+// UniversityDashboardComponent lazy-loaded (standalone)
 // OnboardComponent lazy-loaded (standalone)
-import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
+// AdminChallengesComponent lazy-loaded (standalone)
 // SponsorChallengeComponent lazy-loaded (standalone)
 
 const routes: Routes = [
@@ -96,16 +96,16 @@ const routes: Routes = [
   { path: 'search', component: SearchComponent},
   { path: 'badge/:id', loadComponent: () => import('./badge/badge-page.component').then(m => m.BadgePageComponent), data: {title: 'Verified Badge'} },
   { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
-  { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
+  { path: 'admin', loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent), canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
-  { path: 'admin/challenges', component: AdminChallengesComponent, canActivate: [AuthGuard], data: {title: 'Admin · Challenges'}},
+  { path: 'admin/challenges', loadComponent: () => import('./admin-challenges/admin-challenges.component').then(m => m.AdminChallengesComponent), canActivate: [AuthGuard], data: {title: 'Admin · Challenges'}},
   { path: 'sponsor', loadComponent: () => import('./sponsor-challenge/sponsor-challenge.component').then(m => m.SponsorChallengeComponent), data: {title: 'Sponsor a challenge'}},
   { path: 'onboard', loadComponent: () => import('./onboard/onboard.component').then(m => m.OnboardComponent), data: {title: 'Upload your CV'} },
   { path: 'star/:id', loadComponent: () => import('./star-profile/star-profile.component').then(m => m.StarProfileComponent), data: {title: 'STAR Profile'} },
   { path: 'coach/:id', loadComponent: () => import('./ai-coach/ai-coach.component').then(m => m.AiCoachComponent), canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },
-  { path: 'employer/dashboard', component: EmployerDashboardComponent, canActivate: [AuthGuard], data: {title: 'Employer · Talent'} },
+  { path: 'employer/dashboard', loadComponent: () => import('./employer-dashboard/employer-dashboard.component').then(m => m.EmployerDashboardComponent), canActivate: [AuthGuard], data: {title: 'Employer · Talent'} },
   { path: 'employer', redirectTo: 'employer/dashboard', pathMatch: 'full' },
-  { path: 'university/dashboard', component: UniversityDashboardComponent, canActivate: [AuthGuard], data: {title: 'University · Cohort'} },
+  { path: 'university/dashboard', loadComponent: () => import('./university-dashboard/university-dashboard.component').then(m => m.UniversityDashboardComponent), canActivate: [AuthGuard], data: {title: 'University · Cohort'} },
   { path: 'university', redirectTo: 'university/dashboard', pathMatch: 'full' },
   { path: '404', loadComponent: () => import('./RibComponents/notfound/notfound.component').then(m => m.NotfoundComponent) },
   { path: 'upload', component: UploadFileComponent },

@@ -220,13 +220,13 @@ import { UpgradeModalComponent } from './shared/components/upgrade-modal/upgrade
 import { ReferralWidgetComponent } from './shared/components/referral-widget/referral-widget.component';
 // BadgePageComponent is standalone + lazy-loaded
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+// AdminDashboardComponent is standalone + lazy-loaded
 import { UserResolverComponent } from './user-resolver/user-resolver.component';
 // StarProfileComponent + AiCoachComponent are standalone + lazy-loaded
-import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
-import { UniversityDashboardComponent } from './university-dashboard/university-dashboard.component';
+// EmployerDashboardComponent is standalone + lazy-loaded
+// UniversityDashboardComponent is standalone + lazy-loaded
 // OnboardComponent is standalone + lazy-loaded
-import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
+// AdminChallengesComponent is standalone + lazy-loaded
 // SponsorChallengeComponent is standalone + lazy-loaded
 @NgModule({
   declarations: [
@@ -415,11 +415,7 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     UpgradeModalComponent,
     ReferralWidgetComponent,
     AdminSeedComponent,
-    AdminDashboardComponent,
     UserResolverComponent,
-    EmployerDashboardComponent,
-    UniversityDashboardComponent,
-    AdminChallengesComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'richblok-app' }),

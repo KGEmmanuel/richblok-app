@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
@@ -24,6 +27,8 @@ interface AdminChallenge {
 
 @Component({
   selector: 'app-admin-challenges',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './admin-challenges.component.html',
   styleUrls: ['./admin-challenges.component.scss']
 })

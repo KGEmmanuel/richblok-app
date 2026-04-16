@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { CompetencyTag } from '../shared/entites/Challenge';
 import { COMPETENCY_LABELS } from '../shared/entites/StarProfile';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 interface CandidateCard {
@@ -22,6 +24,8 @@ interface CandidateCard {
 
 @Component({
   selector: 'app-employer-dashboard',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './employer-dashboard.component.html',
   styleUrls: ['./employer-dashboard.component.scss']
 })
