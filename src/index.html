@@ -147,7 +147,10 @@
     <script src="./assets/js/jquery.easypiechart.js"></script>
     <script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>
     <script src="./assets/js/range.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaQFo7HEQvvXDz6gAkr2sChKaYrkrQR3E&libraries=places&language=en"></script>
+    <!-- removed: Google Maps JS SDK (was 50KB + ~4 transitive requests).
+         @agm/core and @angular-material-extensions/google-maps-autocomplete were
+         unused on master too, then dropped entirely in the Angular 17 migration.
+         Add back via @angular/google-maps if location features are re-introduced. -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
