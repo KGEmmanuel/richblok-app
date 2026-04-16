@@ -25,9 +25,9 @@ import { ParticipateToChallengeComponent } from './evaluate/evaluate-list/partic
 import { FriendsComponent } from './user/friends/friends.component';
 import { CreateOrganisationComponent } from './create-organisation/create-organisation.component';
 import { OrganisationSettingsComponent } from './organisation/organisation-settings/organisation-settings.component';
-import { TermsComponent } from './RibComponents/terms/terms.component';
-import { PolicyComponent } from './RibComponents/policy/policy.component';
-import { ContactComponent } from './RibComponents/contact/contact.component';
+// TermsComponent lazy-loaded (standalone)
+// PolicyComponent lazy-loaded (standalone)
+// ContactComponent lazy-loaded (standalone)
 import { JobProfileComponent } from './job-profile/job-profile.component';
 import { UserJobProfileComponent } from './job-profile/user-job-profile/user-job-profile.component';
 import { JobsPostComponent } from './jobs/jobs-post/jobs-post.component';
@@ -41,7 +41,7 @@ import { OrganisationViewComponent } from './organisation-view/organisation-view
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { SearchComponent } from './search/search.component';
-import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
+// NotfoundComponent lazy-loaded (standalone)
 // BadgePageComponent lazy-loaded (standalone)
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
@@ -78,9 +78,9 @@ const routes: Routes = [
   { path: 'participate', component: ParticipateToChallengeComponent, canActivate: [AuthGuard], data: {title: 'Participate'}},
   { path: 'create-organisation', component: CreateOrganisationComponent, canActivate: [AuthGuard]},
   { path: 'organisation-settings', component: OrganisationSettingsComponent, canActivate: [AuthGuard]},
-  { path: 'terms', component: TermsComponent},
-  { path: 'policy', component: PolicyComponent},
-  { path: 'contact', component: ContactComponent},
+  { path: 'terms', loadComponent: () => import('./RibComponents/terms/terms.component').then(m => m.TermsComponent)},
+  { path: 'policy', loadComponent: () => import('./RibComponents/policy/policy.component').then(m => m.PolicyComponent)},
+  { path: 'contact', loadComponent: () => import('./RibComponents/contact/contact.component').then(m => m.ContactComponent)},
   { path: 'job-profile/:id', component: UserJobProfileComponent},
   { path: 'job-process/:id', component: JobProcessComponent},
   { path: 'post-jobs', component: JobsPostComponent, canActivate: [AuthGuard]},
@@ -107,9 +107,9 @@ const routes: Routes = [
   { path: 'employer', redirectTo: 'employer/dashboard', pathMatch: 'full' },
   { path: 'university/dashboard', component: UniversityDashboardComponent, canActivate: [AuthGuard], data: {title: 'University · Cohort'} },
   { path: 'university', redirectTo: 'university/dashboard', pathMatch: 'full' },
-  { path: '404', component: NotfoundComponent },
+  { path: '404', loadComponent: () => import('./RibComponents/notfound/notfound.component').then(m => m.NotfoundComponent) },
   { path: 'upload', component: UploadFileComponent },
-  { path: '**', component: NotfoundComponent }
+  { path: '**', loadComponent: () => import('./RibComponents/notfound/notfound.component').then(m => m.NotfoundComponent) }
 
 ];
 

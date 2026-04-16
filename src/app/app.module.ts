@@ -109,9 +109,9 @@ import { EvaluateItemComponent } from './evaluate/evaluate-list/evaluate-item/ev
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 import { ParticipateToChallengeComponent } from './evaluate/evaluate-list/participate-to-challenge/participate-to-challenge.component';
 import { MaintenanceComponent } from './RibComponents/maintenance/maintenance.component';
-import { PolicyComponent } from './RibComponents/policy/policy.component';
+// PolicyComponent is standalone + lazy-loaded
 import { PricingComponent } from './RibComponents/pricing/pricing.component';
-import { TermsComponent } from './RibComponents/terms/terms.component';
+// TermsComponent is standalone + lazy-loaded
 import { OrganisationAboutComponent } from './organisation/organisation-about/organisation-about.component';
 import { OrganisationCertificationComponent } from './organisation/organisation-certification/organisation-certification.component';
 import { OrganisationJobsComponent } from './organisation/organisation-jobs/organisation-jobs.component';
@@ -134,7 +134,7 @@ import { OrganisationViewJobsItemComponent } from './organisation-view/organisat
 import { OrganisationCertificationApprouvedComponent } from './organisation/organisation-certification/organisation-certification-approuved/organisation-certification-approuved.component';
 import { UserPostComponent } from './user/user-post/user-post.component';
 import { UserPostItemComponent } from './user/user-post/user-post-item/user-post-item.component';
-import { ContactComponent } from './RibComponents/contact/contact.component';
+// ContactComponent is standalone + lazy-loaded
 import { JobProfileComponent } from './job-profile/job-profile.component';
 import { OrgJobProfileComponent } from './job-profile/org-job-profile/org-job-profile.component';
 import { UserJobProfileComponent } from './job-profile/user-job-profile/user-job-profile.component';
@@ -200,7 +200,7 @@ import { JobProcessComponent } from './job-profile/job-process/job-process.compo
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
 import { SearchComponent } from './search/search.component';
-import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
+// NotfoundComponent is standalone + lazy-loaded
 import { VideosComponent } from './RibComponents/videos/videos.component';
 import { ChatContentComponent } from './chat/chat-content/chat-content.component';
 import { ChatImgComponent } from './chat/chat-img/chat-img.component';
@@ -263,7 +263,6 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     OrganisationProfileComponent,
     OrganisationsListComponent,
     UserCardComponent,
-    HeaderComponent,
     UserAboutComponent,
     LandingTestimanialsComponent,
     PremiumComponent,
@@ -275,7 +274,6 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     ViewedProfileComponent,
     ViewedProfileItemComponent,
     JobsComponent,
-    FooterComponent,
     ChatComponent,
     NotificationsComponent,
     NotificationsItemsComponent,
@@ -319,9 +317,7 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     EvaluateFormComponent,
     ParticipateToChallengeComponent,
     MaintenanceComponent,
-    PolicyComponent,
     PricingComponent,
-    TermsComponent,
     OrganisationAboutComponent,
     OrganisationCertificationComponent,
     OrganisationJobsComponent,
@@ -344,7 +340,6 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     OrganisationCertificationApprouvedComponent,
     UserPostComponent,
     UserPostItemComponent,
-    ContactComponent,
     JobProfileComponent,
     OrgJobProfileComponent,
     UserJobProfileComponent,
@@ -403,7 +398,6 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     JobProcessComponent,
     FollowOrgsComponent,
     SearchComponent,
-    NotfoundComponent,
     VideosComponent,
     ChatContentComponent,
     ChatImgComponent,
@@ -452,6 +446,10 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
       enabled: typeof window !== 'undefined' && (window as any).location.hostname !== 'localhost'
     }),
 
+    // Standalone shared components — exposed to every NgModule-declared
+    // component that uses <app-header> / <app-footer> in its template.
+    HeaderComponent,
+    FooterComponent,
 
   ],
   providers: [
