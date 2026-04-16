@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { DemonstrateService } from 'src/app/shared/services/demonstrate.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Demonstration } from 'src/app/shared/entites/demonstration';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-demonstrate-dashboard',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './demonstrate-dashboard.component.html',
   styleUrls: ['./demonstrate-dashboard.component.scss']
 })

@@ -299,10 +299,8 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     UserViewFriendsItemComponent,
     DemonstrateComponent,
     EvaluateComponent,
-    DemonstrateDashboardComponent,
     DemonstrateFormComponent,
     DemonstrateListeComponent,
-    DemonstrateItemComponent,
     EvaluateListComponent,
     EvaluateSuggestionComponent,
     EvaluateOwnerComponent,
@@ -447,6 +445,8 @@ import { UserResolverComponent } from './user-resolver/user-resolver.component';
     ConnectionAsideComponent,
     JobAsideComponent,
     DemonstrateSuggestionComponent,
+    DemonstrateDashboardComponent,
+    DemonstrateItemComponent,
 
   ],
   providers: [
