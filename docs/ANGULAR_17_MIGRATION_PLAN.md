@@ -1,15 +1,17 @@
 # Angular 9 → 17 + Firebase 7 → 10 Migration Plan (T01)
 
-**Status:** Stages 1 + 2 + 3 **complete** on branch `migrate-angular-17`.
-Stages 4–5 pending — each needs a dedicated session with manual smoke testing.
+**Status:** Stages 1 + 2 + 3 + 4 **complete** on branch `migrate-angular-17`.
+Stage 5 (15 → 17 + modular Firebase SDK + lazy loading) is the final step.
 
-| Stage | Version | Branch commit | Browser build | Server build |
-|-------|---------|---------------|---------------|--------------|
-| 1 | 9 → 10 | `migrate-angular-17` | ✅ green | ✅ green |
-| 2 | 10 → 11 | `migrate-angular-17` | ✅ green | ✅ green |
-| 3 | 11 → 12 + Firebase 7 → 9 compat | `migrate-angular-17` HEAD | ✅ green | ✅ green |
-| 4 | 12 → 15 | — | — | — |
-| 5 | 15 → 17 + modular Firebase SDK + lazy loading | — | — | — |
+| Stage | Version | Browser build | Server build |
+|-------|---------|---------------|--------------|
+| 1 | 9 → 10 (TS 3.7 → 4.0) | ✅ green | ✅ green |
+| 2 | 10 → 11 | ✅ green | ✅ green |
+| 3 | 11 → 12 + Firebase 7 → 9 compat + @angular/fire 5 → 7 | ✅ green | ✅ green |
+| 4A | 12 → 13 (Ivy-only, single bundle) | ✅ green | — |
+| 4B | 13 → 14 (typed forms, ES2020 target) | ✅ green | — |
+| 4C | 14 → 15 (TS 4.9.5, ES2022 target) | ✅ green | ✅ green |
+| 5 | 15 → 17 + modular Firebase + lazy loading | — | — |
 
 This is a deliberate, multi-day migration that should own its own session
 per stage; it touches ~100+ files and every guard, interceptor, and service
