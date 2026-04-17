@@ -1,0 +1,77 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+.rb-field {
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-2;
+  width: 100%;
+  font-family: $rb-font-display;
+}
+
+.rb-label {
+  font-size: $rb-text-xs;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $rb-text-muted;
+}
+
+.rb-required { color: $rb-danger; margin-left: 2px; }
+
+.rb-input {
+  display: block;
+  width: 100%;
+  font-family: $rb-font-display;
+  font-size: $rb-text-base;
+  color: $rb-text;
+  background: $rb-bg;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-sm;
+  padding: $rb-space-3 $rb-space-4;
+  line-height: 1.5;
+  transition:
+    border-color $rb-duration-micro $rb-ease-out,
+    background   $rb-duration-micro $rb-ease-out,
+    box-shadow   $rb-duration-micro $rb-ease-out;
+
+  &::placeholder { color: $rb-text-dim; }
+
+  &:hover:not(:disabled) { border-color: $rb-border-hi; }
+
+  &:focus {
+    outline: none;
+    border-color: $rb-accent;
+    background: $rb-surface;
+    box-shadow: 0 0 0 3px $rb-accent-15;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.rb-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: $rb-font-display;
+  line-height: 1.6;
+}
+
+.rb-helper {
+  font-size: $rb-text-xs;
+  color: $rb-text-dim;
+}
+
+.rb-error {
+  font-size: $rb-text-xs;
+  color: $rb-danger;
+  font-weight: 500;
+}
+
+.rb-field-error .rb-input {
+  border-color: $rb-danger;
+  &:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
+}
+
+.rb-field-disabled { opacity: 0.6; }

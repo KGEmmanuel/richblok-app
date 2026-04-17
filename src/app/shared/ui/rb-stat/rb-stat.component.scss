@@ -1,0 +1,30 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+.rb-stat {
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-1;
+}
+
+.rb-stat-value {
+  font-family: $rb-font-mono;
+  font-variant-numeric: tabular-nums;
+  font-size: $rb-text-xl;
+  font-weight: 700;
+  line-height: 1;
+  color: $rb-text;
+  letter-spacing: $rb-tracking-tight;
+}
+
+.rb-stat-lg .rb-stat-value { font-size: $rb-text-3xl; }
+
+.rb-stat-accent .rb-stat-value { color: $rb-accent; }
+
+.rb-stat-label {
+  font-family: $rb-font-display;
+  font-size: $rb-text-xs;
+  font-weight: 500;
+  color: $rb-text-muted;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}

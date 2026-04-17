@@ -1,0 +1,50 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+:host(.rb-card) {
+  display: block;
+  background: $rb-surface;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-lg;
+  padding: $rb-space-6;
+  transition:
+    border-color $rb-duration-micro $rb-ease-out,
+    background   $rb-duration-micro $rb-ease-out;
+}
+
+:host(.rb-card.rb-card-flush) { padding: 0; }
+
+:host(.rb-card.rb-card-raised) {
+  background: $rb-surface-hi;
+  box-shadow: $rb-shadow-md;
+}
+
+:host(.rb-card.rb-card-interactive) {
+  cursor: pointer;
+
+  &:hover  { border-color: $rb-border-hi; background: $rb-surface-hi; }
+  &:focus-visible {
+    outline: 2px solid $rb-accent-25;
+    outline-offset: 2px;
+  }
+}
+
+// Title + eyebrow inside a card
+.rb-card-title {
+  margin: 0 0 $rb-space-4;
+  font-family: $rb-font-display;
+  font-size: $rb-text-lg;
+  font-weight: 700;
+  letter-spacing: $rb-tracking-tight;
+  color: $rb-text;
+}
+
+.rb-eyebrow {
+  display: inline-block;
+  font-family: $rb-font-mono;
+  font-size: $rb-text-xs;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $rb-accent;
+  margin-bottom: $rb-space-2;
+}

@@ -18,7 +18,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ResetComponent } from './auth/reset/reset.component';
 import { SignupComponent } from './auth/signup/signup.component';
-import { FeedComponent } from './feed/feed.component';
+// FeedComponent is standalone (V5 Sprint 0) — loaded via the route definition
 import { PostItemComponent } from './feed/post/post-item/post-item.component';
 import { PostFormComponent } from './feed/post/post-form/post-form.component';
 import { RecordComponent } from './record/record.component';
@@ -228,6 +228,30 @@ import { UniversityDashboardComponent } from './university-dashboard/university-
 // OnboardComponent is standalone + lazy-loaded
 import { AdminChallengesComponent } from './admin-challenges/admin-challenges.component';
 // SponsorChallengeComponent is standalone + lazy-loaded
+
+// V5 UI kit — global icon registration for lucide-angular. All Richblok
+// <rb-icon name="…"> uses must have their name listed here. Unregistered
+// names log a GlobalErrorHandler warning at render time.
+import {
+  LucideAngularModule,
+  Settings, Target, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
+  Clock, ArrowUp, ArrowRight, ArrowDown, ArrowLeft,
+  Check, CheckCircle, X, XCircle, Plus, Minus, Search,
+  Bell, User, Users, Bot, Sparkles, PartyPopper,
+  Clipboard, ClipboardCopy, Copy, ExternalLink, Link as LinkIcon,
+  Share2, Download, Upload,
+  FileText, File, Image as ImageIcon, Mail,
+  MessageSquare, MessageCircle,
+  Eye, EyeOff, Lock, Unlock, Shield, ShieldCheck,
+  Award, Trophy, Star, Briefcase, Calendar, Home,
+  Menu, MoreVertical, MoreHorizontal,
+  Edit, Edit2, Edit3, Trash, Trash2,
+  Filter, Info, AlertCircle, AlertTriangle, HelpCircle,
+  Tag, Zap, TrendingUp, BarChart, BarChart2,
+  LogOut, LogIn, RefreshCw, Loader,
+  Facebook, Twitter, Linkedin, Github,
+} from 'lucide-angular';
+
 @NgModule({
   declarations: [
     DndDirective,
@@ -235,7 +259,6 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
     LoginComponent,
     ResetComponent,
     SignupComponent,
-    FeedComponent,
     PostItemComponent,
     PostFormComponent,
     RecordComponent,
@@ -452,6 +475,26 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
       enabled: typeof window !== 'undefined' && (window as any).location.hostname !== 'localhost'
     }),
 
+    // V5 UI kit — global Lucide icon registration. Standalone <rb-icon>
+    // components in any lazy chunk can render any of these by name.
+    LucideAngularModule.pick({
+      Settings, Target, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
+      Clock, ArrowUp, ArrowRight, ArrowDown, ArrowLeft,
+      Check, CheckCircle, X, XCircle, Plus, Minus, Search,
+      Bell, User, Users, Bot, Sparkles, PartyPopper,
+      Clipboard, ClipboardCopy, Copy, ExternalLink, LinkIcon,
+      Share2, Download, Upload,
+      FileText, File, ImageIcon, Mail,
+      MessageSquare, MessageCircle,
+      Eye, EyeOff, Lock, Unlock, Shield, ShieldCheck,
+      Award, Trophy, Star, Briefcase, Calendar, Home,
+      Menu, MoreVertical, MoreHorizontal,
+      Edit, Edit2, Edit3, Trash, Trash2,
+      Filter, Info, AlertCircle, AlertTriangle, HelpCircle,
+      Tag, Zap, TrendingUp, BarChart, BarChart2,
+      LogOut, LogIn, RefreshCw, Loader,
+      Facebook, Twitter, Linkedin, Github,
+    }),
 
   ],
   providers: [
