@@ -1,0 +1,51 @@
+name: Pods cron
+
+# Pings Railway's /api/pods/* endpoints on schedule. Replaces cron-job.org.
+#
+# Two schedules:
+#   - every 30 min → /api/pods/deliver   (sends queued WhatsApp nudges via Twilio)
+#   - Mon 09:00 UTC → /api/pods/nudge    (generates the week's pod-nudge records)
+#
+# Requires one repo secret:
+#   PODS_CRON_SECRET   — the 48-char hex that gates the two endpoints
+#                        (same value that's set as a Railway env var on the main
+#                        service — Railway check at server.js ~/api/pods/nudge).
+#
+# GitHub Actions cron is free for public repos; for private repos it costs ~300
+# minutes/month at this cadence (deliver every 30min × 1 min run ≈ 48min/day).
+# Schedules can lag 5-15 min during peak GitHub load — fine for pods, not ideal
+# for latency-sensitive jobs.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # every 30 min — deliver queued nudges
+    - cron: '0 9 * * 1'      # Mon 09:00 UTC — emit nudges for active pods
+  workflow_dispatch:         # also allow manual run from the Actions tab
+
+jobs:
+  deliver:
+    if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping /api/pods/deliver
+        run: |
+          HTTP_CODE=$(curl -sS -o /tmp/body.txt -w "%{http_code}" \
+            "https://richblok-app-production-86b6.up.railway.app/api/pods/deliver?secret=${{ secrets.PODS_CRON_SECRET }}&limit=20")
+          echo "HTTP ${HTTP_CODE}"
+          cat /tmp/body.txt
+          # Fail the job on 4xx/5xx so GitHub surfaces the problem.
+          if [ "${HTTP_CODE}" -ge 400 ]; then exit 1; fi
+
+  nudge:
+    if: github.event.schedule == '0 9 * * 1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping /api/pods/nudge
+        run: |
+          HTTP_CODE=$(curl -sS -o /tmp/body.txt -w "%{http_code}" \
+            "https://richblok-app-production-86b6.up.railway.app/api/pods/nudge?secret=${{ secrets.PODS_CRON_SECRET }}")
+          echo "HTTP ${HTTP_CODE}"
+          cat /tmp/body.txt
+          if [ "${HTTP_CODE}" -ge 400 ]; then exit 1; fi
