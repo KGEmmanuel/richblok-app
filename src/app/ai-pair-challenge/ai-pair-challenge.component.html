@@ -200,8 +200,30 @@
       </rb-empty-state>
     </rb-card>
 
-    <!-- STEP 4: RESULT -->
-    <ng-container *ngIf="step === 'result' && score && challenge">
+    <!-- STEP 4: RESULT — pending human review (AI scorer degraded; NO badge). -->
+    <!-- TSEF-E2: This path must never show a score or imply a credential. -->
+    <ng-container *ngIf="step === 'result' && score && challenge && score.mode === 'pending_human_review'">
+      <section class="ap-hero">
+        <rb-eyebrow>Submission received · {{ challenge.titre }}</rb-eyebrow>
+        <h1 class="ap-h1">Queued for human review</h1>
+        <p class="ap-sub">
+          Automated scoring is temporarily unavailable, so a human reviewer will respond within 48h.
+          Your work is saved — no need to resubmit.
+        </p>
+      </section>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>What happens next</rb-card-title>
+        <div class="ap-feedback">{{ score.feedback }}</div>
+      </rb-card>
+
+      <div class="ap-cta-row">
+        <rb-button [routerLink]="['/feed']">Go to dashboard</rb-button>
+      </div>
+    </ng-container>
+
+    <!-- STEP 4: RESULT — real AI-scored response with overall score. -->
+    <ng-container *ngIf="step === 'result' && score && challenge && score.mode !== 'pending_human_review'">
       <section class="ap-hero">
         <rb-eyebrow>Your score · {{ challenge.titre }}</rb-eyebrow>
         <h1 class="ap-h1">
@@ -209,8 +231,8 @@
           <span class="ap-passed" *ngIf="score.scores.overall.passed">✓ Verified</span>
           <span class="ap-notpassed" *ngIf="!score.scores.overall.passed">Not yet passed — try again</span>
         </h1>
-        <p class="ap-sub" *ngIf="score.scores.overall.passed">
-          Top {{ 100 - score.scores.overall.percentile }}% of AI-pair submissions.
+        <p class="ap-sub" *ngIf="score.scores.overall.passed && score.scores.overall.percentile !== null">
+          Top {{ 100 - (score.scores.overall.percentile || 0) }}% of AI-pair submissions.
           Badge earned at <strong>{{ score.recommendedBadge.level }}</strong> level.
         </p>
       </section>
@@ -226,7 +248,7 @@
             <rb-stat [value]="score.scores.verification.score + '/100'" label="Verification discipline (35%)" accent />
             <p class="ap-score-notes">{{ score.scores.verification.notes }}</p>
           </div>
-          <div class="ap-score-row" *ngIf="score.scores.explainer.score > 0">
+          <div class="ap-score-row" *ngIf="(score.scores.explainer.score || 0) > 0">
             <rb-stat [value]="score.scores.explainer.score + '/100'" label="Explainer (10%)" />
             <p class="ap-score-notes">{{ score.scores.explainer.notes }}</p>
           </div>

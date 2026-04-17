@@ -29,17 +29,22 @@ interface ScoreDim {
 }
 
 interface ScoreResult {
-  mode: 'ai' | 'fallback' | 'fallback_error' | 'fallback_parse_error';
+  // After TSEF hardening: 'claude_sonnet' on real score, 'pending_human_review' on any degraded path.
+  // Legacy 'ai' / 'fallback*' kept only so an older server build doesn't crash the UI during rollout.
+  mode: 'claude_sonnet' | 'pending_human_review' | 'ai' | 'fallback' | 'fallback_error' | 'fallback_parse_error';
+  reason?: string;
+  promptVersion?: string;
   scores: {
     correctness:        ScoreDim;
     verification:       ScoreDim;
     explainer:          ScoreDim;
     cost_consciousness: ScoreDim;
-    overall:            { score: number; percentile: number; passed: boolean };
+    overall:            { score: number | null; percentile: number | null; passed: boolean | null };
   };
   feedback: string;
   aiCompetenciesDemonstrated: CompetencyTag[];
-  recommendedBadge: { earned: boolean; level: string; competencyTags: CompetencyTag[] };
+  recommendedBadge: { earned: boolean; level: string | null; competencyTags: CompetencyTag[] };
+  badgeId?: string | null;   // server-assigned; client no longer mints this
 }
 
 /**
@@ -207,9 +212,26 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
     this.step = 'scoring';
     this.cdr.markForCheck();
 
+    // TSEF-A3: Require a real signed-in user with a Firebase ID token.
+    // Server also enforces this, but blocking here gives a clearer UX.
     const user = await this.afAuth.authState.pipe(first()).toPromise();
-    const uid = user ? user.uid : 'anonymous';
-    const userName = user ? (user.displayName || user.email || '') : '';
+    if (!user) {
+      this.errorMsg = 'You need to be signed in to submit. Please sign in and retry.';
+      this.step = 'error';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // Firebase ID token — the server verifies this via admin SDK and extracts uid.
+    let idToken: string;
+    try {
+      idToken = await user.getIdToken();
+    } catch (err) {
+      this.errorMsg = 'Could not obtain auth token. Please sign in again.';
+      this.step = 'error';
+      this.cdr.markForCheck();
+      return;
+    }
 
     this.analytics.track('AiPairChallengeSubmitted', {
       slug: this.slug,
@@ -225,15 +247,17 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
       const resp = await this.http.post<ScoreResult>('/api/ai-pair/score', {
         challengeId:     this.challenge.id,
         challengeTitle:  this.challenge.titre,
+        challengeSlug:   this.challenge.slug,
         brief:           this.challenge.brief || this.challenge.description,
         successCriteria: this.challenge.successCriteria || this.challenge.conditionValidaation,
         transcript:      this.transcript,
         prDiff:          this.prDiff,
         explainer:       this.explainer,
         aiToolUsed:      this.aiToolUsed,
-        userName,
-        uid,
         elapsedSeconds:  this.elapsedSeconds
+        // NOTE: uid + userName removed — server reads them from the verified JWT.
+      }, {
+        headers: { Authorization: `Bearer ${idToken}` }
       }).toPromise();
 
       this.score = resp!;
@@ -248,47 +272,22 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
         mode: resp!.mode
       });
 
-      // If passed, write a badge record with AI-tool metadata
-      if (resp!.recommendedBadge.earned && uid !== 'anonymous') {
-        await this.issueBadge(resp!, userName, uid);
+      // TSEF-A2: Badge is written server-side. The client no longer mints it.
+      // If the server issued one, `badgeId` is present — fire the analytics only.
+      if (resp!.recommendedBadge.earned && resp!.badgeId) {
+        this.analytics.track('BadgeEarned', {
+          content_type: 'badge',
+          content_id: resp!.badgeId,
+          challengeFormat: 'ai_pair',
+          aiTool: this.aiToolUsed
+        });
       }
     } catch (err) {
       const e: any = err;
+      // Surface server error messages (401/429/400) directly — they're user-actionable.
       this.errorMsg = e?.error?.error || e?.message || 'Scoring failed. Your work is not lost — try again.';
       this.step = 'error';
       this.cdr.markForCheck();
-    }
-  }
-
-  private async issueBadge(result: ScoreResult, userName: string, uid: string) {
-    if (!this.challenge) { return; }
-    try {
-      const badgeRef = await this.afs.collection('badges').add({
-        uid,
-        userName,
-        skill: (this.challenge.skills || [])[0] || 'AI-Pair',
-        level: result.recommendedBadge.level,
-        score: result.scores.overall.score,
-        percentile: result.scores.overall.percentile,
-        passed: result.scores.overall.passed,
-        earnedAt: new Date(),
-        challengeId: this.challenge.id,
-        challengeSlug: this.challenge.slug,
-        challengeFormat: 'ai_pair',
-        // F20 additions — tool-agnostic badge metadata
-        ai_tool_used: this.aiToolUsed,
-        ai_competencies: result.aiCompetenciesDemonstrated,
-        verification_score: result.scores.verification.score,
-        cost_consciousness_score: result.scores.cost_consciousness.score
-      });
-      this.analytics.track('BadgeEarned', {
-        content_type: 'badge',
-        content_id: badgeRef.id,
-        challengeFormat: 'ai_pair',
-        aiTool: this.aiToolUsed
-      });
-    } catch (err) {
-      console.warn('[ai-pair] badge write failed:', err);
     }
   }
 
