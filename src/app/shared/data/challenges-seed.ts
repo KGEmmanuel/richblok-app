@@ -856,5 +856,173 @@ The module uses an in-memory Map keyed by IP, with a sliding window. Tests in \`
 - [ ] At least one test exists that would catch the original bug (i.e. if you revert your fix, the test fails).
 - [ ] No new npm dependency added.
 - [ ] Your transcript shows at least one instance of you pushing back on, fact-checking, or correcting AI output.`
+  },
+
+  {
+    slug: 'ai-pair-n-plus-one-query',
+    titre: 'AI-Pair Challenge · Kill the N+1 query',
+    skills: ['SQL', 'ORM', 'Performance', 'AI-Pair'],
+    description: 'A list endpoint is 15s slow in production. The query looks fine in code but the DB is doing 400+ queries per request. Fix with any AI tool.',
+    objectif: 'Ship a fix that drops query count from 400+ to <5',
+    objectifEtape: 'Submit PR diff + full AI transcript + optional explainer',
+    conditionValidaation: 'Overall score >= 60 (weighted 40% correctness, 35% verification, 10% explainer, 15% cost)',
+    question: 'Can you diagnose ORM pathologies when the AI wants to reach for Redis?',
+    language: 'EN',
+    type: 'AI_PAIR',
+    creatorType: 'SYS',
+    duree: 2700,
+    note: 60,
+    questions: [],
+    image: '/assets/rb/challenge-sql.svg',
+    competencyTags: ['ai_pair_programming', 'verification_discipline', 'ai_cost_consciousness', 'decision_making', 'pressure_performance'],
+    challengeFormat: 'ai_pair',
+    estimatedDuration: '45 minutes',
+    timerSeconds: 2700,
+    aiAllowed: true,
+    starterRepoUrl: 'https://github.com/KGEmmanuel/richblok-ai-pair-n-plus-one',
+    brief: `# The symptom
+
+\`GET /api/orders\` returns 200 orders and is 15s slow in production. The controller code reads as 4 lines. The DB CPU graph spikes every time the endpoint is hit.
+
+Running \`ANALYZE\` on the DB during a request shows 400+ individual queries against the \`users\`, \`products\`, and \`shipping_addresses\` tables.
+
+# What you ship
+
+1. A fix that drops the query count per request to fewer than 5.
+2. A test (integration or query-log assertion) that would catch the regression if anyone re-introduces it.
+3. No behavior change: the JSON response shape is the same.
+
+# Constraints
+
+- Don't add Redis or any cache layer. The fix must be at the query level.
+- Don't change the DB schema.
+- Don't denormalize. The orders table must stay normalized.
+- Keep the response JSON backwards-compatible (same keys, same shape).
+
+# Verification traps to watch for (the AI may fall for these)
+
+- The AI may suggest caching. Push back — caching hides the bug, doesn't fix it.
+- The AI may suggest \`.includes()\` / eager-load without checking which associations are actually used in the response. A correct fix loads only what the serializer touches.
+- The \`shipping_addresses\` table has a polymorphic association (\`addressable_type\`, \`addressable_id\`) — naive eager-load will silently skip it.
+- The test suite runs against SQLite but production is Postgres; some eager-load patterns silently fall back to N+1 on one but not the other. Catch this.`,
+    successCriteria: `- [ ] Query count per \`/api/orders\` request is < 5 (measured with your ORM's query log or a proxy like pg_stat_statements).
+- [ ] No caching layer introduced.
+- [ ] Polymorphic \`shipping_addresses\` association is eager-loaded correctly.
+- [ ] JSON response shape is unchanged.
+- [ ] A test exists that asserts on query count (not just correctness).
+- [ ] Your transcript shows at least one instance of you pushing back on a caching suggestion or fact-checking an ORM claim.`
+  },
+
+  {
+    slug: 'ai-pair-stale-closure-hook',
+    titre: 'AI-Pair Challenge · Debug the stale-closure React bug',
+    skills: ['React', 'Hooks', 'Debugging', 'AI-Pair'],
+    description: 'A search input works fine in dev but returns stale results in production. useEffect has a missing dep. Fix it without silencing the linter.',
+    objectif: 'Ship a fix that survives React 18 strict-mode and prod concurrent rendering',
+    objectifEtape: 'Submit PR diff + full AI transcript + optional explainer',
+    conditionValidaation: 'Overall score >= 60 (weighted 40% correctness, 35% verification, 10% explainer, 15% cost)',
+    question: 'Can you reason about closures, re-renders, and concurrent mode when the AI wants to //eslint-disable?',
+    language: 'EN',
+    type: 'AI_PAIR',
+    creatorType: 'SYS',
+    duree: 2700,
+    note: 60,
+    questions: [],
+    image: '/assets/rb/challenge-react.svg',
+    competencyTags: ['ai_pair_programming', 'verification_discipline', 'decision_making', 'ai_cost_consciousness', 'pressure_performance'],
+    challengeFormat: 'ai_pair',
+    estimatedDuration: '45 minutes',
+    timerSeconds: 2700,
+    aiAllowed: true,
+    starterRepoUrl: 'https://github.com/KGEmmanuel/richblok-ai-pair-stale-closure',
+    brief: `# The symptom
+
+A search autocomplete in \`src/components/SearchBar.tsx\` shows the right results in dev mode but in production (React 18 strict-mode, no double-invoke) it sometimes shows results for an older query. Users report typing "react" then "vue" and seeing React results appear under "vue".
+
+The component uses \`useEffect\` + \`fetch\` with an abort controller. The eslint-plugin-react-hooks warning was silenced with \`// eslint-disable-next-line react-hooks/exhaustive-deps\`.
+
+# What you ship
+
+1. A fix that makes the bug un-reproducible in strict-mode + React 18 concurrent rendering.
+2. The eslint-disable comment is removed (or replaced with a lint-clean implementation).
+3. A test (unit or integration) that reliably reproduces the race before your fix, and passes after.
+
+# Constraints
+
+- Don't add state management libraries (no Redux, Zustand, etc.). Stay in React.
+- Don't disable strict-mode or downgrade React.
+- The fetch call stays — don't move it to a server component.
+
+# Verification traps to watch for (the AI may fall for these)
+
+- The AI will likely suggest re-enabling the lint rule by adding the missing dep. Sometimes that's correct. Sometimes that causes infinite loops. Figure out which case applies.
+- \`useRef\` for the latest query is tempting but creates a different class of race (ref updates don't trigger effect re-runs). Catch this.
+- The abort controller usage has a subtle bug: it's created inside the effect and the effect's cleanup runs after the next render starts, not before. Mentioning this is a bonus.
+- The test suite uses jest.fakeTimers() for the debounce, which will NOT catch the stale-closure bug on its own. You need an async test.`,
+    successCriteria: `- [ ] \`// eslint-disable-next-line react-hooks/exhaustive-deps\` is removed.
+- [ ] Component works correctly under strict-mode double-invoke.
+- [ ] A test reliably reproduces the stale-closure race before your fix (assertion fails on old code).
+- [ ] Same test passes after your fix.
+- [ ] No new state-management library added.
+- [ ] Your transcript shows at least one case of you rejecting an AI suggestion (e.g. "just add it to deps" when that creates a loop).`
+  },
+
+  {
+    slug: 'ai-pair-cors-security-bug',
+    titre: 'AI-Pair Challenge · Fix the CORS security hole',
+    skills: ['Security', 'HTTP', 'Express', 'AI-Pair'],
+    description: 'The API accepts credentialed requests from any origin. A pentest flagged it. The obvious AI fix is wrong. Ship a correct one.',
+    objectif: 'Ship a fix that satisfies the spec AND the actual threat model',
+    objectifEtape: 'Submit PR diff + full AI transcript + optional explainer',
+    conditionValidaation: 'Overall score >= 60 (weighted 40% correctness, 35% verification, 10% explainer, 15% cost)',
+    question: 'Can you tell a real security fix from a placebo when the AI writes confident-sounding CORS config?',
+    language: 'EN',
+    type: 'AI_PAIR',
+    creatorType: 'SYS',
+    duree: 2700,
+    note: 60,
+    questions: [],
+    image: '/assets/rb/challenge-product.svg',
+    competencyTags: ['ai_pair_programming', 'verification_discipline', 'decision_making', 'ai_cost_consciousness', 'learning_from_failure'],
+    challengeFormat: 'ai_pair',
+    estimatedDuration: '45 minutes',
+    timerSeconds: 2700,
+    aiAllowed: true,
+    starterRepoUrl: 'https://github.com/KGEmmanuel/richblok-ai-pair-cors-bug',
+    brief: `# The pentest report
+
+> SEV-2: The API at \`/api/*\` returns \`Access-Control-Allow-Origin: *\` while also accepting cookies and \`Authorization\` headers via credentialed requests. Any page on the internet can read authenticated responses for a logged-in user.
+
+The current CORS middleware is in \`src/middleware/cors.ts\`. It uses \`cors\` npm package with \`{ origin: '*', credentials: true }\`.
+
+Product has given you a list of 3 allowed origins:
+- \`https://app.example.com\` (main web app)
+- \`https://admin.example.com\` (internal admin)
+- \`https://*.preview.example.com\` (PR preview URLs, dynamic subdomain per PR)
+
+# What you ship
+
+1. A fix to \`cors.ts\` that only allows credentialed requests from the 3 allowed origin patterns above.
+2. At least one test that sends a credentialed request from a non-allowed origin and asserts it's blocked.
+3. Production logs should be able to tell the difference between a legit cross-origin request and a blocked one (for ops monitoring).
+
+# Constraints
+
+- You can keep the \`cors\` npm package OR write your own — your call. Explain the tradeoff in your transcript if you pick one.
+- No \`Access-Control-Allow-Origin: null\` anywhere (that's its own vulnerability).
+- No regex that matches too broadly (e.g. \`*.example.com\` also matching \`evil.example.com.attacker.com\`).
+
+# Verification traps to watch for (the AI may fall for these)
+
+- **The confident-wrong fix:** AI will often suggest \`origin: '*', credentials: true\`. Browsers reject this on the client side, but it's still a misconfig — some tools (postman, curl, legacy clients) don't enforce it. Catch this.
+- **Subdomain regex blind spot:** \`/.*\\.preview\\.example\\.com/\` matches \`attacker.com.preview.example.com.evil.com\`. You need anchored regex.
+- **Null origin:** some fetch flows (opaque redirects, data: URIs) send \`Origin: null\`. AI may suggest allowing it — don't.
+- **Preflight vs actual:** CORS failures on preflight (OPTIONS) look different from failures on the actual request. Make sure your test catches both paths.`,
+    successCriteria: `- [ ] \`origin: '*'\` with \`credentials: true\` is gone.
+- [ ] Only the 3 allowed origin patterns can make credentialed requests.
+- [ ] Subdomain regex for preview URLs is anchored (\`^https://[a-z0-9-]+\\.preview\\.example\\.com$\`).
+- [ ] \`Origin: null\` is explicitly rejected.
+- [ ] At least one test sends a credentialed request from \`https://attacker.com\` and asserts it's blocked on both preflight and actual request.
+- [ ] Your transcript shows at least one case of you rejecting an AI suggestion that would have re-introduced a security hole.`
   }
 ];
