@@ -29,7 +29,7 @@ interface SeedChallenge {
   conditionValidaation: string;
   question: string;
   language: 'EN';
-  type: 'SKILL';
+  type: 'SKILL' | 'AI_PAIR';
   creatorType: 'SYS';
   duree: number;
   note: number;
@@ -37,8 +37,14 @@ interface SeedChallenge {
   image: string;
   // v3 additions
   competencyTags?: string[];
-  challengeFormat?: 'solo_capstone' | 'team' | 'hackathon' | 'pivot' | 'review' | 'oss';
+  challengeFormat?: 'solo_capstone' | 'team' | 'hackathon' | 'pivot' | 'review' | 'oss' | 'ai_pair';
   estimatedDuration?: string;
+  // v4 F17 additions — AI-pair fields
+  brief?: string;
+  starterRepoUrl?: string;
+  successCriteria?: string;
+  timerSeconds?: number;
+  aiAllowed?: boolean;
 }
 
 const D = 60;             // default 60s per question
@@ -793,5 +799,62 @@ export const CHALLENGES_SEED: SeedChallenge[] = [
     competencyTags: ['leadership', 'decision_making', 'learning_from_failure', 'initiative'],
     challengeFormat: 'solo_capstone',
     estimatedDuration: '20 minutes'
+  },
+
+  // ========== PRD v4 F17 — AI-pair challenges ==========
+  // These use the new AI_PAIR challenge format. Candidates get 45 min with
+  // any AI tool of their choice. Submission = PR diff + full transcript +
+  // optional explainer. Scored by Claude across 4 dimensions.
+  {
+    slug: 'ai-pair-rate-limit-bug',
+    titre: 'AI-Pair Challenge · Fix the rate-limit bug',
+    skills: ['Node.js', 'Express', 'Debugging', 'AI-Pair'],
+    description: 'A broken rate-limiter is letting requests through. Fix it with any AI tool. We score correctness, verification discipline, and cost-consciousness.',
+    objectif: 'Ship a correct patch + demonstrate verification discipline',
+    objectifEtape: 'Submit PR diff + full AI transcript + optional explainer',
+    conditionValidaation: 'Overall score >= 60 (weighted 40% correctness, 35% verification, 10% explainer, 15% cost)',
+    question: 'Can you ship real work with an AI agent AND catch its mistakes?',
+    language: 'EN',
+    type: 'AI_PAIR',
+    creatorType: 'SYS',
+    duree: 2700,
+    note: 60,
+    questions: [],
+    image: '/assets/rb/challenge-react.svg',
+    competencyTags: ['ai_pair_programming', 'verification_discipline', 'ai_cost_consciousness', 'pressure_performance', 'decision_making'],
+    challengeFormat: 'ai_pair',
+    estimatedDuration: '45 minutes',
+    timerSeconds: 2700,
+    aiAllowed: true,
+    starterRepoUrl: 'https://github.com/KGEmmanuel/richblok-ai-pair-rate-limit',
+    brief: `# The bug
+
+A rate-limiter in \`src/middleware/rate-limit.ts\` is supposed to allow 10 requests per minute per IP. Production logs show it's letting through 30+ requests/min from the same IP. A user has been hammering the /login endpoint for 6 hours.
+
+The module uses an in-memory Map keyed by IP, with a sliding window. Tests in \`test/rate-limit.test.ts\` are passing (they shouldn't be).
+
+# What you ship
+
+1. A fix to \`rate-limit.ts\` that actually enforces the limit.
+2. At least one failing test that now passes, OR a new test that catches the regression.
+3. No behavior change to other code paths (don't refactor unrelated things).
+
+# Constraints
+
+- Don't add a new dependency. Stay on \`express\` + \`node:*\`.
+- Don't use \`setInterval\` — the module must be stateless beyond the Map.
+- Must work correctly with concurrent requests (Node is single-threaded but async).
+
+# Verification traps to watch for (the AI may fall for these)
+
+- The existing tests use mocked \`Date.now()\` in a way that hides the bug. Catch this.
+- A naive fix "while time < now - 60s, shift" creates an O(n²) on bursts. Catch this too.
+- The IP key uses \`req.ip\` which behind a proxy is always the proxy IP. Optional: note this in your explainer.`,
+    successCriteria: `- [ ] Rate-limit bug is fixed. Manual check: sending 11 requests in < 60s gets a 429 on request 11.
+- [ ] Fix does not rely on setInterval or setTimeout for cleanup.
+- [ ] Test suite passes AFTER the fix (green).
+- [ ] At least one test exists that would catch the original bug (i.e. if you revert your fix, the test fails).
+- [ ] No new npm dependency added.
+- [ ] Your transcript shows at least one instance of you pushing back on, fact-checking, or correcting AI output.`
   }
 ];

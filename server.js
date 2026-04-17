@@ -112,6 +112,9 @@ app.use('/api/coach', express.json({ limit: '100kb' }));
 app.use('/api/coach/stream', express.json({ limit: '100kb' }));
 app.use('/api/cv-extract', express.json({ limit: '12mb' }));
 app.use('/api/cv-to-star', express.json({ limit: '200kb' }));
+// F17 AI-pair: transcripts can be large (claude-code .jsonl multi-turn sessions)
+// so allow up to 5mb. Most submissions will be <500kb.
+app.use('/api/ai-pair/score', express.json({ limit: '5mb' }));
 app.use('/api/stripe/checkout', express.json({ limit: '16kb' }));
 app.use('/api/stripe/portal', express.json({ limit: '8kb' }));
 app.use('/api/pods/match', express.json({ limit: '32kb' }));
@@ -1420,6 +1423,185 @@ try {
   console.warn('[ssr] init failed (non-fatal, serving SPA):', e.message);
   ssrEngine = null;
 }
+
+/* =========================================================================
+ * F17 AI-pair challenge scoring endpoint
+ *
+ * POST /api/ai-pair/score
+ * Body: {
+ *   challengeId:    string,
+ *   challengeTitle: string,
+ *   brief:          string,    // what the candidate was asked to ship
+ *   successCriteria:string,    // bullet list the scorer checks against
+ *   transcript:     string,    // full AI agent transcript (jsonl, markdown, or plaintext)
+ *   prDiff:         string,    // the candidate's final patch (unified diff format)
+ *   explainer?:     string,    // optional 5-min async explanation
+ *   aiToolUsed:     AiTool,
+ *   userName?:      string,
+ *   uid?:           string,
+ *   elapsedSeconds: number     // how long the candidate took
+ * }
+ *
+ * Returns: {
+ *   mode: 'ai' | 'fallback',
+ *   scores: {
+ *     correctness:        { score: 0-100, notes: string },
+ *     verification:       { score: 0-100, notes: string },
+ *     explainer:          { score: 0-100, notes: string },
+ *     cost_consciousness: { score: 0-100, notes: string },
+ *     overall:            { score: 0-100, percentile: number, passed: boolean }
+ *   },
+ *   feedback: string,          // 2-3 paragraphs of coaching feedback
+ *   aiCompetenciesDemonstrated: CompetencyTag[],    // subset of AI-native tags earned
+ *   recommendedBadge: { earned: boolean, level: 'junior'|'mid'|'senior', competencyTags: CompetencyTag[] }
+ * }
+ *
+ * Scoring is done by Claude Sonnet reading the three artifacts + the brief.
+ * Falls back to a structured templated response if ANTHROPIC_API_KEY is unset.
+ * ========================================================================= */
+app.post('/api/ai-pair/score', async (req, res) => {
+  const p = req.body || {};
+  const required = ['challengeId', 'brief', 'transcript', 'prDiff'];
+  for (const f of required) {
+    if (!p[f]) return res.status(400).json({ error: `${f} is required` });
+  }
+
+  const transcript = String(p.transcript).substring(0, 120000);   // cap at ~30k tokens
+  const prDiff     = String(p.prDiff).substring(0, 40000);
+  const explainer  = p.explainer ? String(p.explainer).substring(0, 8000) : '';
+  const aiTool     = p.aiToolUsed || 'other';
+  const elapsed    = parseInt(p.elapsedSeconds, 10) || 0;
+
+  // Fallback when AI isn't configured — gives a structured-but-generic score
+  // so the UI can render something plausible during dev without spending tokens.
+  function fallbackScore() {
+    return {
+      mode: 'fallback',
+      scores: {
+        correctness:        { score: 70, notes: 'Automated scoring unavailable; treating submission as default pass-through score pending human review.' },
+        verification:       { score: 70, notes: 'Transcript heuristics unavailable without AI scoring.' },
+        explainer:          { score: explainer ? 70 : 0, notes: explainer ? 'Explainer provided.' : 'No explainer provided.' },
+        cost_consciousness: { score: 70, notes: 'Token cost heuristics unavailable without AI scoring.' },
+        overall:            { score: 70, percentile: 50, passed: true }
+      },
+      feedback: 'Your submission was received. Automated scoring is unavailable right now — a human reviewer will follow up within 48 hours with detailed feedback.',
+      aiCompetenciesDemonstrated: ['ai_pair_programming'],
+      recommendedBadge: { earned: true, level: 'mid', competencyTags: ['ai_pair_programming'] }
+    };
+  }
+
+  if (!ANTHROPIC_API_KEY) {
+    return res.json(fallbackScore());
+  }
+
+  const system = `You are an expert technical hiring manager scoring AI-pair programming challenges on Richblok.
+
+You evaluate four dimensions, each 0-100:
+
+1. **Correctness** — Does the candidate's PR diff actually implement what the brief asked for? Does it pass the success criteria? Would you accept this PR in production?
+
+2. **Verification discipline** — Did the candidate catch AI mistakes during the session? Did they fact-check AI claims, push back on bad suggestions, verify the AI's output compiles/runs, or blindly copy? This is the single most important signal for employers.
+
+3. **Explainer clarity** — If an explainer is provided, does the candidate clearly articulate their decisions, trade-offs, and what they learned? If no explainer, score 0 (not penalized in overall if omitted).
+
+4. **Cost consciousness** — Did the candidate use AI tokens responsibly? Signals of waste: long "please fix this" hail-mary prompts, re-generating entire files to change one line, not leveraging tool use efficiently.
+
+Output strict JSON matching this schema:
+{
+  "scores": {
+    "correctness": { "score": <0-100>, "notes": "<1-2 sentences>" },
+    "verification": { "score": <0-100>, "notes": "<1-2 sentences>" },
+    "explainer": { "score": <0-100>, "notes": "<1-2 sentences>" },
+    "cost_consciousness": { "score": <0-100>, "notes": "<1-2 sentences>" },
+    "overall": { "score": <0-100, weighted 40% correctness, 35% verification, 10% explainer, 15% cost>, "percentile": <0-100 estimate>, "passed": <true if overall >= 60> }
+  },
+  "feedback": "<2-3 paragraph coaching feedback — specific, actionable, honest. Cite concrete lines from the transcript or diff.>",
+  "aiCompetenciesDemonstrated": [<subset of: "ai_pair_programming", "ai_tool_orchestration", "verification_discipline", "ai_cost_consciousness">],
+  "recommendedBadge": {
+    "earned": <true if overall >= 60>,
+    "level": <"junior" if overall < 70, "mid" if 70-85, "senior" if > 85>,
+    "competencyTags": [<same as aiCompetenciesDemonstrated>]
+  }
+}
+
+Rules:
+- Be rigorous. Do not inflate scores. A 70 is "competent, would hire at mid-level remote." A 50 is "needs work."
+- If the transcript shows the candidate blindly accepting AI output without verification, cap verification at 40.
+- If the PR diff is empty or trivially wrong, cap correctness at 30.
+- If aiToolUsed == 'none', score cost_consciousness as 100 but note the candidate did the work without AI assistance (different credential).`;
+
+  const userPrompt = `# Challenge
+Title: ${p.challengeTitle || p.challengeId}
+AI tool used: ${aiTool}
+Elapsed time: ${elapsed} seconds (${Math.round(elapsed/60)} min)
+Candidate: ${p.userName || '(anonymous)'}
+
+## Brief
+${p.brief}
+
+## Success Criteria
+${p.successCriteria || '(not provided)'}
+
+## Candidate's PR Diff
+\`\`\`diff
+${prDiff}
+\`\`\`
+
+## AI Session Transcript
+\`\`\`
+${transcript}
+\`\`\`
+
+${explainer ? `## Candidate's Explainer\n${explainer}\n` : ''}
+
+Score this submission.`;
+
+  try {
+    const { content } = await callClaude({
+      model: CLAUDE_MODEL,
+      system,
+      userMessage: userPrompt,
+      maxTokens: 2000,
+      temperature: 0.2
+    });
+
+    // Extract the JSON — Claude may wrap it in markdown code fences
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('[ai-pair/score] no JSON in response:', content.substring(0, 200));
+      return res.json({ ...fallbackScore(), mode: 'fallback_parse_error' });
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonMatch[0]);
+    } catch (e) {
+      console.error('[ai-pair/score] JSON parse failed:', e.message);
+      return res.json({ ...fallbackScore(), mode: 'fallback_parse_error' });
+    }
+
+    // Validate required fields; fill safe defaults if missing
+    const scores = parsed.scores || {};
+    const overall = scores.overall || { score: 0, percentile: 0, passed: false };
+
+    res.json({
+      mode: 'ai',
+      scores: {
+        correctness:        scores.correctness        || { score: 0, notes: '' },
+        verification:       scores.verification       || { score: 0, notes: '' },
+        explainer:          scores.explainer          || { score: 0, notes: '' },
+        cost_consciousness: scores.cost_consciousness || { score: 0, notes: '' },
+        overall
+      },
+      feedback: parsed.feedback || '(no feedback)',
+      aiCompetenciesDemonstrated: Array.isArray(parsed.aiCompetenciesDemonstrated) ? parsed.aiCompetenciesDemonstrated : [],
+      recommendedBadge: parsed.recommendedBadge || { earned: false, level: 'mid', competencyTags: [] }
+    });
+  } catch (err) {
+    console.error('[ai-pair/score] Claude error:', err.message);
+    res.json({ ...fallbackScore(), mode: 'fallback_error', error: err.message });
+  }
+});
 
 // Serve static files from the Angular build
 app.use(express.static(path.join(__dirname, 'dist'), { index: false }));

@@ -258,9 +258,9 @@ P1 = next, P2 = opportunistic).
 
 | ID | Feature | Priority | Effort |
 |---|---|---|---|
-| **F17** | **AI-pair challenge format**: user gets a broken repo + 45 min + any AI tool of choice. Submits PR + full agent transcript + optional 5-min async explainer. Scored on correctness (auto), transcript quality (LLM-scored), explainer clarity (optional human review). | **P0 NEW** | L (3-5 days) |
+| **F17** | **AI-pair challenge format**: user gets a broken repo + 45 min + any AI tool of choice. Submits PR + full agent transcript + optional 5-min async explainer. Scored on correctness (auto), transcript quality (LLM-scored), explainer clarity (optional human review). | **P0 NEW** | **✅ MVP SHIPPED** — on branch `feat/f17-ai-pair-challenge` |
 | **F18** | **Transcript ingestion**: new mode of `/api/cv-extract` that accepts Claude Code `.jsonl`, Cursor chat export, Codex transcript, or pasted markdown. Auto-drafts STAR stories with `ai_pair_programming` tag. | **P0 NEW** | M (2 days) — reuses existing CV extract pipeline |
-| **F19** | **AI-competency tags on STAR profile**: add `ai_pair_programming`, `ai_tool_orchestration`, `verification_discipline`, `ai_cost_consciousness` to taxonomy. Questions, prompts, draft answers all extended. | **P0 NEW** | S (1 day) — data model + seed questions |
+| **F19** | **AI-competency tags on STAR profile**: add `ai_pair_programming`, `ai_tool_orchestration`, `verification_discipline`, `ai_cost_consciousness` to taxonomy. Questions, prompts, draft answers all extended. | **✅ SHIPPED** (with F17) | S |
 | **F20** | **Tool-agnostic badge metadata**: badge JSON now encodes `ai_tool_used` (Claude / Cursor / Copilot / Codex / None) as metadata. Badge page renders the tool logo in the OG image. Employer dashboard filters on it. | **P1 NEW** | M (1-2 days) |
 | **F21** | **AI-vendor sponsored challenges**: extend F14 so Anthropic, Cursor, etc. can sponsor a challenge branded with their tool. Top 10 performers get vendor-specified reward (access, interview fast-track, cash). | **P1 NEW** | S (1 day) — extends existing F14 schema |
 | **F22** | **Employer dashboard "verified AI-native" filter**: boolean toggle surfaces only candidates with ≥1 F17 badge. Adds a tool-breakdown pie chart (% using Claude / Cursor / etc.) | **P1 NEW** | S (half day) — extends existing competency filter |
@@ -494,6 +494,65 @@ validated and we retrench to v3 scope.
 
 Three capabilities are **unique to Richblok v4** and together form the
 defensible position. Any competitor copying one would need all three to win.
+
+---
+
+## Appendix B — F17 implementation log (April 2026)
+
+**Branch**: `feat/f17-ai-pair-challenge`
+**Status**: MVP shipped, ready for Railway preview smoke test + merge
+**Time to MVP**: 1 session (~4 hours)
+
+### Files changed / created
+
+**Data model**:
+- `src/app/shared/entites/Challenge.ts` — `CompetencyTag` extended with 4 AI tags (`ai_pair_programming`, `ai_tool_orchestration`, `verification_discipline`, `ai_cost_consciousness`); new `ChallengeFormat` type adds `'ai_pair'`; new `AiTool` type union enumerates 10 tools + `'none'` baseline; `Challenge` class gets `brief`, `starterRepoUrl`, `successCriteria`, `timerSeconds`, `aiAllowed` optional fields
+- `src/app/shared/entites/StarProfile.ts` — `COMPETENCY_LABELS` and `COMPETENCY_QUESTIONS` extended with the 4 new AI-native tags
+
+**Server endpoint**:
+- `server.js` — new `POST /api/ai-pair/score` endpoint. Accepts transcript + PR diff + optional explainer. Calls Claude Sonnet with a rigorous rubric (correctness 40%, verification discipline 35%, explainer 10%, cost consciousness 15%). Returns structured JSON with per-dimension scores, coaching feedback, AI competencies demonstrated, and badge recommendation. Graceful templated fallback when `ANTHROPIC_API_KEY` is unset. 5mb body limit to accept large transcripts.
+
+**Angular component** (standalone, lazy-loaded):
+- `src/app/ai-pair-challenge/ai-pair-challenge.component.ts` — 4-step state machine: `loading` → `brief` → `submit` → `scoring` → `result` / `error`. Uses V5 UI kit exclusively (rb-card, rb-button, rb-chip, rb-icon, rb-stat, rb-empty-state). Loads challenge by slug from Firestore. Starts 45-min timer on user click. On submit, posts to `/api/ai-pair/score`. If `recommendedBadge.earned` is true, writes a `badges` Firestore record with F20 tool-agnostic metadata (`ai_tool_used`, `ai_competencies`, `verification_score`, `cost_consciousness_score`).
+- `src/app/ai-pair-challenge/ai-pair-challenge.component.html` — 4 sections conditional on `step`: brief card + scorecard + tool selector, then submission form (PR diff textarea + transcript textarea + optional explainer), then scoring loader, then 4-dimension breakdown + coach feedback + earned competency chips + CTAs to dashboard or next challenge.
+- `src/app/ai-pair-challenge/ai-pair-challenge.component.scss` — V5 tokens only. Distinctive: top-nav timer pill with 3 states (normal, warn at ≤5 min, over with pulse-red animation), score-breakdown rows, feedback markdown rendering.
+
+**Seed content**:
+- `src/app/shared/data/challenges-seed.ts` — `SeedChallenge` interface extended to accept `type: 'AI_PAIR'`, `challengeFormat: 'ai_pair'`, and the 5 F17 AI-pair fields. One new seed: `slug: 'ai-pair-rate-limit-bug'` — a rate-limiter bug in `src/middleware/rate-limit.ts` with 4 verification traps (mocked `Date.now`, O(n²) on bursts, proxy-IP issue, etc.). Candidate must fix + catch the traps.
+
+**Routing**:
+- `src/app/app-routing.module.ts` — new lazy route `/ai-pair/:slug` with `AuthGuard`.
+
+### What F17 MVP does NOT include (documented for the next sprint)
+
+1. **Automated test-runner scoring** — for now, correctness is LLM-judged from the PR diff. A future version could clone the starter repo, apply the diff in an isolated container, run the test suite, and feed exit-code + test output into the correctness score. That's F17.1 — meaningful but not MVP.
+2. **Human review workflow** — badges auto-issue on AI-score >= 60. A manual re-verification queue for disputed scores is a v4.5 add-on.
+3. **Sponsored AI-pair challenges** — extends cleanly from F21 (which reuses F14). A sponsor gets their challenge branded, recruiting pipeline from top performers, ~$2-5K per sponsorship. F21 implementation reuses the existing Stripe one-off checkout flow.
+4. **Public discovery page** — `/ai-native` (F23) lists top 100 AI-pair badge holders. Depends on F22 "verified AI-native" filter UI. Easy to build once F17 produces real badges.
+5. **Weekly leaderboard + WhatsApp broadcast** — F24, uses the existing Twilio pod-nudge infra.
+
+### Smoke-test path (what to verify on Railway preview before merging to master)
+
+1. Switch Railway preview service to branch `feat/f17-ai-pair-challenge`, wait for auto-deploy.
+2. Seed the challenge: navigate to `/admin/seed-challenges` as admin; click re-seed.
+3. Visit `/ai-pair/ai-pair-rate-limit-bug` (AuthGuard requires login).
+4. Verify:
+   - Brief renders as markdown with success criteria + starter repo link
+   - 4 scoring dimensions explained with weights
+   - Tool-selector dropdown shows 11 options (10 tools + 'none' baseline)
+   - "Start timer" button begins countdown (visible top-right pill)
+   - Submit form appears, PR diff + transcript fields required
+   - Submit disabled until >= 60 sec elapsed AND both required fields filled
+   - After submit, "Scoring your submission..." spinner
+   - Result page shows 4 score rows + coach feedback + earned competencies
+5. Check Firestore: `badges` collection has new doc with `challengeFormat: 'ai_pair'`, `ai_tool_used`, `verification_score`, `cost_consciousness_score` fields.
+
+### Revenue hypothesis check
+
+Once F17 ships to production and the first public AI-pair challenge runs:
+- If 500+ candidates complete in week 1 → PRD v4 validated, double-down on F20/F22/F23/F24.
+- If < 100 complete → the format has a UX or positioning gap; iterate on the brief quality + landing copy + distribution channels.
+- Either way, F21 (sponsored challenges) becomes viable revenue once >= 200 candidates exist in the network.
 
 ---
 

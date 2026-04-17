@@ -46,6 +46,7 @@ export interface StarProfile {
 
 /** Human-friendly labels for each competency tag. */
 export const COMPETENCY_LABELS: Record<CompetencyTag, string> = {
+  // PRD v3 classic behavioral
   leadership: 'Leadership',
   conflict_resolution: 'Conflict Resolution',
   pressure_performance: 'Pressure Performance',
@@ -55,7 +56,12 @@ export const COMPETENCY_LABELS: Record<CompetencyTag, string> = {
   initiative: 'Initiative',
   decision_making: 'Decision Making',
   adaptability: 'Adaptability',
-  feedback_reception: 'Feedback Reception'
+  feedback_reception: 'Feedback Reception',
+  // PRD v4 AI-native (F19)
+  ai_pair_programming: 'AI Pair Programming',
+  ai_tool_orchestration: 'AI Tool Orchestration',
+  verification_discipline: 'Verification Discipline',
+  ai_cost_consciousness: 'AI Cost Consciousness'
 };
 
 /** Default behavioral questions per competency (used as fallback + seed). */
@@ -99,5 +105,22 @@ export const COMPETENCY_QUESTIONS: Record<CompetencyTag, string[]> = {
   feedback_reception: [
     'Tell me about a time you received critical feedback.',
     'Describe the last time a peer review changed your work significantly.'
+  ],
+  // PRD v4 — AI-native competency questions
+  ai_pair_programming: [
+    'Walk me through a recent feature you shipped with an AI coding assistant. What was your role vs the AI\'s?',
+    'Describe a time an AI tool accelerated you 3-5x on a task. What made that possible?'
+  ],
+  ai_tool_orchestration: [
+    'Tell me about a task where you chose one AI tool over another. Why?',
+    'Describe how you compose AI tools with your own judgment when shipping production code.'
+  ],
+  verification_discipline: [
+    'Tell me about a time an AI tool confidently produced wrong output. How did you catch it?',
+    'Describe your process for verifying AI-generated code before merging.'
+  ],
+  ai_cost_consciousness: [
+    'Tell me about a time you chose NOT to use an AI tool for a task where you could have.',
+    'Describe a time you reduced token cost significantly without reducing output quality.'
   ]
 };

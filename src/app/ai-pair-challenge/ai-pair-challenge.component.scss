@@ -1,0 +1,334 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+:host {
+  display: block;
+  background: $rb-bg;
+  color: $rb-text;
+  min-height: 100vh;
+  font-family: $rb-font-display;
+  font-feature-settings: 'cv02','cv03','cv04','cv11';
+  -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(1200px circle at 50% -200px, rgba(29, 209, 161, 0.06), transparent);
+}
+
+.ap-page { min-height: 100vh; }
+
+// ───── top nav
+.ap-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $rb-space-3 $rb-space-6;
+  border-bottom: 1px solid $rb-border;
+  background: rgba(10, 10, 11, 0.80);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.ap-logo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: $rb-text;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: $rb-text-lg;
+  letter-spacing: $rb-tracking-tight;
+}
+.ap-logo-mark {
+  width: 30px; height: 30px;
+  border-radius: $rb-radius-sm;
+  background: linear-gradient(135deg, $rb-accent, $rb-accent-2);
+  color: $rb-bg;
+  font-weight: 900; font-size: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.ap-logo-word { font-weight: 800; }
+.ap-logo-tag  { color: $rb-text-dim; font-weight: 500; font-size: $rb-text-sm; margin-left: $rb-space-2; }
+
+// ───── timer pill
+.ap-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: $rb-space-2;
+  padding: $rb-space-2 $rb-space-4;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-pill;
+  background: $rb-surface;
+  font-family: $rb-font-mono;
+  font-variant-numeric: tabular-nums;
+  transition: border-color $rb-duration-micro $rb-ease-out, color $rb-duration-micro $rb-ease-out;
+}
+.ap-timer-value {
+  font-size: $rb-text-md;
+  font-weight: 700;
+  color: $rb-text;
+}
+.ap-timer-label {
+  font-size: $rb-text-xs;
+  color: $rb-text-dim;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ap-timer-warn {
+  border-color: $rb-warning-25;
+  color: $rb-warning;
+  .ap-timer-value { color: $rb-warning; }
+}
+.ap-timer-over {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: $rb-danger;
+  animation: ap-pulse-red 1.8s infinite;
+  .ap-timer-value { color: $rb-danger; }
+}
+@keyframes ap-pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.25); }
+  50%      { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.00); }
+}
+
+// ───── main
+.ap-main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: $rb-space-10 $rb-space-6 $rb-space-16;
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-6;
+}
+
+// ───── hero
+.ap-hero { margin-bottom: $rb-space-2; }
+.ap-h1 {
+  margin: $rb-space-2 0 $rb-space-3;
+  font-size: $rb-text-3xl;
+  font-weight: 800;
+  letter-spacing: $rb-tracking-tighter;
+  line-height: 1.15;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: $rb-space-4;
+}
+.ap-h1-sm {
+  margin: $rb-space-2 0 $rb-space-3;
+  font-size: $rb-text-2xl;
+  font-weight: 800;
+  letter-spacing: $rb-tracking-tighter;
+  line-height: 1.2;
+}
+.ap-sub {
+  margin: 0;
+  color: $rb-text-muted;
+  font-size: $rb-text-md;
+  line-height: 1.6;
+  max-width: 640px;
+}
+.ap-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: $rb-space-4;
+}
+.ap-passed {
+  font-family: $rb-font-display;
+  font-size: $rb-text-md;
+  font-weight: 700;
+  color: $rb-accent;
+  letter-spacing: 0.01em;
+}
+.ap-notpassed {
+  font-family: $rb-font-display;
+  font-size: $rb-text-md;
+  font-weight: 700;
+  color: $rb-warning;
+}
+
+// ───── brief cards + markdown
+.ap-brief-card { padding: $rb-space-6; }
+
+.ap-markdown {
+  font-size: $rb-text-base;
+  color: $rb-text-muted;
+  line-height: 1.7;
+  white-space: pre-wrap;
+
+  strong { color: $rb-text; }
+  code {
+    font-family: $rb-font-mono;
+    font-size: 13px;
+    background: $rb-surface-hi;
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: $rb-accent-2;
+  }
+}
+.ap-markdown-sm { font-size: $rb-text-sm; }
+
+.ap-summary {
+  cursor: pointer;
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  padding: $rb-space-2 0;
+  &::marker, &::-webkit-details-marker { color: $rb-text-dim; }
+}
+
+.ap-starter-link {
+  margin-top: $rb-space-4;
+  padding: $rb-space-3 $rb-space-4;
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: $rb-radius-md;
+  display: flex;
+  align-items: center;
+  gap: $rb-space-2;
+  font-family: $rb-font-mono;
+  font-size: $rb-text-sm;
+
+  a { color: $rb-accent-2; text-decoration: none; word-break: break-all; }
+  a:hover { text-decoration: underline; }
+}
+
+// ───── scorecard list
+.ap-scorecard {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-3;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: $rb-space-1;
+    color: $rb-text-muted;
+    font-size: $rb-text-sm;
+    line-height: 1.6;
+    padding-left: $rb-space-4;
+    border-left: 3px solid $rb-accent-25;
+  }
+  li.ap-scorecard-neg { border-left-color: $rb-border-hi; color: $rb-text-dim; }
+}
+.ap-dim {
+  color: $rb-text;
+  font-weight: 600;
+  display: inline-flex; align-items: baseline; gap: $rb-space-2;
+  font-size: $rb-text-base;
+}
+.ap-weight {
+  font-family: $rb-font-mono;
+  font-size: $rb-text-xs;
+  color: $rb-accent;
+  font-weight: 500;
+}
+
+// ───── form controls
+.ap-select {
+  display: block;
+  width: 100%;
+  margin-top: $rb-space-3;
+  padding: $rb-space-3 $rb-space-4;
+  background: $rb-bg;
+  color: $rb-text;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-sm;
+  font-family: $rb-font-display;
+  font-size: $rb-text-base;
+
+  &:focus { outline: none; border-color: $rb-accent; box-shadow: 0 0 0 3px $rb-accent-15; }
+}
+.ap-select-hint {
+  margin: $rb-space-2 0 0;
+  color: $rb-text-dim;
+  font-size: $rb-text-xs;
+}
+
+.ap-textarea {
+  display: block;
+  width: 100%;
+  margin-top: $rb-space-3;
+  padding: $rb-space-3 $rb-space-4;
+  background: $rb-bg;
+  color: $rb-text;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-sm;
+  font-family: $rb-font-display;
+  font-size: $rb-text-base;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 120px;
+  transition: border-color $rb-duration-micro $rb-ease-out, box-shadow $rb-duration-micro $rb-ease-out;
+
+  &:focus { outline: none; border-color: $rb-accent; box-shadow: 0 0 0 3px $rb-accent-15; }
+  &::placeholder { color: $rb-text-dim; }
+}
+.ap-textarea.ap-code {
+  font-family: $rb-font-mono;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ap-field-hint {
+  margin: 0;
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  line-height: 1.6;
+  code {
+    font-family: $rb-font-mono;
+    background: $rb-surface-hi;
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: $rb-accent-2;
+    font-size: 12px;
+  }
+}
+
+.ap-optional {
+  font-weight: 500;
+  color: $rb-text-dim;
+  font-size: $rb-text-sm;
+}
+
+// ───── CTA row
+.ap-cta-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $rb-space-3;
+  padding: $rb-space-6 0;
+}
+.ap-cta-note {
+  margin: 0;
+  color: $rb-text-dim;
+  font-size: $rb-text-sm;
+  text-align: center;
+  max-width: 560px;
+}
+
+// ───── result (step 4)
+.ap-state-card { padding: $rb-space-8; }
+
+.ap-scores-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-5;
+}
+.ap-score-row {
+  padding: $rb-space-4;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-md;
+
+  rb-stat { display: block; margin-bottom: $rb-space-2; }
+}
+.ap-score-notes {
+  margin: 0;
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  line-height: 1.6;
+}
+
+.ap-feedback {
+  font-size: $rb-text-base;
+  color: $rb-text;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
