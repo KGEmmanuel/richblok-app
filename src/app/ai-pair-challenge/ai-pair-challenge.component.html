@@ -1,0 +1,265 @@
+<div class="ap-page">
+  <!-- Top nav (minimal — challenge is focus mode) -->
+  <header class="ap-nav">
+    <a class="ap-logo" [routerLink]="['/landing']" aria-label="Richblok home">
+      <span class="ap-logo-mark">r</span>
+      <span class="ap-logo-word">ichblok</span>
+      <span class="ap-logo-tag">· AI-pair</span>
+    </a>
+
+    <!-- Timer shown during submit phase -->
+    <div class="ap-timer" *ngIf="step === 'submit'" [class.ap-timer-warn]="remainingSeconds <= 300" [class.ap-timer-over]="timerOver">
+      <rb-icon name="clock" size="sm" />
+      <span class="ap-timer-value">{{ timerDisplay }}</span>
+      <span class="ap-timer-label">remaining</span>
+    </div>
+  </header>
+
+  <main class="ap-main">
+
+    <!-- LOADING -->
+    <rb-card *ngIf="step === 'loading'" class="ap-state-card">
+      <rb-empty-state icon="loader" heading="Loading challenge…" sub="One second." />
+    </rb-card>
+
+    <!-- ERROR -->
+    <rb-card *ngIf="step === 'error'" class="ap-state-card">
+      <rb-empty-state
+        icon="alert-circle"
+        heading="Something went wrong"
+        [sub]="errorMsg">
+        <rb-button variant="ghost" (clicked)="retry()">Try again</rb-button>
+      </rb-empty-state>
+    </rb-card>
+
+    <!-- STEP 1: BRIEF -->
+    <ng-container *ngIf="step === 'brief' && challenge">
+      <section class="ap-hero">
+        <rb-eyebrow>AI-pair challenge · {{ challenge.estimatedDuration || '45 minutes' }}</rb-eyebrow>
+        <h1 class="ap-h1">{{ challenge.titre }}</h1>
+        <p class="ap-sub">
+          Real work, scored by AI, verified by artifact. Use any AI tool.
+          We evaluate correctness, verification discipline, and cost-consciousness —
+          not just "did you ship."
+        </p>
+
+        <div class="ap-pills">
+          <rb-chip variant="accent">⏱ {{ challenge.estimatedDuration || '45 min' }}</rb-chip>
+          <rb-chip variant="tag" *ngFor="let s of challenge.skills?.slice(0, 4)">{{ s }}</rb-chip>
+          <rb-chip *ngFor="let t of challenge.competencyTags" variant="verified">
+            ✓ {{ competencyLabel(t) }}
+          </rb-chip>
+        </div>
+      </section>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>The brief</rb-card-title>
+        <div class="ap-markdown">{{ challenge.brief || challenge.description }}</div>
+
+        <div class="ap-starter-link" *ngIf="challenge.starterRepoUrl">
+          <rb-icon name="link" size="sm" accent />
+          <a [href]="challenge.starterRepoUrl" target="_blank" rel="noopener">
+            Starter repo → {{ challenge.starterRepoUrl }}
+          </a>
+        </div>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>Success criteria</rb-card-title>
+        <div class="ap-markdown">{{ challenge.successCriteria || '(see brief)' }}</div>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>What we score (and don't)</rb-card-title>
+        <ul class="ap-scorecard">
+          <li>
+            <span class="ap-dim">Correctness <span class="ap-weight">40%</span></span>
+            Does your PR actually solve the brief? Would a reviewer merge it?
+          </li>
+          <li>
+            <span class="ap-dim">Verification discipline <span class="ap-weight">35%</span></span>
+            Did you catch the AI's mistakes? Fact-check? Push back on bad suggestions?
+            This is the single highest-signal dimension for employers.
+          </li>
+          <li>
+            <span class="ap-dim">Explainer clarity <span class="ap-weight">10%</span></span>
+            (Optional) — if you add one, we score how well you articulate your decisions.
+          </li>
+          <li>
+            <span class="ap-dim">Cost consciousness <span class="ap-weight">15%</span></span>
+            Did you use tokens responsibly? Or did you hail-mary 50k-token "please fix this" prompts?
+          </li>
+          <li class="ap-scorecard-neg">
+            <span class="ap-dim">We don't score</span>
+            which tool you used (tool-agnostic), your coding style, git commit hygiene, or how fast you finished.
+          </li>
+        </ul>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>Which AI tool will you use?</rb-card-title>
+        <select class="ap-select" [(ngModel)]="aiToolUsed">
+          <option *ngFor="let t of aiToolOptions" [value]="t.value">{{ t.label }}</option>
+        </select>
+        <p class="ap-select-hint">
+          You can declare more than one later in your transcript. This is your primary tool.
+        </p>
+      </rb-card>
+
+      <div class="ap-cta-row">
+        <rb-button size="lg" (clicked)="startChallenge()">
+          Start timer · {{ timerMinutes }} minutes
+        </rb-button>
+        <p class="ap-cta-note">
+          The timer starts immediately. You'll submit your PR diff + full AI transcript.
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- STEP 2: SUBMIT -->
+    <ng-container *ngIf="step === 'submit' && challenge">
+      <section class="ap-hero">
+        <rb-eyebrow>Submit · {{ challenge.titre }}</rb-eyebrow>
+        <h1 class="ap-h1-sm">Paste your work — the AI reviewer is ready.</h1>
+      </section>
+
+      <!-- Reminder of the brief (collapsed) -->
+      <rb-card class="ap-brief-card">
+        <details>
+          <summary class="ap-summary"><strong>Recap the brief</strong> (click to expand)</summary>
+          <div class="ap-markdown ap-markdown-sm">{{ challenge.brief || challenge.description }}</div>
+          <div class="ap-markdown ap-markdown-sm" *ngIf="challenge.successCriteria">
+            <strong>Success criteria:</strong><br>{{ challenge.successCriteria }}
+          </div>
+        </details>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>1. Your PR diff</rb-card-title>
+        <p class="ap-field-hint">
+          Paste the unified diff of your final code change.
+          From your terminal: <code>git diff origin/main...HEAD</code>
+        </p>
+        <textarea class="ap-textarea ap-code"
+          [(ngModel)]="prDiff"
+          rows="8"
+          placeholder="diff --git a/src/foo.ts b/src/foo.ts&#10;index abc..def 100644&#10;--- a/src/foo.ts&#10;+++ b/src/foo.ts&#10;@@ ...">
+        </textarea>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>2. Your AI session transcript</rb-card-title>
+        <p class="ap-field-hint">
+          Paste the full conversation — every prompt you sent, every response.
+          Don't redact. Claude Code: export the <code>.jsonl</code> or copy from the session UI.
+          Cursor: export chat. Copilot: paste the chat panel contents.
+        </p>
+        <textarea class="ap-textarea ap-code"
+          [(ngModel)]="transcript"
+          rows="12"
+          placeholder="[user] Fix the bug where the email validator rejects plus-addressing...&#10;[assistant] Looking at the validator regex, I see...">
+        </textarea>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>3. Explainer <span class="ap-optional">(optional, +10% score weight)</span></rb-card-title>
+        <p class="ap-field-hint">
+          5-minute-or-less explanation of your key decisions. Why did you approach it this way?
+          What did the AI get wrong? What would you do next time?
+        </p>
+        <textarea class="ap-textarea"
+          [(ngModel)]="explainer"
+          rows="5"
+          placeholder="I started by running the failing test to understand the exact symptom. Claude suggested X, but that would have broken edge case Y, so I pushed back and asked it to consider...">
+        </textarea>
+      </rb-card>
+
+      <div class="ap-cta-row">
+        <rb-button size="lg" [disabled]="!canSubmit" (clicked)="submitWork()">
+          Submit · score my work
+        </rb-button>
+        <p class="ap-cta-note" *ngIf="!canSubmit && elapsedSeconds < 60">
+          Give yourself at least 60 seconds before submitting (sanity check).
+        </p>
+        <p class="ap-cta-note" *ngIf="!canSubmit && elapsedSeconds >= 60">
+          Paste your PR diff and AI transcript to enable submission.
+        </p>
+        <p class="ap-cta-note" *ngIf="timerOver">
+          ⏱ Timer is up — you can still submit (we don't hard-fail on time, but we do record it).
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- STEP 3: SCORING (in-flight) -->
+    <rb-card *ngIf="step === 'scoring'" class="ap-state-card">
+      <rb-empty-state icon="loader" heading="Scoring your submission…">
+        <p class="ap-cta-note">
+          Claude is reading your transcript, checking your PR diff against the success criteria,
+          and writing specific feedback. 30-60 seconds.
+        </p>
+      </rb-empty-state>
+    </rb-card>
+
+    <!-- STEP 4: RESULT -->
+    <ng-container *ngIf="step === 'result' && score && challenge">
+      <section class="ap-hero">
+        <rb-eyebrow>Your score · {{ challenge.titre }}</rb-eyebrow>
+        <h1 class="ap-h1">
+          {{ score.scores.overall.score }}/100
+          <span class="ap-passed" *ngIf="score.scores.overall.passed">✓ Verified</span>
+          <span class="ap-notpassed" *ngIf="!score.scores.overall.passed">Not yet passed — try again</span>
+        </h1>
+        <p class="ap-sub" *ngIf="score.scores.overall.passed">
+          Top {{ 100 - score.scores.overall.percentile }}% of AI-pair submissions.
+          Badge earned at <strong>{{ score.recommendedBadge.level }}</strong> level.
+        </p>
+      </section>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>Score breakdown</rb-card-title>
+        <div class="ap-scores-grid">
+          <div class="ap-score-row">
+            <rb-stat [value]="score.scores.correctness.score + '/100'" label="Correctness (40%)" accent />
+            <p class="ap-score-notes">{{ score.scores.correctness.notes }}</p>
+          </div>
+          <div class="ap-score-row">
+            <rb-stat [value]="score.scores.verification.score + '/100'" label="Verification discipline (35%)" accent />
+            <p class="ap-score-notes">{{ score.scores.verification.notes }}</p>
+          </div>
+          <div class="ap-score-row" *ngIf="score.scores.explainer.score > 0">
+            <rb-stat [value]="score.scores.explainer.score + '/100'" label="Explainer (10%)" />
+            <p class="ap-score-notes">{{ score.scores.explainer.notes }}</p>
+          </div>
+          <div class="ap-score-row">
+            <rb-stat [value]="score.scores.cost_consciousness.score + '/100'" label="Cost consciousness (15%)" />
+            <p class="ap-score-notes">{{ score.scores.cost_consciousness.notes }}</p>
+          </div>
+        </div>
+      </rb-card>
+
+      <rb-card class="ap-brief-card">
+        <rb-card-title>Coach feedback</rb-card-title>
+        <div class="ap-feedback">{{ score.feedback }}</div>
+      </rb-card>
+
+      <rb-card class="ap-brief-card" *ngIf="score.aiCompetenciesDemonstrated?.length">
+        <rb-card-title>AI competencies demonstrated</rb-card-title>
+        <div class="ap-pills">
+          <rb-chip variant="verified" *ngFor="let t of score.aiCompetenciesDemonstrated">
+            ✓ {{ competencyLabel(t) }}
+          </rb-chip>
+        </div>
+        <p class="ap-cta-note">
+          These tags are now on your STAR profile. Recruiters filtering for "verified AI-native"
+          will find you.
+        </p>
+      </rb-card>
+
+      <div class="ap-cta-row">
+        <rb-button [routerLink]="['/feed']">Go to dashboard</rb-button>
+        <rb-button variant="ghost" (clicked)="retry()">Take another challenge</rb-button>
+      </div>
+    </ng-container>
+
+  </main>
+</div>
