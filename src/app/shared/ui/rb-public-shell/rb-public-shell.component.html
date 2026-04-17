@@ -1,0 +1,24 @@
+<div class="rb-pshell">
+  <header class="rb-pnav">
+    <a class="rb-plogo" routerLink="/landing" aria-label="Richblok home">
+      <span class="rb-plogo-mark">r</span>
+      <span class="rb-plogo-word">ichblok</span>
+    </a>
+    <div class="rb-pnav-right">
+      <a *ngIf="cta === 'signin'" routerLink="/sign-in" class="rb-pcta">Sign in</a>
+      <a *ngIf="cta === 'signup'" routerLink="/sign-up" class="rb-pcta">Get started</a>
+      <a *ngIf="cta === 'home'" routerLink="/landing" class="rb-pcta">Home</a>
+    </div>
+  </header>
+  <main class="rb-pmain">
+    <ng-content />
+  </main>
+  <footer class="rb-pfoot" *ngIf="!hideFooter">
+    <span class="rb-pfoot-brand">© Richblok</span>
+    <nav class="rb-pfoot-nav">
+      <a routerLink="/terms">Terms</a>
+      <a routerLink="/policy">Privacy</a>
+      <a routerLink="/contact">Contact</a>
+    </nav>
+  </footer>
+</div>

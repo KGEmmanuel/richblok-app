@@ -17,3 +17,8 @@ export {
 export { RbChipComponent }        from './rb-chip/rb-chip.component';
 export { RbStatComponent }        from './rb-stat/rb-stat.component';
 export { RbEmptyStateComponent }  from './rb-empty-state/rb-empty-state.component';
+
+// Shells — wrap page content with the V5 chrome (nav + logo + main container).
+// rb-app-shell for authenticated pages; rb-public-shell for marketing/auth.
+export { RbAppShellComponent }    from './rb-app-shell/rb-app-shell.component';
+export { RbPublicShellComponent } from './rb-public-shell/rb-public-shell.component';

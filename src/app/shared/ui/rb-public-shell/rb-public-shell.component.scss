@@ -1,0 +1,91 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+:host {
+  display: block;
+  background: $rb-bg;
+  color: $rb-text;
+  min-height: 100vh;
+  font-family: $rb-font-display;
+  font-feature-settings: 'cv02','cv03','cv04','cv11';
+  -webkit-font-smoothing: antialiased;
+}
+
+.rb-pshell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.rb-pnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $rb-space-3 $rb-space-6;
+  border-bottom: 1px solid $rb-border;
+}
+
+.rb-plogo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $rb-text;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: $rb-text-lg;
+  letter-spacing: $rb-tracking-tight;
+}
+.rb-plogo-mark {
+  width: 30px; height: 30px;
+  border-radius: $rb-radius-sm;
+  background: linear-gradient(135deg, $rb-accent, $rb-accent-2);
+  color: $rb-bg;
+  font-weight: 900; font-size: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.rb-plogo-word { font-weight: 800; }
+
+.rb-pcta {
+  color: $rb-accent;
+  font-size: $rb-text-sm;
+  font-weight: 600;
+  padding: $rb-space-2 $rb-space-3;
+  border-radius: $rb-radius-sm;
+  text-decoration: none;
+  &:hover { background: $rb-accent-15; }
+}
+
+.rb-pmain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: $rb-space-8 $rb-space-6;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.rb-pfoot {
+  border-top: 1px solid $rb-border;
+  padding: $rb-space-4 $rb-space-6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+
+  .rb-pfoot-brand { opacity: 0.8; }
+  .rb-pfoot-nav {
+    display: flex; gap: $rb-space-4;
+    a {
+      color: $rb-text-muted;
+      text-decoration: none;
+      &:hover { color: $rb-text; }
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .rb-pnav, .rb-pmain, .rb-pfoot { padding-left: $rb-space-3; padding-right: $rb-space-3; }
+  .rb-plogo-word { display: none; }
+  .rb-pfoot { flex-direction: column; gap: $rb-space-2; }
+}

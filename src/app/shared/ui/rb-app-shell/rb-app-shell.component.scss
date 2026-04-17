@@ -1,0 +1,97 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+:host {
+  display: block;
+  background: $rb-bg;
+  color: $rb-text;
+  min-height: 100vh;
+  font-family: $rb-font-display;
+  font-feature-settings: 'cv02','cv03','cv04','cv11';
+  -webkit-font-smoothing: antialiased;
+  // Subtle hero gradient — identical to /feed so the chrome feels continuous.
+  background-image: radial-gradient(1200px circle at 50% -200px, rgba(29, 209, 161, 0.05), transparent);
+}
+
+.rb-shell { min-height: 100vh; }
+
+// ───── top nav
+.rb-nav {
+  display: flex;
+  align-items: center;
+  gap: $rb-space-8;
+  padding: $rb-space-3 $rb-space-6;
+  border-bottom: 1px solid $rb-border;
+  background: rgba(10, 10, 11, 0.75);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.rb-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $rb-text;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: $rb-text-lg;
+  letter-spacing: $rb-tracking-tight;
+}
+.rb-logo-mark {
+  width: 30px; height: 30px;
+  border-radius: $rb-radius-sm;
+  background: linear-gradient(135deg, $rb-accent, $rb-accent-2);
+  color: $rb-bg;
+  font-weight: 900; font-size: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.rb-logo-word { font-weight: 800; }
+
+.rb-nav-links {
+  display: flex; align-items: center; gap: $rb-space-1;
+  flex: 1;
+}
+.rb-nav-link {
+  font-size: $rb-text-sm; font-weight: 500;
+  color: $rb-text-muted;
+  text-decoration: none;
+  padding: $rb-space-2 $rb-space-3;
+  border-radius: $rb-radius-sm;
+  transition: color $rb-duration-micro $rb-ease-out, background $rb-duration-micro $rb-ease-out;
+  &:hover { color: $rb-text; background: $rb-surface; }
+  &.rb-active { color: $rb-accent; background: $rb-accent-15; }
+}
+
+.rb-nav-right {
+  display: flex; align-items: center; gap: $rb-space-2;
+}
+.rb-nav-icon {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: $rb-radius-sm;
+  color: $rb-text-muted;
+  text-decoration: none;
+  transition: background $rb-duration-micro $rb-ease-out, color $rb-duration-micro $rb-ease-out;
+  &:hover { background: $rb-surface; color: $rb-text; }
+}
+
+// ───── main container
+.rb-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $rb-space-8 $rb-space-6 $rb-space-16;
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-6;
+}
+.rb-main-tight {
+  padding-top: $rb-space-4;
+  gap: $rb-space-4;
+}
+
+@media (max-width: 720px) {
+  .rb-nav { padding: $rb-space-2 $rb-space-3; gap: $rb-space-3; }
+  .rb-logo-word { display: none; }  // mark-only on narrow
+  .rb-main { padding: $rb-space-4 $rb-space-3 $rb-space-10; }
+}

@@ -1,0 +1,23 @@
+<div class="rb-shell">
+  <header class="rb-nav">
+    <a class="rb-logo" routerLink="/feed" aria-label="Richblok home">
+      <span class="rb-logo-mark">r</span>
+      <span class="rb-logo-word">ichblok</span>
+    </a>
+    <nav class="rb-nav-links">
+      <a routerLink="/feed" class="rb-nav-link" [class.rb-active]="active === 'dashboard'">Dashboard</a>
+      <a routerLink="/evaluate" class="rb-nav-link" [class.rb-active]="active === 'challenges'">Challenges</a>
+      <a routerLink="/record" class="rb-nav-link" [class.rb-active]="active === 'profile'">Profile</a>
+      <a routerLink="/jobs" class="rb-nav-link" [class.rb-active]="active === 'jobs'">Jobs</a>
+      <a *ngIf="isAdmin" routerLink="/admin" class="rb-nav-link" [class.rb-active]="active === 'admin'">Admin</a>
+    </nav>
+    <div class="rb-nav-right">
+      <a routerLink="/settings" class="rb-nav-icon" aria-label="Settings">
+        <rb-icon name="settings" />
+      </a>
+    </div>
+  </header>
+  <main class="rb-main" [class.rb-main-tight]="tight">
+    <ng-content />
+  </main>
+</div>

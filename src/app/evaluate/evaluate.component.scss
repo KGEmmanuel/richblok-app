@@ -1,21 +1,46 @@
-.focus:hover > i{
- color: #fff;
+@use 'src/app/shared/ui/tokens' as *;
+
+.ev-hero {
+  margin-bottom: $rb-space-2;
 }
 
-.focus:hover{
-    background-color: #047B80;
-    color: #fff;
+.ev-h1 {
+  margin: $rb-space-2 0 $rb-space-3;
+  font-size: $rb-text-3xl;
+  font-weight: 800;
+  letter-spacing: $rb-tracking-tighter;
+  line-height: 1.1;
 }
 
-.focus{
-    cursor: pointer;
-    border: 1px solid #047B80;
+.ev-sub {
+  margin: 0 0 $rb-space-4;
+  color: $rb-text-muted;
+  font-size: $rb-text-md;
+  line-height: 1.6;
+  max-width: 720px;
 }
 
-.focus > i {
-    color: #047B80;
+.ev-hero-cta {
+  display: flex;
+  gap: $rb-space-3;
+  flex-wrap: wrap;
 }
 
-.focus > i:hover, .focus:hover {
-    color: #fff;
+.ev-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $rb-space-1;
+  color: $rb-text;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: $rb-text-sm;
+  padding: $rb-space-2 $rb-space-3;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-sm;
+  transition: border-color $rb-duration-micro $rb-ease-out,
+              background $rb-duration-micro $rb-ease-out;
+  &:hover {
+    border-color: $rb-accent;
+    background: $rb-accent-15;
+  }
 }

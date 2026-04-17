@@ -232,6 +232,21 @@ import { AdminChallengesComponent } from './admin-challenges/admin-challenges.co
 // V5 UI kit — global icon registration for lucide-angular. All Richblok
 // <rb-icon name="…"> uses must have their name listed here. Unregistered
 // names log a GlobalErrorHandler warning at render time.
+// V5 UI kit — import barrel-exported standalone components so they're
+// usable inside NgModule-declared pages.
+import {
+  RbAppShellComponent,
+  RbPublicShellComponent,
+  RbCardComponent,
+  RbCardTitleComponent,
+  RbEyebrowComponent,
+  RbButtonComponent,
+  RbIconComponent,
+  RbChipComponent,
+  RbStatComponent,
+  RbEmptyStateComponent,
+} from './shared/ui';
+
 import {
   LucideAngularModule,
   Settings, Target, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
@@ -496,6 +511,20 @@ import {
       Facebook, Twitter, Linkedin, Github,
     }),
 
+    // V5 UI kit — standalone components exposed to NgModule-declared pages.
+    // Any legacy NgModule component (e.g. EvaluateComponent) can use
+    // <rb-app-shell>, <rb-card>, <rb-button>, <rb-eyebrow> etc. in its
+    // template because these are listed here.
+    RbAppShellComponent,
+    RbPublicShellComponent,
+    RbCardComponent,
+    RbCardTitleComponent,
+    RbEyebrowComponent,
+    RbButtonComponent,
+    RbIconComponent,
+    RbChipComponent,
+    RbStatComponent,
+    RbEmptyStateComponent,
   ],
   providers: [
     ApiService,

@@ -1,60 +1,29 @@
-<header>
-    <app-header></app-header>
-</header>
-<div class="py-4">
-    <div class="container">
-        <div class="row">
-            <!-- bloc de gauche -->
-            <aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
-                <app-connection-aside></app-connection-aside>
-                <app-rib-solutions></app-rib-solutions>
-            </aside>
-
-            <!-- block du centre -->
-            <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
-                <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
-                    <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
-                        <div class="font-weight-bold">
-                            <h6 class="">Find a challenge</h6>
-                        </div>
-                    </div>
-                    <div class="col-lg-12" style="padding-top: 2%;">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label>Skill name</label>
-                                    <select name="research" class="form-control">
-
-                                 </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label>Challenge name</label>
-                                    <input type="text " class="form-control " placeholder="Search... " aria-label="Amount (to the nearest dollar) ">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end col-lg-12" style="margin-bottom: 2%;">
-                        <button type="button" class="btn btn-outline-primary btn-sm mr-1"><i class="feather-search"></i> Search</button>
-                    </div>
-                </div>
-                <app-evaluate-list></app-evaluate-list>
-            </main>
-            <!-- block de droite -->
-            <aside class="col col-xl-3 order-xl-3 col-lg-6 order-lg-3 col-md-6 col-sm-6 col-12 ">
-                <button type="button " routerLink="/create-challenge" class="btn btn-lg btn-block btn-outline-gold mb-3 "> <i class="feather-pocket "></i>
-                Create a challenge </button>
-                <app-follow-orgs></app-follow-orgs>
-                <app-job-aside></app-job-aside>
-            </aside>
-        </div>
+<rb-app-shell active="challenges">
+  <section class="ev-hero">
+    <rb-eyebrow>Challenges</rb-eyebrow>
+    <h1 class="ev-h1">Take a challenge · earn a verified badge</h1>
+    <p class="ev-sub">
+      Pick a skill, beat the pass threshold, and your badge shows up on your public profile —
+      with your STAR stories and AI-pair verification auto-attached.
+    </p>
+    <div class="ev-hero-cta">
+      <a routerLink="/create-challenge" class="ev-hero-link">
+        <rb-icon name="plus" size="16" /> Create a challenge
+      </a>
+      <a routerLink="/ai-pair/ai-pair-rate-limit-bug" class="ev-hero-link">
+        <rb-icon name="bot" size="16" /> Try an AI-pair challenge
+      </a>
     </div>
-</div>
-<footer>
-    <app-footer></app-footer>
-</footer>
+  </section>
 
-<app-upgrade-modal [open]="upgradeOpen" [trigger]="upgradeTrigger" (closed)="onUpgradeClosed()"></app-upgrade-modal>
+  <rb-card>
+    <rb-card-title>All challenges</rb-card-title>
+    <app-evaluate-list></app-evaluate-list>
+  </rb-card>
+</rb-app-shell>
+
+<app-upgrade-modal
+  [open]="upgradeOpen"
+  [trigger]="upgradeTrigger"
+  (closed)="onUpgradeClosed()">
+</app-upgrade-modal>
