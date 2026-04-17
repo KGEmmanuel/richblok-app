@@ -16,9 +16,14 @@ RUN npm ci --legacy-peer-deps --ignore-scripts --omit=dev \
     && rm -rf node_modules/@angular/fire/node_modules \
     && npm cache clean --force
 
-# Copy pre-built Angular bundles + Express app entry
+# Copy pre-built Angular bundles + Express app entry + server-side libs.
+# `lib/` was added with F18 (transcript parser). Anything `server.js` does
+# `require('./lib/...')` for must be listed here — Docker's build context
+# otherwise leaves it out and the container crashes at module load with
+# `Cannot find module './lib/transcript-parser'`.
 COPY dist ./dist
 COPY dist-server ./dist-server
+COPY lib ./lib
 COPY server.js ./
 
 EXPOSE 8080
