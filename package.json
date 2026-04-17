@@ -8,13 +8,14 @@
     "build": "ng build --prod",
     "build:ssr": "ng build --prod && ng run Rib:server:production",
     "test": "ng test",
+    "test:server": "node --test test/server/*.test.js",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "node -e \"try{require('fs').rmSync('node_modules/@angular/fire/node_modules',{recursive:true,force:true})}catch(e){}\" && ng build --prod || true"
   },
   "private": true,
   "engines": {
-    "node": "14.x"
+    "node": ">=18"
   },
   "dependencies": {
     "@angular/animations": "^17.3.12",

@@ -1974,6 +1974,25 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Richblok server running on port ${PORT}`);
-});
+// Don't bind a port when required as a module (tests use `require('./server.js')`
+// and drive `app` via supertest-style HTTP against it).
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Richblok server running on port ${PORT}`);
+  });
+}
+
+// Export app + a few internals so the spec file can reset rate-limit buckets
+// and concurrency counters between tests.
+module.exports = {
+  app,
+  __test: {
+    resetAiPairState() {
+      aiPairRateBuckets.clear();
+      aiPairActiveCount = 0;
+    },
+    getAiPairActiveCount() { return aiPairActiveCount; },
+    AI_PAIR_DAILY_LIMIT,
+    AI_PAIR_MAX_CONCURRENT
+  }
+};
