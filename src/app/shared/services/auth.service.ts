@@ -1,4 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
+// TODO(firebase-modular): pilot site for D7. See docs/FIREBASE_MODULAR_MIGRATION.md.
+// When this file moves to modular, do it for all 64 compat imports — partial
+// migration costs MORE bundle size, not less. Don't half-ship.
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/compat/firestore';
 import { Utilisateur } from '../entites/Utilisateur';
 import { AngularFireAuth } from '@angular/fire/compat/auth';

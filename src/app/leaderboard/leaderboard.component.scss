@@ -1,0 +1,125 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+.lb-hero {
+  padding: $rb-space-6 0 $rb-space-4;
+  max-width: 760px;
+}
+
+.lb-h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: $rb-tracking-tighter;
+  line-height: 1.1;
+  margin: $rb-space-2 0 $rb-space-3;
+}
+
+.lb-sub {
+  color: $rb-text-muted;
+  font-size: $rb-text-md;
+  line-height: 1.55;
+  margin: 0 0 $rb-space-4;
+}
+
+.lb-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-md;
+  background: $rb-surface;
+}
+.lb-tab {
+  background: transparent;
+  border: none;
+  padding: $rb-space-2 $rb-space-4;
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  font-weight: 600;
+  border-radius: $rb-radius-sm;
+  cursor: pointer;
+  transition: background $rb-duration-micro $rb-ease-out, color $rb-duration-micro $rb-ease-out;
+  &:hover { color: $rb-text; }
+  &.lb-active { background: $rb-accent-15; color: $rb-accent; }
+}
+
+.lb-card { margin-top: $rb-space-5; padding: $rb-space-4; }
+
+.lb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-2;
+}
+
+.lb-row {
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  gap: $rb-space-3;
+  padding: $rb-space-3;
+  border-radius: $rb-radius-sm;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid transparent;
+  align-items: center;
+  transition: border-color $rb-duration-micro $rb-ease-out;
+  &:hover { border-color: $rb-border; }
+}
+
+.lb-rank {
+  font-size: $rb-text-lg;
+  font-weight: 800;
+  color: $rb-text-muted;
+  text-align: center;
+  &.lb-podium {
+    color: $rb-accent;
+  }
+}
+
+.lb-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.lb-name {
+  font-weight: 700;
+  color: $rb-text;
+  text-decoration: none;
+  &:hover { color: $rb-accent; }
+}
+.lb-meta {
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+}
+.lb-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.lb-score-block { text-align: right; }
+
+.lb-score {
+  display: flex;
+  flex-direction: column;
+  strong {
+    color: $rb-accent;
+    font-size: $rb-text-xl;
+    font-weight: 800;
+    line-height: 1;
+  }
+  span {
+    color: $rb-text-muted;
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+}
+
+.lb-footnote {
+  color: $rb-text-muted;
+  font-size: $rb-text-xs;
+  margin: $rb-space-4 0 0;
+  text-align: center;
+}

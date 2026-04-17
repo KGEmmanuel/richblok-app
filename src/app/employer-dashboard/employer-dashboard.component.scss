@@ -223,3 +223,36 @@ $border-hi: #3f3f46;
 @media (min-width: 1024px) {
   .ed-filters { grid-template-columns: repeat(5, 1fr); align-items: end; }
 }
+
+// F22 — verified-AI-native row. Purple-ish tint so it sits apart from the
+// teal behavioral-competency chips and doesn't collide with the $accent.
+.ed-filters-ainative {
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+.ed-filter-ainative-toggle { grid-column: 1 / -1; }
+
+.ed-ai-native-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.ed-ai-native-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(156, 110, 255, 0.12);
+  color: #c7a9ff;
+  border: 1px solid rgba(156, 110, 255, 0.25);
+  white-space: nowrap;
+  &.ed-ai-native-chip-header { background: rgba(156, 110, 255, 0.22); color: #fff; }
+  &.ed-ai-native-chip-comp { background: rgba(156, 110, 255, 0.06); }
+}
+.ed-ai-verscore {
+  font-weight: 400;
+  opacity: 0.85;
+  margin-left: 4px;
+}

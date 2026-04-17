@@ -1,0 +1,185 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+.an-hero {
+  padding: $rb-space-6 0 $rb-space-4;
+  max-width: 880px;
+}
+
+.an-h1 {
+  font-family: $rb-font-display;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: $rb-tracking-tighter;
+  line-height: 1.05;
+  margin: $rb-space-2 0 $rb-space-3;
+}
+
+.an-sub {
+  color: $rb-text-muted;
+  font-size: $rb-text-md;
+  line-height: 1.55;
+  margin: 0 0 $rb-space-5;
+}
+
+.an-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $rb-space-4;
+  margin: $rb-space-4 0 $rb-space-5;
+}
+
+.an-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  strong {
+    font-size: $rb-text-2xl;
+    font-weight: 800;
+    color: $rb-accent;
+  }
+  span {
+    color: $rb-text-muted;
+    font-size: $rb-text-sm;
+  }
+}
+
+.an-hero-cta {
+  display: flex;
+  gap: $rb-space-3;
+  flex-wrap: wrap;
+}
+
+.an-cta-primary {
+  display: inline-block;
+  padding: $rb-space-3 $rb-space-5;
+  background: $rb-accent;
+  color: $rb-bg;
+  font-weight: 700;
+  border-radius: $rb-radius-sm;
+  text-decoration: none;
+  transition: background $rb-duration-micro $rb-ease-out;
+  &:hover { background: $rb-accent-2; }
+}
+
+.an-cta-ghost {
+  display: inline-block;
+  padding: $rb-space-3 $rb-space-5;
+  border: 1px solid $rb-border;
+  color: $rb-text;
+  font-weight: 600;
+  border-radius: $rb-radius-sm;
+  text-decoration: none;
+  &:hover { border-color: $rb-accent; color: $rb-accent; }
+}
+
+.an-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $rb-space-4;
+  margin-top: $rb-space-6;
+}
+
+.an-card {
+  position: relative;
+  display: block;
+  padding: $rb-space-4;
+  background: $rb-surface;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-md;
+  text-decoration: none;
+  color: $rb-text;
+  transition: border-color $rb-duration-micro $rb-ease-out,
+              transform $rb-duration-micro $rb-ease-out;
+  &:hover {
+    border-color: $rb-accent;
+    transform: translateY(-2px);
+  }
+}
+
+.an-card-rank {
+  position: absolute;
+  top: $rb-space-2;
+  right: $rb-space-3;
+  font-size: $rb-text-sm;
+  color: $rb-text-muted;
+  font-weight: 700;
+}
+
+.an-card-head {
+  margin-bottom: $rb-space-3;
+}
+
+.an-card-name {
+  font-size: $rb-text-lg;
+  font-weight: 700;
+}
+
+.an-card-meta {
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  margin-top: 2px;
+}
+
+.an-card-scores {
+  display: flex;
+  align-items: center;
+  gap: $rb-space-4;
+  margin-bottom: $rb-space-3;
+}
+
+.an-card-score {
+  display: flex;
+  flex-direction: column;
+  strong {
+    font-size: $rb-text-xl;
+    font-weight: 800;
+    color: $rb-accent;
+    line-height: 1;
+  }
+  span {
+    color: $rb-text-muted;
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+}
+
+.an-card-level {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  background: rgba(156, 110, 255, 0.12);
+  color: #c7a9ff;
+  border: 1px solid rgba(156, 110, 255, 0.25);
+
+  &.an-senior {
+    background: $rb-accent-15;
+    color: $rb-accent;
+    border-color: $rb-accent;
+  }
+}
+
+.an-card-comps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.an-cta-footer {
+  margin-top: $rb-space-10;
+  padding: $rb-space-6;
+  border-top: 1px solid $rb-border;
+  text-align: center;
+
+  h2 {
+    font-size: $rb-text-2xl;
+    margin: 0 0 $rb-space-2;
+  }
+  p {
+    color: $rb-text-muted;
+    max-width: 620px;
+    margin: 0 auto $rb-space-4;
+  }
+}

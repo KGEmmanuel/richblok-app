@@ -106,6 +106,14 @@ const routes: Routes = [
   { path: 'sponsor', loadComponent: () => import('./sponsor-challenge/sponsor-challenge.component').then(m => m.SponsorChallengeComponent), data: {title: 'Sponsor a challenge'}},
   // F17 — AI-pair challenge format. Requires AuthGuard because submission issues a badge record.
   { path: 'ai-pair/:slug', loadComponent: () => import('./ai-pair-challenge/ai-pair-challenge.component').then(m => m.AiPairChallengeComponent), canActivate: [AuthGuard], data: {title: 'AI-pair challenge'}},
+  // F23 — public SEO discovery page for AI-native badge holders. No AuthGuard.
+  { path: 'ai-native',
+    loadComponent: () => import('./ai-native-discovery/ai-native-discovery.component').then(m => m.AiNativeDiscoveryComponent),
+    data: {title: 'Verified AI-native engineers'} },
+  // F24 — public weekly leaderboard. No AuthGuard; backed by /api/leaderboard (60s cache).
+  { path: 'leaderboard',
+    loadComponent: () => import('./leaderboard/leaderboard.component').then(m => m.LeaderboardComponent),
+    data: {title: 'Weekly leaderboard'} },
   { path: 'onboard', loadComponent: () => import('./onboard/onboard.component').then(m => m.OnboardComponent), data: {title: 'Upload your CV'} },
   { path: 'star/:id', loadComponent: () => import('./star-profile/star-profile.component').then(m => m.StarProfileComponent), data: {title: 'STAR Profile'} },
   { path: 'coach/:id', loadComponent: () => import('./ai-coach/ai-coach.component').then(m => m.AiCoachComponent), canActivate: [AuthGuard], data: {title: 'AI Interview Coach'} },

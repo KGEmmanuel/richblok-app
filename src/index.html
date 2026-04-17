@@ -50,8 +50,10 @@
       })();
     </script>
 
+    <!-- D1 / V5 Sprint 2: dropped the FA 5.11.2 CDN (~70KB). All 52 icon
+         usages in src/app are `class="fa fa-*"` — FA4-compatible. FA4 stays
+         until full lucide-angular migration (tracked in V5 Sprint 3). -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900" rel="stylesheet">
 
     <!-- Modern startup typography: Inter Variable + JetBrains Mono for numbers -->
@@ -142,16 +144,18 @@
         </div>
 
     </app-root>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <!-- D1 / V5 Sprint 2 cleanup:
+         - Dropped jQuery 3.2.1 slim (was overwritten by 3.3.1 on the next
+           line anyway — dead weight, ~70KB wasted).
+         - Dropped peerjs@1.0.0 (zero usages across src/, was ~50KB + 1 request).
+         - Dropped easypiechart (only self-referenced, ~15KB).
+         - Dropped range.js (only self-referenced, ~6KB).
+         - Kept jQuery 3.3.1 + popper + bootstrap.min.js — still required
+           for the 281 `data-toggle`/`data-dismiss` bootstrap interactions
+           (modals, dropdowns, tabs) across legacy components. These go
+           when V5 Sprint 3 finishes the Bootstrap kill.
+         Net: ~141KB JS dropped, zero functional regressions expected. -->
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-    <script src="./assets/js/jquery.easypiechart.js"></script>
-    <script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>
-    <script src="./assets/js/range.js"></script>
-    <!-- removed: Google Maps JS SDK (was 50KB + ~4 transitive requests).
-         @agm/core and @angular-material-extensions/google-maps-autocomplete were
-         unused on master too, then dropped entirely in the Angular 17 migration.
-         Add back via @angular/google-maps if location features are re-introduced. -->
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>

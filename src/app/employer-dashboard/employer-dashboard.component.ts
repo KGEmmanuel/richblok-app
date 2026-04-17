@@ -18,7 +18,39 @@ interface CandidateCard {
   earnedAt: any;
   passed: boolean;
   verifiedCompetencies: CompetencyTag[];
+  // F20 / F22 — AI-native metadata aggregated across the candidate's badges.
+  aiPairBadgeCount: number;              // how many of their badges are from AI-pair challenges
+  aiTools: string[];                     // distinct ai_tool_used values across AI-pair badges
+  aiCompetencies: string[];              // distinct ai_* competency tags across AI-pair badges
+  verificationScoreMax?: number;         // max verification_score across AI-pair badges
 }
+
+// F20 — AI-native competencies as they land on badges. When any of these
+// appear on a candidate's AI-pair badge, the candidate is considered
+// "verified AI-native" (F22).
+const AI_NATIVE_COMPETENCIES = [
+  'ai_pair_programming',
+  'ai_tool_orchestration',
+  'verification_discipline',
+  'ai_cost_consciousness'
+] as const;
+type AiNativeCompetency = typeof AI_NATIVE_COMPETENCIES[number];
+
+// AI tools we've seen at scoring time. Used for the employer "filter by
+// tool" dropdown. Keep in sync with Challenge.AiTool union.
+const AI_TOOL_LABELS: { [k: string]: string } = {
+  claude_code:    'Anthropic Claude Code',
+  cursor:         'Cursor',
+  github_copilot: 'GitHub Copilot',
+  openai_codex:   'OpenAI Codex',
+  replit_agent:   'Replit Agent',
+  windsurf:       'Windsurf',
+  lovable:        'Lovable',
+  bolt:           'Bolt',
+  v0:             'v0',
+  other:          'Other',
+  none:           'No AI tool'
+};
 
 @Component({
   selector: 'app-employer-dashboard',
@@ -39,6 +71,20 @@ export class EmployerDashboardComponent implements OnInit {
   minScore = 60;
   passedOnly = true;
   competencyFilter: CompetencyTag | '' = '';
+
+  // F22 — verified-AI-native filters. Default off; flipping on narrows
+  // results to candidates with at least one AI-pair badge.
+  aiNativeOnly = false;
+  aiToolFilter = '';                             // '', 'claude_code', 'cursor', ...
+  aiCompetencyFilter: AiNativeCompetency | '' = '';
+  minVerificationScore = 0;                      // 0..100 — candidate must hit this on any AI-pair badge
+  readonly aiToolOptions = Object.keys(AI_TOOL_LABELS).map(v => ({ value: v, label: AI_TOOL_LABELS[v] }));
+  readonly aiCompetencyOptions: Array<{ tag: AiNativeCompetency; label: string }> = [
+    { tag: 'ai_pair_programming',     label: 'AI Pair Programming' },
+    { tag: 'ai_tool_orchestration',   label: 'AI Tool Orchestration' },
+    { tag: 'verification_discipline', label: 'Verification Discipline' },
+    { tag: 'ai_cost_consciousness',   label: 'AI Cost Consciousness' }
+  ];
 
   readonly competencyOptions: Array<{ tag: CompetencyTag; label: string }> = [
     { tag: 'leadership', label: 'Leadership' },
@@ -84,8 +130,29 @@ export class EmployerDashboardComponent implements OnInit {
         verifiedByUid[data.uid] = set;
       });
 
+      // F22 — roll AI-pair badge metadata up per-uid so each candidate card
+      // has a single aggregated view (candidates can own multiple badges).
+      // Keyed by uid, not by badge, so a candidate who ran three AI-pair
+      // challenges across Cursor + Claude Code shows both tools without
+      // duplicating the card.
+      const aiRollup: { [uid: string]: { count: number; tools: Set<string>; comps: Set<string>; verMax: number } } = {};
+      badgesSnap.docs.forEach(d => {
+        const data: any = d.data();
+        if (data.challengeFormat === 'ai_pair' && data.uid) {
+          const r = aiRollup[data.uid] || { count: 0, tools: new Set(), comps: new Set(), verMax: 0 };
+          r.count++;
+          if (typeof data.ai_tool_used === 'string') r.tools.add(data.ai_tool_used);
+          if (Array.isArray(data.ai_competencies)) data.ai_competencies.forEach((t: string) => r.comps.add(t));
+          if (typeof data.verification_score === 'number' && data.verification_score > r.verMax) {
+            r.verMax = data.verification_score;
+          }
+          aiRollup[data.uid] = r;
+        }
+      });
+
       this.candidates = badgesSnap.docs.map(d => {
         const data: any = d.data();
+        const rollup = aiRollup[data.uid];
         return {
           badgeId: d.id,
           uid: data.uid,
@@ -97,8 +164,12 @@ export class EmployerDashboardComponent implements OnInit {
           percentile: data.percentile,
           earnedAt: data.earnedAt && data.earnedAt.toDate ? data.earnedAt.toDate() : null,
           passed: !!data.passed,
-          verifiedCompetencies: Array.from(verifiedByUid[data.uid] || []) as CompetencyTag[]
-        };
+          verifiedCompetencies: Array.from(verifiedByUid[data.uid] || []) as CompetencyTag[],
+          aiPairBadgeCount: rollup ? rollup.count : 0,
+          aiTools: rollup ? Array.from(rollup.tools) : [],
+          aiCompetencies: rollup ? Array.from(rollup.comps) : [],
+          verificationScoreMax: rollup ? rollup.verMax : undefined
+        } as CandidateCard;
       }).filter(c => c.uid && c.uid !== 'anonymous');
 
       this.allSkills = Array.from(new Set(this.candidates.map(c => c.skill).filter(Boolean))).sort();
@@ -120,6 +191,21 @@ export class EmployerDashboardComponent implements OnInit {
           return false;
         }
       }
+      // F22 — verified-AI-native gates. All are AND-ed with the filters above.
+      if (this.aiNativeOnly && (!c.aiPairBadgeCount || c.aiPairBadgeCount === 0)) {
+        return false;
+      }
+      if (this.aiToolFilter && c.aiTools.indexOf(this.aiToolFilter) < 0) {
+        return false;
+      }
+      if (this.aiCompetencyFilter && c.aiCompetencies.indexOf(this.aiCompetencyFilter) < 0) {
+        return false;
+      }
+      if (this.minVerificationScore > 0) {
+        if (typeof c.verificationScoreMax !== 'number' || c.verificationScoreMax < this.minVerificationScore) {
+          return false;
+        }
+      }
       return true;
     });
     if (this.competencyFilter) {
@@ -128,6 +214,24 @@ export class EmployerDashboardComponent implements OnInit {
         resultCount: this.filtered.length
       });
     }
+    if (this.aiNativeOnly || this.aiToolFilter || this.aiCompetencyFilter || this.minVerificationScore > 0) {
+      this.analytics.track('EmployerAiNativeFilter', {
+        aiNativeOnly: this.aiNativeOnly,
+        aiTool: this.aiToolFilter || null,
+        aiCompetency: this.aiCompetencyFilter || null,
+        minVerificationScore: this.minVerificationScore,
+        resultCount: this.filtered.length
+      });
+    }
+  }
+
+  aiToolLabel(tool: string): string {
+    return AI_TOOL_LABELS[tool] || tool;
+  }
+
+  aiCompetencyLabel(tag: string): string {
+    const opt = this.aiCompetencyOptions.find(o => o.tag === tag);
+    return opt ? opt.label : tag;
   }
 
   competencyLabel(tag: CompetencyTag): string {

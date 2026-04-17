@@ -1,0 +1,79 @@
+<rb-public-shell cta="signup">
+  <section class="lb-hero">
+    <rb-eyebrow>Weekly leaderboard · updated hourly</rb-eyebrow>
+    <h1 class="lb-h1">Top candidates this week</h1>
+    <p class="lb-sub">
+      Aggregated from verified badges earned in the last 7 days.
+      AI-pair tab highlights verification discipline — the scarce signal
+      employers filter on.
+    </p>
+    <nav class="lb-tabs" role="tablist">
+      <button type="button"
+              role="tab"
+              [attr.aria-selected]="format === 'all'"
+              class="lb-tab"
+              [class.lb-active]="format === 'all'"
+              (click)="setFormat('all')">
+        All challenges
+      </button>
+      <button type="button"
+              role="tab"
+              [attr.aria-selected]="format === 'ai_pair'"
+              class="lb-tab"
+              [class.lb-active]="format === 'ai_pair'"
+              (click)="setFormat('ai_pair')">
+        ✨ AI-pair only
+      </button>
+    </nav>
+  </section>
+
+  <rb-empty-state *ngIf="loading" icon="loader" heading="Loading leaderboard…" />
+
+  <rb-empty-state *ngIf="!loading && entries.length === 0"
+                  icon="sparkles"
+                  heading="No entries yet this week">
+    <p>
+      Be the first —
+      <a routerLink="/evaluate">take a challenge</a>
+      and your score lands here within a minute.
+    </p>
+  </rb-empty-state>
+
+  <rb-card *ngIf="!loading && entries.length > 0" class="lb-card">
+    <rb-card-title>
+      Top {{ entries.length }} — {{ format === 'ai_pair' ? 'AI-pair (ranked by verification score)' : 'ranked by total score this week' }}
+    </rb-card-title>
+
+    <ol class="lb-list">
+      <li *ngFor="let e of entries; let i = index" class="lb-row">
+        <div class="lb-rank" [class.lb-podium]="i < 3">#{{ i + 1 }}</div>
+        <div class="lb-name-block">
+          <a *ngIf="e.topBadgeId" [routerLink]="['/badge', e.topBadgeId]" class="lb-name">{{ e.userName }}</a>
+          <span *ngIf="!e.topBadgeId" class="lb-name">{{ e.userName }}</span>
+          <div class="lb-meta">
+            <span *ngIf="e.userCountry">{{ e.userCountry }} · </span>
+            <span>{{ e.badgeCount }} {{ e.badgeCount === 1 ? 'badge' : 'badges' }} this week</span>
+            <span *ngIf="e.uniqueChallenges > 1"> · {{ e.uniqueChallenges }} challenges</span>
+          </div>
+          <div class="lb-tools" *ngIf="format === 'ai_pair' && e.aiTools?.length">
+            <rb-chip variant="default" *ngFor="let t of e.aiTools">{{ t }}</rb-chip>
+          </div>
+        </div>
+        <div class="lb-score-block">
+          <div class="lb-score" *ngIf="format === 'all'">
+            <strong>{{ e.totalScore }}</strong>
+            <span>total</span>
+          </div>
+          <div class="lb-score" *ngIf="format === 'ai_pair'">
+            <strong>{{ e.maxVerificationScore }}</strong>
+            <span>verification</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <p class="lb-footnote" *ngIf="generatedAt">
+      Last updated {{ generatedAt | date:'short' }} · data is cached 60s server-side.
+    </p>
+  </rb-card>
+</rb-public-shell>

@@ -41,8 +41,7 @@
                             "src/assets/vendor/jquery/jquery.min.js",
                             "src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
                             "src/assets/vendor/slick/slick.min.js",
-                            "src/assets/js/osahan.js",
-                            "src/assets/js/jquery.easypiechart.js"
+                            "src/assets/js/osahan.js"
                         ]
                     },
                     "configurations": {

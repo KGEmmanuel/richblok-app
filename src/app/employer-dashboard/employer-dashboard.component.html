@@ -54,6 +54,37 @@
     </div>
   </section>
 
+  <!-- F22 — verified-AI-native filter row. Collapses into a single toggle
+       + dropdowns; expands only when the employer toggles "AI-native only". -->
+  <section class="ed-filters ed-filters-ainative">
+    <div class="ed-filter ed-filter-check ed-filter-ainative-toggle">
+      <label>
+        <input type="checkbox" [(ngModel)]="aiNativeOnly" (change)="applyFilters()">
+        <strong>✨ Verified AI-native</strong> — only candidates who completed an AI-pair challenge
+      </label>
+    </div>
+    <ng-container *ngIf="aiNativeOnly">
+      <div class="ed-filter">
+        <label>AI tool</label>
+        <select [(ngModel)]="aiToolFilter" (change)="applyFilters()">
+          <option value="">Any tool</option>
+          <option *ngFor="let t of aiToolOptions" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+      <div class="ed-filter">
+        <label>AI competency</label>
+        <select [(ngModel)]="aiCompetencyFilter" (change)="applyFilters()">
+          <option value="">Any AI competency</option>
+          <option *ngFor="let c of aiCompetencyOptions" [value]="c.tag">{{ c.label }}</option>
+        </select>
+      </div>
+      <div class="ed-filter ed-filter-range">
+        <label>Min verification score: <strong>{{ minVerificationScore }}</strong></label>
+        <input type="range" min="0" max="100" [(ngModel)]="minVerificationScore" (input)="applyFilters()">
+      </div>
+    </ng-container>
+  </section>
+
   <!-- Stats -->
   <section class="ed-stats">
     <div class="ed-stat"><strong>{{ filtered.length }}</strong><span>matches</span></div>
@@ -87,6 +118,21 @@
       <div class="ed-competency-row" *ngIf="c.verifiedCompetencies?.length">
         <span class="ed-competency-chip" *ngFor="let comp of c.verifiedCompetencies">
           ✓ {{ competencyLabel(comp) }}
+        </span>
+      </div>
+      <!-- F22 — AI-native badge row. Only renders when this candidate has
+           at least one AI-pair badge. Distinguished from behavioral chips
+           by a different color + ✨ glyph so employers can spot them fast. -->
+      <div class="ed-ai-native-row" *ngIf="c.aiPairBadgeCount > 0">
+        <span class="ed-ai-native-chip ed-ai-native-chip-header">
+          ✨ Verified AI-native
+          <span *ngIf="c.verificationScoreMax" class="ed-ai-verscore">· verification {{ c.verificationScoreMax }}/100</span>
+        </span>
+        <span class="ed-ai-native-chip" *ngFor="let t of c.aiTools">
+          {{ aiToolLabel(t) }}
+        </span>
+        <span class="ed-ai-native-chip ed-ai-native-chip-comp" *ngFor="let ac of c.aiCompetencies">
+          {{ aiCompetencyLabel(ac) }}
         </span>
       </div>
       <div class="ed-candidate-foot">

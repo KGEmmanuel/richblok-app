@@ -1089,6 +1089,120 @@ app.get('/api/pods/nudge', async (req, res) => {
 });
 
 /* =========================================================================
+ * F24 — Weekly leaderboard
+ *
+ * Public GET endpoint that aggregates badges earned in the last N days and
+ * ranks candidates. Two variants:
+ *   /api/leaderboard         — last 7 days, overall score
+ *   /api/leaderboard?format=ai_pair  — AI-pair only, ranked by verification_score
+ *
+ * Cached per-request for 60s to absorb the SEO+social traffic that the
+ * public /leaderboard page generates. No auth — this is public by design.
+ *
+ * NOTE — WhatsApp broadcast of the weekly top list is DEFERRED. The delivery
+ * path reuses the same Twilio worker as pod nudges, so when TWILIO_* env
+ * vars are set we can add a second cron-job.yml entry that hits
+ * /api/leaderboard/broadcast?secret=... — designed but not implemented.
+ * See docs/LEADERBOARD_BROADCAST_TODO.md for the one-file additive change.
+ * ========================================================================= */
+
+// Cache holds the most recent aggregation. Key = `${format}:${days}`.
+const leaderboardCache = new Map();
+const LEADERBOARD_CACHE_TTL_MS = 60 * 1000;
+
+app.get('/api/leaderboard', async (req, res) => {
+  const format = req.query.format === 'ai_pair' ? 'ai_pair' : 'all';
+  const days = Math.min(Math.max(parseInt(req.query.days, 10) || 7, 1), 90);
+  const cacheKey = `${format}:${days}`;
+
+  const cached = leaderboardCache.get(cacheKey);
+  if (cached && Date.now() - cached.at < LEADERBOARD_CACHE_TTL_MS) {
+    res.set('Cache-Control', 'public, max-age=60, s-maxage=60');
+    return res.json(cached.data);
+  }
+
+  if (!admin || !admin.apps.length) {
+    return res.json({ entries: [], windowDays: days, format, mode: 'no_admin_sdk' });
+  }
+
+  try {
+    const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    let query = admin.firestore().collection('badges')
+      .where('passed', '==', true)
+      .where('earnedAt', '>=', cutoff);
+    if (format === 'ai_pair') {
+      query = query.where('challengeFormat', '==', 'ai_pair');
+    }
+    const snap = await query.limit(500).get();
+
+    // Aggregate per-uid so a candidate with 3 badges this week doesn't
+    // appear 3 times. Rank metric = sum of scores (rewards both volume
+    // and quality; a single 95 beats two 45s).
+    const byUid = new Map();
+    snap.forEach(d => {
+      const data = d.data();
+      if (!data.uid) return;
+      const row = byUid.get(data.uid) || {
+        uid: data.uid,
+        userName: data.userName || 'Anonymous',
+        userCountry: data.userCountry || '',
+        badgeCount: 0,
+        totalScore: 0,
+        maxScore: 0,
+        maxVerificationScore: 0,
+        topBadgeId: null,
+        aiTools: new Set(),
+        challenges: new Set()
+      };
+      row.badgeCount++;
+      row.totalScore += data.score || 0;
+      if ((data.score || 0) > row.maxScore) {
+        row.maxScore = data.score || 0;
+        row.topBadgeId = d.id;
+      }
+      if (typeof data.verification_score === 'number' && data.verification_score > row.maxVerificationScore) {
+        row.maxVerificationScore = data.verification_score;
+      }
+      if (data.ai_tool_used) row.aiTools.add(data.ai_tool_used);
+      if (data.challengeId)  row.challenges.add(data.challengeId);
+      byUid.set(data.uid, row);
+    });
+
+    // Serialize sets → arrays; sort.
+    const rawEntries = Array.from(byUid.values()).map(r => ({
+      uid: r.uid,
+      userName: r.userName,
+      userCountry: r.userCountry,
+      badgeCount: r.badgeCount,
+      totalScore: r.totalScore,
+      maxScore: r.maxScore,
+      maxVerificationScore: r.maxVerificationScore,
+      topBadgeId: r.topBadgeId,
+      aiTools: Array.from(r.aiTools),
+      uniqueChallenges: r.challenges.size
+    }));
+    // AI-pair leaderboard ranks by verification-discipline primarily.
+    // General leaderboard ranks by total score.
+    if (format === 'ai_pair') {
+      rawEntries.sort((a, b) => {
+        if (b.maxVerificationScore !== a.maxVerificationScore) return b.maxVerificationScore - a.maxVerificationScore;
+        return b.totalScore - a.totalScore;
+      });
+    } else {
+      rawEntries.sort((a, b) => b.totalScore - a.totalScore);
+    }
+    const entries = rawEntries.slice(0, 50);
+    const data = { entries, windowDays: days, format, generatedAt: new Date().toISOString(), total: byUid.size };
+    leaderboardCache.set(cacheKey, { at: Date.now(), data });
+    res.set('Cache-Control', 'public, max-age=60, s-maxage=60');
+    return res.json(data);
+  } catch (err) {
+    console.error('[leaderboard] failed:', err && err.message);
+    return res.status(500).json({ error: 'leaderboard failed' });
+  }
+});
+
+/* =========================================================================
  * Pods: delivery worker (Twilio WhatsApp Business API)
  *
  * Reads undelivered pod_nudges docs, resolves each member's phone via

@@ -1,0 +1,80 @@
+<rb-public-shell cta="signup">
+  <section class="an-hero">
+    <rb-eyebrow>Public directory</rb-eyebrow>
+    <h1 class="an-h1">Verified AI-native engineers</h1>
+    <p class="an-sub">
+      Every person below shipped a real PR with an AI tool inside a timed challenge,
+      scored by Claude across correctness, verification discipline, explainer clarity,
+      and cost consciousness. Credentials, not resumes.
+    </p>
+    <div class="an-stats" *ngIf="!loading && cards.length > 0">
+      <div class="an-stat"><strong>{{ totalAiNativeBadges }}</strong><span>verified badges</span></div>
+      <div class="an-stat"><strong>{{ uniqueCandidates }}</strong><span>candidates</span></div>
+      <div class="an-stat"><strong>{{ uniqueTools }}</strong><span>AI tools</span></div>
+      <div class="an-stat"><strong>{{ uniqueCountries }}</strong><span>countries</span></div>
+    </div>
+    <div class="an-hero-cta">
+      <a routerLink="/sign-up" class="an-cta-primary">Earn your AI-native badge →</a>
+      <a routerLink="/employer/dashboard" class="an-cta-ghost">Hiring? Employer view</a>
+    </div>
+  </section>
+
+  <rb-empty-state
+    *ngIf="loading"
+    icon="loader"
+    heading="Loading directory…"
+  />
+
+  <rb-empty-state
+    *ngIf="!loading && cards.length === 0"
+    icon="sparkles"
+    heading="Directory is warming up"
+  >
+    <p>
+      Be among the first verified AI-native engineers on Richblok —
+      <a routerLink="/ai-pair/ai-pair-rate-limit-bug">take the rate-limit challenge</a>
+      and your badge shows up here automatically.
+    </p>
+  </rb-empty-state>
+
+  <section class="an-grid" *ngIf="!loading && cards.length > 0">
+    <a *ngFor="let c of cards; let i = index"
+       [routerLink]="['/badge', c.badgeId]"
+       class="an-card"
+       [attr.aria-label]="'View badge for ' + c.userName">
+      <div class="an-card-rank">#{{ i + 1 }}</div>
+      <div class="an-card-head">
+        <div class="an-card-name">{{ c.userName }}</div>
+        <div class="an-card-meta">
+          <span *ngIf="c.userCountry">{{ c.userCountry }} · </span>
+          <span>{{ aiToolLabel(c.aiTool) }}</span>
+        </div>
+      </div>
+      <div class="an-card-scores">
+        <div class="an-card-score">
+          <strong>{{ c.verificationScore }}</strong>
+          <span>verification</span>
+        </div>
+        <div class="an-card-score">
+          <strong>{{ c.score }}</strong>
+          <span>overall</span>
+        </div>
+        <div class="an-card-level" [class.an-senior]="c.level === 'senior'">{{ c.level }}</div>
+      </div>
+      <div class="an-card-comps" *ngIf="c.aiCompetencies?.length">
+        <rb-chip variant="verified" *ngFor="let comp of c.aiCompetencies">
+          ✓ {{ aiCompetencyLabel(comp) }}
+        </rb-chip>
+      </div>
+    </a>
+  </section>
+
+  <section class="an-cta-footer" *ngIf="!loading && cards.length > 0">
+    <h2>Not on the list?</h2>
+    <p>
+      AI-pair challenges take 45 minutes. Pick any AI tool you already use.
+      Your badge is public, permanent, and tool-agnostic — no vendor lock-in.
+    </p>
+    <a routerLink="/evaluate" class="an-cta-primary">Browse challenges →</a>
+  </section>
+</rb-public-shell>
