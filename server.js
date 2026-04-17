@@ -120,6 +120,8 @@ app.use('/api/stripe/checkout', express.json({ limit: '16kb' }));
 app.use('/api/stripe/portal', express.json({ limit: '8kb' }));
 app.use('/api/pods/match', express.json({ limit: '32kb' }));
 app.use('/api/admin/challenges', express.json({ limit: '200kb' }));
+// Human-reviewer approve POST carries 4 {score, notes} + feedback; <16kb always.
+app.use('/api/admin/ai-pair', express.json({ limit: '64kb' }));
 // Default smaller limit for other /api endpoints
 app.use('/api/health', express.json({ limit: '8kb' }));
 
@@ -1336,6 +1338,200 @@ app.delete('/api/admin/challenges/:id', async (req, res) => {
 });
 
 /* =========================================================================
+ * F17 — Admin review queue for pending AI-pair submissions
+ *
+ * Backs the /admin/ai-pair/review dashboard. All three endpoints require
+ * role=admin. Submissions land in `pending_review_queue` when automated
+ * scoring fails (Claude API down, malformed response, unconfigured key).
+ *
+ *   GET    /api/admin/ai-pair/pending-reviews            → list pending items
+ *   POST   /api/admin/ai-pair/pending-reviews/:id/approve → issue badge + mark reviewed
+ *   POST   /api/admin/ai-pair/pending-reviews/:id/reject  → mark rejected (no badge)
+ * ========================================================================= */
+
+// GET — list pending items, newest first, paginated (default 50).
+app.get('/api/admin/ai-pair/pending-reviews', async (req, res) => {
+  const user = await requireAdmin(req, res);
+  if (!user) return;
+  const limit = Math.min(parseInt(req.query.limit, 10) || 50, 200);
+  const status = typeof req.query.status === 'string' ? req.query.status : 'pending';
+  try {
+    const snap = await admin.firestore()
+      .collection('pending_review_queue')
+      .where('status', '==', status)
+      .limit(limit)
+      .get();
+    const items = snap.docs.map(d => {
+      const data = d.data();
+      // Timestamps → ISO for JSON transport.
+      if (data.submittedAt && typeof data.submittedAt.toDate === 'function') {
+        data.submittedAt = data.submittedAt.toDate().toISOString();
+      }
+      if (data.reviewedAt && typeof data.reviewedAt.toDate === 'function') {
+        data.reviewedAt = data.reviewedAt.toDate().toISOString();
+      }
+      return { id: d.id, ...data };
+    });
+    // Sort client-side to avoid a composite index. Safe for limit <= 200.
+    items.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+    res.json({ items, count: items.length });
+  } catch (err) {
+    console.error('[admin/pending-reviews] list failed:', err && err.message);
+    res.status(500).json({ error: 'failed to list pending reviews' });
+  }
+});
+
+// POST /:id/approve — human-reviewer fills in the 4 dimension scores,
+// server applies the same weights/level logic as the automated path and
+// issues a real badge. The queue doc is stamped reviewedBy/reviewedAt.
+//
+// Body: {
+//   correctness:        { score, notes },
+//   verification:       { score, notes },
+//   explainer:          { score, notes },
+//   cost_consciousness: { score, notes },
+//   feedback:           string,
+//   aiCompetenciesDemonstrated: string[]
+// }
+app.post('/api/admin/ai-pair/pending-reviews/:id/approve', async (req, res) => {
+  const user = await requireAdmin(req, res);
+  if (!user) return;
+  const b = req.body || {};
+  const dims = ['correctness', 'verification', 'explainer', 'cost_consciousness'];
+  // Same validation as the automated path.
+  const validated = {};
+  for (const d of dims) {
+    const v = b[d];
+    if (!v || typeof v.score !== 'number' || v.score < 0 || v.score > 100) {
+      return res.status(400).json({ error: `${d}.score must be a number 0..100` });
+    }
+    validated[d] = { score: Math.round(v.score), notes: typeof v.notes === 'string' ? v.notes : '' };
+  }
+
+  const overallScore = Math.round(
+    validated.correctness.score        * AI_PAIR_WEIGHTS.correctness +
+    validated.verification.score       * AI_PAIR_WEIGHTS.verification +
+    validated.explainer.score          * AI_PAIR_WEIGHTS.explainer +
+    validated.cost_consciousness.score * AI_PAIR_WEIGHTS.cost_consciousness
+  );
+  const passed = overallScore >= AI_PAIR_PASS_THRESHOLD;
+  const level  = !passed ? null :
+                 overallScore > 85 ? 'senior' :
+                 overallScore > 70 ? 'mid' : 'junior';
+  const percentile = Math.max(0, Math.min(100, overallScore));
+  const validCompetencies = Array.isArray(b.aiCompetenciesDemonstrated)
+    ? b.aiCompetenciesDemonstrated
+        .filter(s => typeof s === 'string')
+        .filter(s => AI_COMPETENCY_ENUM.includes(s))
+        .slice(0, 4)
+    : [];
+
+  try {
+    const db = admin.firestore();
+    const queueRef = db.collection('pending_review_queue').doc(req.params.id);
+    const queueSnap = await queueRef.get();
+    if (!queueSnap.exists) {
+      return res.status(404).json({ error: 'queue item not found' });
+    }
+    const queueData = queueSnap.data();
+    if (queueData.status !== 'pending') {
+      return res.status(409).json({ error: `item already ${queueData.status}` });
+    }
+
+    let badgeId = null;
+    if (passed) {
+      const badgeDoc = await db.collection('badges').add({
+        uid: queueData.uid,
+        userName: queueData.userName || '',
+        skill: 'AI-Pair',
+        level,
+        score: overallScore,
+        percentile,
+        passed: true,
+        earnedAt: admin.firestore.FieldValue.serverTimestamp(),
+        challengeId: queueData.challengeId,
+        challengeSlug: queueData.challengeSlug || null,
+        challengeFormat: 'ai_pair',
+        ai_tool_used: queueData.aiTool || 'other',
+        ai_competencies: validCompetencies,
+        verification_score: validated.verification.score,
+        cost_consciousness_score: validated.cost_consciousness.score,
+        promptVersion: queueData.promptVersion || AI_PAIR_PROMPT_VERSION,
+        scoringMode: 'human_review',    // distinguishes from 'claude_sonnet'
+        reviewedBy: user.uid
+      });
+      badgeId = badgeDoc.id;
+    }
+
+    // Mark the queue doc as reviewed and link the issued badge (if any).
+    await queueRef.update({
+      status: passed ? 'approved' : 'rejected_low_score',
+      reviewedBy: user.uid,
+      reviewedAt: admin.firestore.FieldValue.serverTimestamp(),
+      reviewScores: validated,
+      reviewFeedback: typeof b.feedback === 'string' ? b.feedback : '',
+      reviewOverall: overallScore,
+      reviewLevel: level,
+      badgeId
+    });
+
+    aiPairLog('ai_pair.human_reviewed', {
+      queueId: req.params.id,
+      reviewerUid: user.uid,
+      candidateUid: queueData.uid,
+      challengeId: queueData.challengeId,
+      overallScore,
+      passed,
+      level,
+      badgeId
+    });
+
+    res.json({ queueId: req.params.id, overallScore, passed, level, badgeId });
+  } catch (err) {
+    console.error('[admin/pending-reviews/approve] failed:', err && err.message);
+    res.status(500).json({ error: 'approve failed' });
+  }
+});
+
+// POST /:id/reject — no badge, queue doc flipped to status=rejected.
+// Body: { reason: string, reviewFeedback?: string }
+app.post('/api/admin/ai-pair/pending-reviews/:id/reject', async (req, res) => {
+  const user = await requireAdmin(req, res);
+  if (!user) return;
+  const reason = typeof (req.body && req.body.reason) === 'string' ? req.body.reason : 'no_reason_provided';
+  const feedback = typeof (req.body && req.body.reviewFeedback) === 'string' ? req.body.reviewFeedback : '';
+  try {
+    const queueRef = admin.firestore().collection('pending_review_queue').doc(req.params.id);
+    const queueSnap = await queueRef.get();
+    if (!queueSnap.exists) {
+      return res.status(404).json({ error: 'queue item not found' });
+    }
+    const queueData = queueSnap.data();
+    if (queueData.status !== 'pending') {
+      return res.status(409).json({ error: `item already ${queueData.status}` });
+    }
+    await queueRef.update({
+      status: 'rejected',
+      rejectedReason: reason,
+      reviewFeedback: feedback,
+      reviewedBy: user.uid,
+      reviewedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    aiPairLog('ai_pair.human_rejected', {
+      queueId: req.params.id,
+      reviewerUid: user.uid,
+      candidateUid: queueData.uid,
+      challengeId: queueData.challengeId,
+      reason
+    });
+    res.json({ queueId: req.params.id, status: 'rejected' });
+  } catch (err) {
+    console.error('[admin/pending-reviews/reject] failed:', err && err.message);
+    res.status(500).json({ error: 'reject failed' });
+  }
+});
+
+/* =========================================================================
  * AI Coach SSE streaming endpoint
  *   POST /api/coach/stream   → keep-alive SSE (`text/event-stream`).
  *   Events: {type:'delta', text:'…'} repeated, then {type:'done'}.
@@ -1521,6 +1717,8 @@ const AI_PAIR_MAX_EXPLAINER  =   8000;
 
 // TSEF-A1: Per-uid in-memory rate limit. 10 scorings/day/uid. When we scale
 // horizontally, swap this for Redis — until then, single-node Railway is fine.
+// Migration plan + triggers: docs/REDIS_MIGRATION.md
+// TODO(redis): when replicas > 1, swap aiPairRateBuckets for a Redis INCR+EXPIRE.
 const AI_PAIR_DAILY_LIMIT   = 10;
 const AI_PAIR_WINDOW_MS     = 24 * 60 * 60 * 1000;
 const aiPairRateBuckets     = new Map(); // uid -> { windowStart, count }
@@ -1545,6 +1743,8 @@ const AI_PAIR_CLAUDE_TIMEOUT_MS = 30_000;
 // in-flight to Claude, new ones get 503 + Retry-After rather than pile up.
 // Chosen over p-queue: no new dep, and refusing fast beats queueing when
 // Anthropic is the bottleneck.
+// TODO(redis): when replicas > 1, this counter becomes per-replica.
+// See docs/REDIS_MIGRATION.md for the atomic INCR/DECR pattern.
 const AI_PAIR_MAX_CONCURRENT = 10;
 let   aiPairActiveCount      = 0;
 function aiPairAcquireSlot() {

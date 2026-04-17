@@ -4,9 +4,17 @@
       <h1>📊 Richblok · Admin dashboard</h1>
       <p class="ad-meta">Last refreshed {{ lastRefresh | date:'medium' }}</p>
     </div>
-    <button type="button" class="ad-refresh" (click)="refresh()" [disabled]="loading">
-      {{ loading ? 'Loading…' : '↻ Refresh' }}
-    </button>
+    <div class="ad-header-actions">
+      <a routerLink="/admin/ai-pair/review" class="ad-refresh" style="text-decoration: none;">
+        🔍 AI-pair review queue
+      </a>
+      <a routerLink="/admin/challenges" class="ad-refresh" style="text-decoration: none;">
+        🎯 Challenges
+      </a>
+      <button type="button" class="ad-refresh" (click)="refresh()" [disabled]="loading">
+        {{ loading ? 'Loading…' : '↻ Refresh' }}
+      </button>
+    </div>
   </header>
 
   <section class="ad-cards">

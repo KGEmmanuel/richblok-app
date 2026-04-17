@@ -99,6 +99,10 @@ const routes: Routes = [
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },
   { path: 'admin/seed-challenges', component: AdminSeedComponent, canActivate: [AuthGuard], data: {title: 'Admin · Seed'}},
   { path: 'admin/challenges', component: AdminChallengesComponent, canActivate: [AuthGuard], data: {title: 'Admin · Challenges'}},
+  { path: 'admin/ai-pair/review',
+    loadComponent: () => import('./admin-ai-pair-review/admin-ai-pair-review.component').then(m => m.AdminAiPairReviewComponent),
+    canActivate: [AuthGuard],
+    data: {title: 'Admin · AI-pair review'} },
   { path: 'sponsor', loadComponent: () => import('./sponsor-challenge/sponsor-challenge.component').then(m => m.SponsorChallengeComponent), data: {title: 'Sponsor a challenge'}},
   // F17 — AI-pair challenge format. Requires AuthGuard because submission issues a badge record.
   { path: 'ai-pair/:slug', loadComponent: () => import('./ai-pair-challenge/ai-pair-challenge.component').then(m => m.AiPairChallengeComponent), canActivate: [AuthGuard], data: {title: 'AI-pair challenge'}},

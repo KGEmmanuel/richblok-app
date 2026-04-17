@@ -1,0 +1,161 @@
+<div class="ap-review">
+  <header class="ap-review-header">
+    <rb-eyebrow>Admin · AI-pair review</rb-eyebrow>
+    <h1>Pending review queue</h1>
+    <p class="ap-sub">
+      Submissions here failed automated scoring (Claude API error, malformed response, or missing key).
+      Approve with dimension scores to issue a verified badge, or reject with a reason.
+    </p>
+    <div class="ap-toolbar">
+      <rb-button variant="ghost" (clicked)="refresh()" [disabled]="loading">
+        <rb-icon name="refresh-cw" size="14" /> Refresh
+      </rb-button>
+      <span class="ap-count" *ngIf="!loading">{{ items.length }} pending</span>
+    </div>
+  </header>
+
+  <rb-empty-state
+    *ngIf="loading"
+    icon="loader"
+    heading="Loading review queue…"
+  />
+
+  <rb-card *ngIf="!loading && errorMsg" class="ap-error">
+    <p>{{ errorMsg }}</p>
+  </rb-card>
+
+  <rb-empty-state
+    *ngIf="!loading && !errorMsg && items.length === 0"
+    icon="check-circle"
+    heading="Nothing to review"
+  >
+    <p>When automated scoring degrades, submissions show up here. The queue is empty right now.</p>
+  </rb-empty-state>
+
+  <ng-container *ngIf="!loading && items.length > 0">
+    <rb-card *ngFor="let item of items" class="ap-review-item">
+      <div class="ap-review-item-head">
+        <div>
+          <rb-card-title>{{ item.challengeId }}</rb-card-title>
+          <p class="ap-review-meta">
+            <strong>{{ item.userName || item.uid }}</strong> ·
+            {{ reasonLabel(item.reason) }} ·
+            {{ formatDuration(item.elapsedSeconds) }} ·
+            tool: {{ item.aiTool }} ·
+            submitted {{ item.submittedAt }}
+          </p>
+        </div>
+        <div class="ap-review-item-actions">
+          <rb-button
+            *ngIf="openItemId !== item.id"
+            variant="ghost"
+            (clicked)="openItem(item)"
+          >Open</rb-button>
+          <rb-button
+            *ngIf="openItemId === item.id"
+            variant="ghost"
+            (clicked)="closeItem()"
+          >Close</rb-button>
+        </div>
+      </div>
+
+      <ng-container *ngIf="openItemId === item.id">
+        <!-- Submission content — brief, PR diff, transcript, explainer -->
+        <section class="ap-section">
+          <h3>Brief</h3>
+          <pre class="ap-code">{{ item.brief }}</pre>
+        </section>
+        <section class="ap-section" *ngIf="item.successCriteria">
+          <h3>Success criteria</h3>
+          <pre class="ap-code">{{ item.successCriteria }}</pre>
+        </section>
+        <section class="ap-section">
+          <h3>PR diff</h3>
+          <pre class="ap-code ap-code-diff">{{ item.prDiff }}</pre>
+        </section>
+        <section class="ap-section">
+          <h3>Transcript</h3>
+          <pre class="ap-code">{{ item.transcript }}</pre>
+        </section>
+        <section class="ap-section" *ngIf="item.explainer">
+          <h3>Explainer</h3>
+          <pre class="ap-code">{{ item.explainer }}</pre>
+        </section>
+
+        <!-- Scoring form -->
+        <section class="ap-section ap-scoring">
+          <h3>Your scores (0-100)</h3>
+          <p class="ap-hint">
+            Server weights: correctness 40% · verification 35% · explainer 10% · cost 15%.
+            Pass threshold ≥ 60. Badge level: senior &gt; 85, mid 71-85, junior 60-70.
+          </p>
+
+          <div class="ap-score-grid">
+            <div class="ap-score-cell">
+              <label>Correctness (40%)</label>
+              <input type="number" min="0" max="100" [(ngModel)]="scores.correctness.score" />
+              <textarea rows="2" placeholder="1-2 sentences" [(ngModel)]="scores.correctness.notes"></textarea>
+            </div>
+            <div class="ap-score-cell">
+              <label>Verification (35%)</label>
+              <input type="number" min="0" max="100" [(ngModel)]="scores.verification.score" />
+              <textarea rows="2" placeholder="1-2 sentences" [(ngModel)]="scores.verification.notes"></textarea>
+            </div>
+            <div class="ap-score-cell">
+              <label>Explainer (10%)</label>
+              <input type="number" min="0" max="100" [(ngModel)]="scores.explainer.score" />
+              <textarea rows="2" placeholder="1-2 sentences" [(ngModel)]="scores.explainer.notes"></textarea>
+            </div>
+            <div class="ap-score-cell">
+              <label>Cost consciousness (15%)</label>
+              <input type="number" min="0" max="100" [(ngModel)]="scores.cost_consciousness.score" />
+              <textarea rows="2" placeholder="1-2 sentences" [(ngModel)]="scores.cost_consciousness.notes"></textarea>
+            </div>
+          </div>
+
+          <div class="ap-preview" *ngIf="previewOverall !== null">
+            <strong>Preview overall: {{ previewOverall }}/100</strong>
+            <span *ngIf="previewLevel"> · badge level <strong>{{ previewLevel }}</strong></span>
+            <span *ngIf="!previewLevel"> · below pass threshold — no badge will be issued</span>
+          </div>
+
+          <div class="ap-competencies">
+            <label>AI competencies demonstrated</label>
+            <div class="ap-pills">
+              <rb-chip
+                *ngFor="let c of competencyOptions"
+                [variant]="isCompetencySelected(c.tag) ? 'verified' : 'default'"
+                (click)="toggleCompetency(c.tag)"
+                style="cursor: pointer;"
+              >{{ c.label }}</rb-chip>
+            </div>
+          </div>
+
+          <label>Reviewer feedback (shown to the candidate)</label>
+          <textarea rows="4" placeholder="2-3 paragraphs of specific, actionable coaching" [(ngModel)]="feedback"></textarea>
+
+          <div class="ap-cta-row">
+            <rb-button
+              [disabled]="!canApprove || submitting"
+              (clicked)="approve(item)"
+            >Approve with scores</rb-button>
+          </div>
+        </section>
+
+        <!-- Reject path -->
+        <section class="ap-section ap-reject">
+          <h3>Reject (no badge)</h3>
+          <label>Reason (e.g. "bad-faith submission", "duplicate", "off-topic")</label>
+          <input type="text" [(ngModel)]="rejectReason" />
+          <div class="ap-cta-row">
+            <rb-button
+              variant="ghost"
+              [disabled]="!rejectReason.trim() || submitting"
+              (clicked)="reject(item)"
+            >Reject</rb-button>
+          </div>
+        </section>
+      </ng-container>
+    </rb-card>
+  </ng-container>
+</div>
