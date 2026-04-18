@@ -13,16 +13,15 @@
             </div>
         </form>
         <ul class="navbar-nav ml-auto d-flex align-items-center">
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <li class="nav-item dropdown no-arrow d-sm-none">
-                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <!-- D2: mobile search dropdown migrated to ngbDropdown -->
+            <li class="nav-item no-arrow d-sm-none" ngbDropdown>
+                <a class="nav-link" style="cursor:pointer;" role="button" ngbDropdownToggle>
                     <i class="feather-search mr-2"></i>
                 </a>
-                <!-- Dropdown - Messages -->
-                <div class="dropdown-menu dropdown-menu-right p-3 shadow-sm animated--grow-in" aria-labelledby="searchDropdown">
+                <div ngbDropdownMenu class="dropdown-menu-right p-3 shadow-sm" aria-label="Search">
                     <form class="form-inline mr-auto w-100 navbar-search">
                         <div class="input-group">
-                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search people, jobs and more..." aria-label="Search" aria-describedby="basic-addon2">
+                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search people, jobs and more..." aria-label="Search">
                             <div class="input-group-append">
                                 <button class="btn" type="button">
                   <i class="feather-search"></i>

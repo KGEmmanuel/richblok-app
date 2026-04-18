@@ -18,13 +18,14 @@
                                 <div class="small">Income tax sops on the cards, The bias in VC funding, and other top news for you</div>
                             </div>
                             <span class="ml-auto mb-auto">
-                       <div class="btn-group">
-                          <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       <!-- D2: dropdown migrated to ngbDropdown -->
+                       <div class="btn-group" ngbDropdown>
+                          <button type="button" class="btn btn-light btn-sm rounded" ngbDropdownToggle aria-expanded="false">
                           <i class="feather-more-vertical"></i>
                           </button>
-                          <div class="dropdown-menu dropdown-menu-right">
-                             <button class="dropdown-item" type="button"><i class="feather-trash"></i> Delete</button>
-                             <button class="dropdown-item" type="button"><i class="feather-x-circle"></i> Turn Off</button>
+                          <div ngbDropdownMenu class="dropdown-menu-right">
+                             <button ngbDropdownItem type="button"><i class="feather-trash"></i> Delete</button>
+                             <button ngbDropdownItem type="button"><i class="feather-x-circle"></i> Turn Off</button>
                           </div>
                        </div>
                        <br>
@@ -41,13 +42,14 @@
                                 <button type="button" class="btn btn-outline-primary">View Jobs</button>
                             </div>
                             <span class="ml-auto mb-auto">
-                       <div class="btn-group">
-                          <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       <!-- D2: dropdown migrated to ngbDropdown -->
+                       <div class="btn-group" ngbDropdown>
+                          <button type="button" class="btn btn-light btn-sm rounded" ngbDropdownToggle aria-expanded="false">
                           <i class="feather-more-vertical"></i>
                           </button>
-                          <div class="dropdown-menu dropdown-menu-right">
-                             <button class="dropdown-item" type="button"><i class="feather-trash"></i> Delete</button>
-                             <button class="dropdown-item" type="button"><i class="feather-x-circle"></i> Turn Off</button>
+                          <div ngbDropdownMenu class="dropdown-menu-right">
+                             <button ngbDropdownItem type="button"><i class="feather-trash"></i> Delete</button>
+                             <button ngbDropdownItem type="button"><i class="feather-x-circle"></i> Turn Off</button>
                           </div>
                        </div>
                        <br>
