@@ -6,11 +6,6 @@ import { Formation } from '../shared/entites/Formation';
 import { Langue } from '../shared/entites/Langue';
 import { Experience } from '../shared/entites/Experience';
 import { Skill } from '../shared/entites/Skill';
-// D7 Day 2 — firebase/compat/app side-effect imports kept until downstream
-// services (UtilisateurService etc.) migrate off compat in Day 3.
-import 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
 import { Router } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
 import { SkillsService } from '../shared/services/skills.service';
