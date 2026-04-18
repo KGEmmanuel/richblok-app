@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Certification } from '../entites/Certification';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Firestore, addDoc, collection } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +11,16 @@ export class CertificationService {
   readonly invitPath = 'certInvitations';
   readonly trainPath = '';
   readonly skillPath = '';
-   db = firebase.firestore();
+
+  private firestore = inject(Firestore);
+
   constructor() { }
 
   inviteToCertify(cert: Certification) {
-    return this.db.collection(this.invitPath).add(Object.assign({}, {...cert, datedemande : new Date() }));
+    return addDoc(
+      collection(this.firestore, this.invitPath),
+      Object.assign({}, { ...cert, datedemande: new Date() })
+    );
   }
 
   certify(cert: Certification) {

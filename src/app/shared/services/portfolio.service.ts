@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Realisation } from '../entites/Realisation';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import {
+  Firestore, addDoc, collection, deleteDoc, doc, updateDoc
+} from '@angular/fire/firestore';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
@@ -10,26 +11,39 @@ import 'firebase/compat/firestore';
 export class PortfolioService {
   path = 'realisations';
   basepath = 'utilisateurs';
-  db = firebase.firestore();
+
+  private firestore = inject(Firestore);
+
   constructor() { }
 
-  add(user, data: Realisation) {
+  private col(user: string) {
+    return collection(this.firestore, this.basepath, user, this.path);
+  }
+
+  add(user: string, data: Realisation) {
     console.log('Real Media ', data.medias);
-    return this.db.collection(this.basepath).doc(user).collection(this.path).add(Object.assign({}, data));
+    return addDoc(this.col(user), Object.assign({}, data));
   }
 
-  setmedia(user, id, meds) {
-    return this.db.collection(this.basepath).doc(user).collection(this.path).doc(id).update({medias: meds});
+  setmedia(user: string, id: string, meds: any) {
+    return updateDoc(
+      doc(this.firestore, this.basepath, user, this.path, id),
+      { medias: meds }
+    );
   }
 
-  getportfolios(user) {
-    return this.db.collection(this.basepath).doc(user).collection(this.path);
+  getportfolios(user: string) {
+    return snapshotQuery(this.col(user));
   }
 
-  delete(userid: string, id: string){
-    return  this.db.collection(this.basepath).doc(userid).collection(this.path).doc(id).delete();
+  delete(userid: string, id: string) {
+    return deleteDoc(doc(this.firestore, this.basepath, userid, this.path, id));
   }
-  update(user, data: Realisation){
-    return this.db.collection(this.basepath).doc(user).collection(this.path).doc(data.id).update(Object.assign({},data));
+
+  update(user: string, data: Realisation) {
+    return updateDoc(
+      doc(this.firestore, this.basepath, user, this.path, data.id),
+      Object.assign({}, data) as any
+    );
   }
 }

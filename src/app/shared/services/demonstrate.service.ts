@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import { Firestore, addDoc, collection } from '@angular/fire/firestore';
 import { Demonstration } from '../entites/demonstration';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +9,16 @@ import { Demonstration } from '../entites/demonstration';
 export class DemonstrateService {
   readonly path = 'demonstrations';
   readonly basepath = 'utilisateurs';
-  db = firebase.firestore();
+
+  private firestore = inject(Firestore);
+
   constructor() { }
 
-  add(user: string, data: Demonstration ) {
-    const chem = this.path;
+  private col(user: string) {
+    return collection(this.firestore, this.basepath, user, this.path);
+  }
+
+  add(user: string, data: Demonstration) {
     console.log(data.medias);
     const medias = [];
     data.demDate = new Date();
@@ -22,14 +26,13 @@ export class DemonstrateService {
       data.medias.forEach(v => {
         medias.push(Object.assign({}, v));
       });
-      // medias.push()
       data.medias = medias;
     }
-    return this.db.collection(this.basepath).doc(user).collection(this.path).add(Object.assign({}, data));
+    return addDoc(this.col(user), Object.assign({}, data));
   }
 
-  get(user:string){
-    return this.db.collection(this.basepath).doc(user).collection(this.path);
+  get(user: string) {
+    return snapshotQuery(this.col(user));
   }
 
 }

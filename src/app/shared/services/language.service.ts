@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Langue } from '../entites/Langue';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import {
+  Firestore, addDoc, collection, deleteDoc, doc, updateDoc
+} from '@angular/fire/firestore';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,9 @@ import 'firebase/compat/firestore';
 export class LanguageService {
   readonly path = 'langues';
   readonly basePaht = 'utilisateurs';
-  db = firebase.firestore();
   LanguagesLevels = new Map();
+
+  private firestore = inject(Firestore);
 
   constructor() {
     this.LanguagesLevels.set('A0', 'Beginner');
@@ -20,25 +22,30 @@ export class LanguageService {
     this.LanguagesLevels.set('B1', 'Intermediate');
     this.LanguagesLevels.set('B2', 'Upper-intermediate');
     this.LanguagesLevels.set('C1', 'Advanced');
-    this.LanguagesLevels.set('C2', 'Proficient'); 
+    this.LanguagesLevels.set('C2', 'Proficient');
+  }
+
+  private col(user: string) {
+    return collection(this.firestore, this.basePaht, user, this.path);
   }
 
   addLanguage(user: string, data: Langue) {
-   // const tags = 
-    return this.db.collection(this.basePaht).doc(user).collection(this.path).add(Object.assign({}, data));
+    return addDoc(this.col(user), Object.assign({}, data));
   }
 
-  updateLanguage(user: string,id, data: Langue) {
-    // const tags = 
-     return this.db.collection(this.basePaht).doc(user).collection(this.path).doc(id).update(Object.assign({}, data));
-   }
+  updateLanguage(user: string, id: string, data: Langue) {
+    return updateDoc(
+      doc(this.firestore, this.basePaht, user, this.path, id),
+      Object.assign({}, data) as any
+    );
+  }
 
   deletelanguage(user: string, lang: string) {
-    return this.db.collection(this.basePaht).doc(user).collection(this.path).doc(lang).delete();
+    return deleteDoc(doc(this.firestore, this.basePaht, user, this.path, lang));
   }
 
   listLanguages(user: string) {
-    return this.db.collection(this.basePaht).doc(user).collection(this.path);
+    return snapshotQuery(this.col(user));
   }
 
 }

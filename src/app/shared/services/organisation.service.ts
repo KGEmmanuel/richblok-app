@@ -1,54 +1,55 @@
-import { Injectable } from "@angular/core";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import { Injectable, inject } from "@angular/core";
+import {
+  Firestore, addDoc, collection, doc, query, updateDoc, where
+} from '@angular/fire/firestore';
 import { Entreprise } from "../entites/Entreprise";
+import { snapshotDoc, snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: "root"
 })
 export class OrganisationService {
-  db: firebase.firestore.Firestore;
   readonly path = 'organisations';
   readonly postePath = 'postes';
   readonly commentPath = 'commentaires';
+
+  private firestore = inject(Firestore);
+
   constructor() {
-    this.db = firebase.firestore();
   }
 
-  save(organisation) {
-    const chem = this.path;
-    return this.db.collection(chem).add(Object.assign({}, organisation));
+  save(organisation: any) {
+    return addDoc(collection(this.firestore, this.path), Object.assign({}, organisation));
   }
 
-  getDocRef(id) {
-    return this.db.collection(this.path).doc(id);
+  getDocRef(id: string) {
+    return snapshotDoc(doc(this.firestore, this.path, id));
   }
 
-  getorganisationsof(user) {
-    return this.db.collection(this.path).where('utilisateurId', '==', user);
+  getorganisationsof(user: string) {
+    return snapshotQuery(
+      query(collection(this.firestore, this.path), where('utilisateurId', '==', user))
+    );
   }
 
 
   getorganisations() {
-    return this.db.collection(this.path);
+    return snapshotQuery(collection(this.firestore, this.path));
   }
 
   update(id: string, data: Partial<Entreprise>) {
-    return this.db
-      .collection(this.path)
-      .doc(id)
-      .update(data);
+    return updateDoc(doc(this.firestore, this.path, id), data as any);
   }
 
-  getPostes(orgId, actual?: boolean, start?, end?) {
-
-    return this.db.collection(this.path).doc(orgId).collection(this.postePath);
+  getPostes(orgId: string, actual?: boolean, start?: any, end?: any) {
+    return snapshotQuery(collection(this.firestore, this.path, orgId, this.postePath));
   }
 
-  addPoste(orgid, poste) {
-    const chem = this.path + '/' + orgid + '/' + this.postePath;
-    return this.db.collection(chem).add(Object.assign({}, poste));
+  addPoste(orgid: string, poste: any) {
+    return addDoc(
+      collection(this.firestore, this.path, orgid, this.postePath),
+      Object.assign({}, poste)
+    );
   }
 
 }

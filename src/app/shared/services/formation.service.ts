@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import {
+  Firestore, addDoc, collection, deleteDoc, doc, orderBy, query, updateDoc, where
+} from '@angular/fire/firestore';
 import { Formation } from '../entites/Formation';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
@@ -10,29 +11,33 @@ import { Formation } from '../entites/Formation';
 export class FormationService {
   readonly path = 'formations';
   readonly basePaht = 'utilisateurs';
-  db = firebase.firestore();
+
+  private firestore = inject(Firestore);
+
   constructor() { }
 
+  private col(userid: string) {
+    return collection(this.firestore, this.basePaht, userid, this.path);
+  }
+
   editableFormationsListQuery(userid: string, typeFormations?: string) {
-    if(typeFormations){
-    return this.db.collection(this.basePaht + '/' + userid + '/' + this.path)
-      .where('typeFormation', '==', typeFormations)
-      .orderBy('datedeb', 'desc');
-    }
-    return this.db.collection(this.basePaht + '/' + userid + '/' + this.path)
-      .orderBy('datedeb', 'desc');
+    const c = this.col(userid);
+    const q = typeFormations
+      ? query(c, where('typeFormation', '==', typeFormations), orderBy('datedeb', 'desc'))
+      : query(c, orderBy('datedeb', 'desc'));
+    return snapshotQuery(q);
   }
 
   save(f: Formation, userid: string) {
-     return this.db.collection(this.basePaht + '/' + userid + '/' + this.path).add(Object.assign({}, f));
+    return addDoc(this.col(userid), Object.assign({}, f));
   }
 
   update(userid: string, fid: string, itm: Partial<Formation>) {
-    return this.db.collection(this.basePaht + '/' + userid + '/' + this.path).doc(fid).update(itm);
+    return updateDoc(doc(this.firestore, this.basePaht, userid, this.path, fid), itm as any);
   }
 
-  delete(userid: string, formationId: string){
-    return  this.db.collection(this.basePaht).doc(userid).collection(this.path).doc(formationId).delete();
+  delete(userid: string, formationId: string) {
+    return deleteDoc(doc(this.firestore, this.basePaht, userid, this.path, formationId));
   }
 
 }

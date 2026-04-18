@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import { Storage, ref as storageRef, uploadBytes } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileUploadService {
+
+  private storage = inject(Storage);
 
   constructor() { }
 
@@ -19,15 +19,14 @@ export class FileUploadService {
 
   }
 
-  putStorageItem(path, item) {
-    // the return value will be a Promise
+  putStorageItem(path: string, item: File) {
     const filePath = path + '/' + '_' + (new Date().getMilliseconds()) + item.name;
-    return firebase.storage().ref(path).put(item)
-    .then((snapshot) => {
-      console.log('One success:', item);
-    }).catch((error) => {
-      console.log('One failed:', item, error.message);
-    });
+    return uploadBytes(storageRef(this.storage, path), item)
+      .then(() => {
+        console.log('One success:', item);
+      }).catch((error: any) => {
+        console.log('One failed:', item, error.message);
+      });
   }
 
 

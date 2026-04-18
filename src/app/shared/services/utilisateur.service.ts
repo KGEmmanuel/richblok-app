@@ -1,23 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Utilisateur } from '../entites/Utilisateur';
-import { DocumentReference, QueryFn, DocumentSnapshot, Query } from '@angular/fire/compat/firestore';
-import { Observable, from, Subject } from 'rxjs';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { AuthService } from './auth.service';
-import { finalize, map, switchMap, filter } from 'rxjs/operators';
+import {
+  Firestore, DocumentReference, addDoc, arrayRemove, arrayUnion, collection,
+  collectionData, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc,
+  updateDoc, where
+} from '@angular/fire/firestore';
+import { Storage, ref as storageRef, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Formation } from '../entites/Formation';
 import { Experience } from '../entites/Experience';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
 import { Notification } from '../entites/Notification';
 import { Post } from '../entites/Post';
 import { Participant } from '../entites/Participant';
-import { async } from 'q';
 import { HttpClient } from '@angular/common/http';
 import { Certification } from '../entites/Certification';
-import { Block } from '../entites/block';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { snapshotDoc, snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
@@ -49,94 +47,87 @@ export class UtilisateurService {
   projetsParti: Observable<Participant[]>;
   tachehorsProjetParti: Observable<Participant[]>;
 
-  formationQuery: Query;
-  utilisateursQuery: Query;
+  private firestore = inject(Firestore);
+  private storage = inject(Storage);
 
+  constructor(private http: HttpClient) {
+  }
 
-  // angular fire
-  // formationsCollection: AngularFirestoreCollection<Formation>;
+  private col() {
+    return collection(this.firestore, this.path);
+  }
 
-
-  private afs = firebase.firestore();
-
-  constructor(private storage: AngularFireStorage, private http: HttpClient, private angFs: AngularFirestore) {
-    // firebase.auth().languageCode = 'fr';
-    this.afs = firebase.firestore();
-
-
+  private userDoc(id: string) {
+    return doc(this.firestore, this.path, id);
   }
 
   add(data: Utilisateur): Promise<DocumentReference> {
-    return this.afs.collection(this.path).add({ ...data, dateCreation: new Date() });
+    return addDoc(this.col(), { ...data, dateCreation: new Date() });
   }
 
   set(data: Utilisateur, id: string): Promise<void> {
-   // alert(id);
-    return this.afs.collection(this.path).doc(id).set({ ...data, dateCreation: new Date() });
+    return setDoc(this.userDoc(id), { ...data, dateCreation: new Date() });
   }
 
   remove(id: string): Promise<void> {
-    return this.afs.doc(`${this.path}/${id}`).delete();
+    return deleteDoc(this.userDoc(id));
   }
 
   get(id: string): Observable<Utilisateur> {
-    return from(this.afs.collection(this.path).doc(id).get().then<Utilisateur>(val => {
+    return from(getDoc(this.userDoc(id)).then<Utilisateur>(val => {
       const u = val.data() as Utilisateur;
-      u.id = val.id;
+      if (u) { u.id = val.id; }
       return u;
     }));
   }
 
   getByEmail(mail: string) {
-    return this.afs.collection(this.path).where('email', '==', mail);
+    return snapshotQuery(query(this.col(), where('email', '==', mail)));
   }
 
 
   getDocRef(id: string) {
-    return this.afs.collection(this.path).doc(id);
+    return snapshotDoc(this.userDoc(id));
   }
 
 
 
-  getRelatedOfOrganisation(orgname) {
-    return this.afs.collection(this.path).where('lieu', '==', orgname);
+  getRelatedOfOrganisation(orgname: string) {
+    return snapshotQuery(query(this.col(), where('lieu', '==', orgname)));
   }
 
   getArchivedFormationListof(userid: string) {
-    const p = this.path + '/' + userid + '/' + this.archFormationPath;
-    // alert('path is' + p);
-    return this.afs.collection(p).where('next', '==', '');
+    return snapshotQuery(
+      query(collection(this.firestore, this.path, userid, this.archFormationPath), where('next', '==', ''))
+    );
   }
 
   getArchivedCompetanceListof(userid: string) {
-    return this.afs.collection(this.path).doc(userid).collection(this.archCompetencePath).where('next', '==', '');
+    return snapshotQuery(
+      query(collection(this.firestore, this.path, userid, this.archCompetencePath), where('next', '==', ''))
+    );
   }
 
   getArchivedExperienceListof(userid: string) {
-    return this.afs.collection(this.path).doc(userid).collection(this.archExperiencePath).where('next', '==', '').orderBy('data.datedeb');
+    return snapshotQuery(
+      query(
+        collection(this.firestore, this.path, userid, this.archExperiencePath),
+        where('next', '==', ''),
+        orderBy('data.datedeb')
+      )
+    );
   }
 
 
   certifieElement(type: string, blocId: string, userId: string, note: string, observation: string, certkey: string) {
-
-
     const cert = new Certification();
-   // cert.certificateur = this.getcurrentuser();
-    /*
-    if(!this.getcurrentuser().certifkey)
-    {
-       // alert('Vous n\'avez pas définit une clé de certification, vous ne pouvez donc pas effectuer cette opération');
-       return;
-    }*/
     let p: string;
-    // alert(type);
     switch (type) {
       case 'FO': p = this.archFormationPath; break;
       case 'CO': p = this.archCompetencePath; break;
       case 'EX': p = this.archExperiencePath; break;
     }
     if (!p) {
-      // alert('Impossible de certifier ce type d\'élements...');
       return;
     }
     cert.dateSign = new Date();
@@ -144,35 +135,21 @@ export class UtilisateurService {
     if (window.navigator && window.navigator.geolocation) {
       window.navigator.geolocation.getCurrentPosition(
         position => {
-          // this.geolocationPosition = position,
-          // console.log('position ...  ' + position);
           cert.lattitude = position.coords.latitude;
           cert.longitude = position.coords.longitude;
           cert.altitude = position.coords.altitude;
           cert.niveaucote = note;
           cert.observation = observation;
-          const pe = this.path + '/' + userId + '/' + p + '/' + blocId + '/certifications';
-          // alert(pe);
-          this.afs.collection(pe).add({ ...cert, dateCreation: new Date() }).then(val => {
-            // alert('Votre certification a été pris en considération. Merci');
-          }).catch(err => {
-            // alert(err.message);
-          });
+          addDoc(
+            collection(this.firestore, this.path, userId, p, blocId, 'certifications'),
+            { ...cert, dateCreation: new Date() }
+          ).then(() => { /* noop */ }).catch(() => { /* noop */ });
         },
         error => {
           switch (error.code) {
-            case 1:
-              // alert('Impossible de certifier' + '  Acces refusé à la localisation');
-              // console.log('Permission Denied');
-              break;
-            case 2:
-              // alert('Impossible de certifier' + ' Position indisponible');
-              // console.log('Position Unavailable');
-              break;
-            case 3:
-              // alert('Impossible de certifier' + '  Timeout');
-              // console.log('Timeout');
-              break;
+            case 1: break; // permission denied
+            case 2: break; // position unavailable
+            case 3: break; // timeout
           }
           return;
         }
@@ -182,35 +159,34 @@ export class UtilisateurService {
   }
 
   getArchivedFormationRef(userid: string) {
-    return this.afs.collection(this.path).doc(userid).collection(this.formationpath).where('archived', '==', true);
+    return snapshotQuery(
+      query(collection(this.firestore, this.path, userid, this.formationpath), where('archived', '==', true))
+    );
   }
 
   getArchivedFormation(userid: string, formationid: string): Observable<Formation> {
-    return from(this.afs.collection(this.path).doc(userid).collection(this.formationpath)
-      .doc(formationid).get().then<Formation>(val => {
-        const u = val.data() as Formation;
-        u.id = val.id;
-        return u;
-      }));
+    return from(getDoc(doc(this.firestore, this.path, userid, this.formationpath, formationid)).then<Formation>(val => {
+      const u = val.data() as Formation;
+      if (u) { u.id = val.id; }
+      return u;
+    }));
   }
 
   getArchivedCompetence(userid: string, formationid: string): Observable<Formation> {
-    return from(this.afs.collection(this.path).doc(userid).collection(this.archCompetencePath)
-      .doc(formationid).get().then<Formation>(val => {
-        const u = val.data() as Formation;
-        u.id = val.id;
-        return u;
-      }));
+    return from(getDoc(doc(this.firestore, this.path, userid, this.archCompetencePath, formationid)).then<Formation>(val => {
+      const u = val.data() as Formation;
+      if (u) { u.id = val.id; }
+      return u;
+    }));
   }
 
 
   getArchivedExperience(userid: string, formationid: string): Observable<Formation> {
-    return from(this.afs.collection(this.path).doc(userid).collection(this.archExperiencePath)
-      .doc(formationid).get().then<Formation>(val => {
-        const u = val.data() as Formation;
-        u.id = val.id;
-        return u;
-      }));
+    return from(getDoc(doc(this.firestore, this.path, userid, this.archExperiencePath, formationid)).then<Formation>(val => {
+      const u = val.data() as Formation;
+      if (u) { u.id = val.id; }
+      return u;
+    }));
   }
 
 
@@ -222,92 +198,80 @@ export class UtilisateurService {
       case 'EX': p = this.archExperiencePath; break;
     }
     if (!p) {
-      // alert('Impossible de certifier ce type d\'élements...');
       return;
     }
-    return from(this.afs.collection(this.path).doc(userid).collection(p)
-      .doc(formationid).collection('certifications').orderBy('dateSign', 'desc').get().then()).pipe(map(actions => {
-
-        return actions.docs.map(action => {
-          const data = action.data() as Certification;
-          const id = action.id;
-
-          return { id, ...data };
-        }
-        );
-      }));
+    return from(
+      getDocs(
+        query(
+          collection(this.firestore, this.path, userid, p, formationid, 'certifications'),
+          orderBy('dateSign', 'desc')
+        )
+      )
+    ).pipe(map(actions => actions.docs.map(action => {
+      const data = action.data() as Certification;
+      const id = action.id;
+      return { id, ...data };
+    })));
   }
 
   update(id: string, data: Partial<Utilisateur>): Promise<void> {
-    // data.id = undefined;
-    return this.afs.doc(`${this.path}/${id}`).update(data);
+    return updateDoc(this.userDoc(id), data as any);
   }
 
   addFormation(data: Formation): Promise<DocumentReference> {
-    const p = this.path + '/' + this.getcurrentuser().id + '/' + this.formationpath;
-    return this.afs.collection(this.path).doc(this.getcurrentuser().id).collection(this.formationpath)
-      .add({ ...data, dateCreation: new Date() });
+    const uid = this.getcurrentuser().id;
+    return addDoc(
+      collection(this.firestore, this.path, uid, this.formationpath),
+      { ...data, dateCreation: new Date() }
+    );
   }
 
   updateFormation(data: Partial<Formation>) {
-    const p = this.path + '/' + this.getcurrentuser().id + '/' + this.formationpath;
-    return this.afs.collection(this.path).doc(this.getcurrentuser().id).collection(this.formationpath).doc(data.id)
-      .update({ ...data });
+    const uid = this.getcurrentuser().id;
+    return updateDoc(
+      doc(this.firestore, this.path, uid, this.formationpath, data.id),
+      { ...data }
+    );
   }
 
-  getCollection$(ref?: QueryFn): Observable<Utilisateur[]> {
-
-    return from(this.afs.collection(this.path).orderBy('nom', 'asc').get().then()).pipe(map(actions => {
-
-      return actions.docs.map(action => {
+  getCollection$(): Observable<Utilisateur[]> {
+    return from(getDocs(query(this.col(), orderBy('nom', 'asc')))).pipe(
+      map(actions => actions.docs.map(action => {
         const data = action.data() as Utilisateur;
         const id = action.id;
-
         return { id, ...data };
-      }
-      );
-    }));
-
-    // return from(this.afs.collection(this.path).get().then<Utilisateur[]>());
+      }))
+    );
   }
 
   addExperience(user: string, data: Experience): Promise<DocumentReference> {
-    const p = this.path + '/' + user + '/' + this.experiencepath;
-    return this.afs.collection(this.path).add({ ...data, dateCreation: new Date() });
+    return addDoc(this.col(), { ...data, dateCreation: new Date() });
   }
 
-  editcouverture(file) {
+  editcouverture(file: File) {
     const user = this.getcurrentuser();
     const filePath = this.couverturepath + '/' + user.id + '.jpg';
-    const fileRef = this.storage.ref(filePath);
-    const task = this.storage.upload(filePath, file);
-    return task.snapshotChanges().pipe(
-      finalize(() => fileRef.getDownloadURL().subscribe(img => {
-        user.imagecouv = img;
-        this.update(user.id, { imagecouv: img });
-        this.setcurrentuser(user);
-      }))
-    )
-      .subscribe();
+    const fileRef = storageRef(this.storage, filePath);
+    uploadBytes(fileRef, file).then(() => getDownloadURL(fileRef)).then(img => {
+      user.imagecouv = img;
+      this.update(user.id, { imagecouv: img });
+      this.setcurrentuser(user);
+    });
   }
 
-  editprofile(file) {
+  editprofile(file: File) {
     const user = this.getcurrentuser();
     const filePath = this.profilepath + '/' + user.id + '.jpg';
-    const fileRef = this.storage.ref(filePath);
-    const task = this.storage.upload(filePath, file);
-    task.snapshotChanges().pipe(
-      finalize(() => fileRef.getDownloadURL().subscribe(img => {
-        user.imageprofil = img;
-        this.update(user.id, { imageprofil: img });
-        this.setcurrentuser(user);
-      }))
-    ).subscribe();
+    const fileRef = storageRef(this.storage, filePath);
+    uploadBytes(fileRef, file).then(() => getDownloadURL(fileRef)).then(img => {
+      user.imageprofil = img;
+      this.update(user.id, { imageprofil: img });
+      this.setcurrentuser(user);
+    });
   }
 
   getcurrentuser(): Utilisateur {
     let user: Utilisateur = null;
-    // // alert(localStorage.getItem('currentuser')+' check '+ (localStorage.getItem('currentuser') === 'undefined'));
     if (localStorage.getItem('currentuser') !== null) {
       if (localStorage.getItem('currentuser') !== 'undefined') {
         user = JSON.parse(localStorage.getItem('currentuser'));
@@ -322,20 +286,16 @@ export class UtilisateurService {
 
   archiveFormation(formationid: string) {
     const url = this.archiveFormationBaseurl + '?user=' + this.getcurrentuser().id + '&id=' + formationid;
-    // alert('url is ' + url);
-    // const value;
     return this.http.get(url);
   }
 
   archiveCompetence(competid: string): Observable<string> {
     const url = this.archiveCompetenceBaseurl + '?user=' + this.getcurrentuser().id + '&id=' + competid;
-    // alert('url is ' + url);
     return this.http.get<string>(url);
   }
 
   archiveExperience(expeid: string): Observable<string> {
     const url = this.archiveExperience + '?user=' + this.getcurrentuser().id + '&id=' + expeid;
-    // alert('url is ' + url);
     return this.http.get<string>(url);
   }
 
@@ -349,175 +309,53 @@ export class UtilisateurService {
     if (!userid) {
       return null;
     }
-
-    // // alert("user id is  "+ userid);
     const p = this.path + '/' + this.getcurrentuser().id + '/' + this.formationpath;
     return p;
   }
 
   mightKnowUser(user: Utilisateur): Observable<Utilisateur[]> {
-
-    return this.angFs.collection(this.path)
-    .snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as Utilisateur;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }).filter( (a) => {
+    return collectionData(this.col(), { idField: 'id' }).pipe(
+      map(arr => (arr as unknown as Utilisateur[]).filter(a => {
         console.log(a.id, user);
-        return a.id !== user.id && !user.abonnees.includes(a.id) && !user.demandesabonnees.includes(a.id);
+        return a.id !== user.id
+          && !user.abonnees.includes(a.id)
+          && !user.demandesabonnees.includes(a.id);
       }))
     );
-    // return this.angFs.collection<Utilisateur>(this.path).snapshotChanges();
-    // return null;
   }
 
-  askconnection(from: string, to: string ) {
-    return this.afs.collection(this.path).doc(to).update({
-      demandesabonnees: firebase.firestore.FieldValue.arrayUnion(from)
-      });
+  askconnection(from: string, to: string) {
+    return updateDoc(this.userDoc(to), {
+      demandesabonnees: arrayUnion(from)
+    });
   }
 
-  saveJob(uid, jobId) {
-    return this.afs.collection(this.path).doc(uid).update({
-      savedJobs: firebase.firestore.FieldValue.arrayUnion(jobId)
-      });
+  saveJob(uid: string, jobId: string) {
+    return updateDoc(this.userDoc(uid), {
+      savedJobs: arrayUnion(jobId)
+    });
   }
 
   confirmconnection(of: string, by: string) {
-    return this.afs.collection(this.path).doc(by).update({
-      demandesabonnees: firebase.firestore.FieldValue.arrayRemove(of)
-      }).then(v => {
-        return this.afs.collection(this.path).doc(by).update({
-          abonnees: firebase.firestore.FieldValue.arrayUnion(of)
-          });
-      }).catch(er => {
-        return null;
+    return updateDoc(this.userDoc(by), {
+      demandesabonnees: arrayRemove(of)
+    }).then(() => {
+      return updateDoc(this.userDoc(by), {
+        abonnees: arrayUnion(of)
       });
+    }).catch(() => {
+      return null;
+    });
   }
 
   initDatas(user?: string) {
-
-    this.utilisateursQuery = this.afs.collection(this.path).orderBy('nom', 'asc');
-    this.items = from(this.afs.collection(this.path).orderBy('nom', 'asc').get().then()).pipe(map(actions => {
-
-      return actions.docs.map(action => {
+    this.items = from(getDocs(query(this.col(), orderBy('nom', 'asc')))).pipe(
+      map(actions => actions.docs.map(action => {
         const data = action.data() as Utilisateur;
         const id = action.id;
-
         return { id, ...data };
-      }
-      );
-    }));
-    return;
-    // // alert('getting items');
-    if (!user) {
-      user = this.getcurrentuser().id;
-    }
-
-
-    if (!this.getcurrentuser()) {
-      return;
-    }
-
-    if (!user) {
-      return;
-    }
-
-    // // alert("user id is  "+ userid);
-    const p = this.path + '/' + user + '/' + this.formationpath;
-    /*
-        this.formationsCollection = this.db.collection<Formation>(p);
-        this.formations = this.formationsCollection.snapshotChanges().pipe(
-          map(actions => actions.map(a => {
-            const data = a.payload.doc.data() as Formation;
-            const id = a.payload.doc.id;
-            return { id, ...data };
-          }))
-        );;
-    */
-
-    /*
-        const size$ = new Subject<string>();
-        this.formations = this.db.collection<Formation>(p).valueChanges()
-    */
-    this.formationQuery = this.afs.collection(p);
-
-    /*
-  this.afs.collection(p).orderBy('datedeb', 'desc').onSnapshot(val=>{
-   // this.formationsArray =
-
-    val.forEach(form=>{
-      const data = form.data() as Formation;
-        const id = form.id;
-        // alert("reding formations  " + id + ' path ' + p);
-        this.formationsArray.push( {id, ...data })
-    })
-
-  });*/
-
-
-
-
-    this.formations = from(this.afs.collection(p).orderBy('datedeb', 'desc').get().then()).pipe(map(actions => {
-
-      return actions.docs.map(action => {
-        const data = action.data() as Formation;
-        const id = action.id;
-        // alert('reding formations  ' + id + ' path  ' + p);
-        return { id, ...data };
-      }
-      );
-    }));
-
-    const e = this.path + '/' + this.getcurrentuser().id + '/' + this.experiencepath;
-    this.experiences = from(this.afs.collection(e).orderBy('datedeb', 'desc').get()).pipe(map(actions => {
-
-      return actions.docs.map(action => {
-        const data = action.data() as Experience;
-        const id = action.id;
-        // // alert("user id is  "+id);
-        return { id, ...data };
-      }
-      );
-    }));
-
-
-    this.relatedNotifs = from(this.afs.collection(this.notificationpath)
-      .where('abonnees', 'array-contains', this.getcurrentuser().id)
-      .orderBy('date', 'desc').get()).pipe(map(actions => {
-
-        return actions.docs.map(action => {
-          const data = action.data() as Notification;
-          const id = action.id;
-          // // alert("user id is  "+id);
-          return { id, ...data };
-        }
-        );
-      }));
-    this.relatedPost = from(this.afs.collection(this.postpath).where('abonnees', 'array-contains', this.getcurrentuser().id)
-      .orderBy('date', 'desc').get()).pipe(map(actions => {
-
-        return actions.docs.map(action => {
-          const data = action.data() as Post;
-          const id = action.id;
-          // // alert("user id is  "+id);
-          return { id, ...data };
-        }
-        );
-      }));
-    this.ownedPost = from(this.afs.collection(this.postpath).where('owner', '==', this.getcurrentuser().id)
-      .orderBy('date', 'desc').get().then()).pipe(map(actions => {
-
-        return actions.docs.map(action => {
-          const data = action.data() as Post;
-          const id = action.id;
-          // // alert("user id is  "+id);
-          return { id, ...data };
-        }
-        );
-      }));
-
+      }))
+    );
   }
 
 }

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import {
+  Firestore, addDoc, collection, deleteDoc, doc, query, updateDoc, where
+} from '@angular/fire/firestore';
 import { Document } from '../entites/Document';
+import { snapshotQuery } from './firestore-compat-shim';
 
 
 @Injectable({
@@ -12,48 +13,43 @@ export class DocumentsService {
 
   readonly path = 'documents';
   readonly basepath = 'utilisateurs';
-  db = firebase.firestore();
+
+  private firestore = inject(Firestore);
+
   constructor() { }
 
-  add(user: string, data: Document) {
-    const chem = this.path;
-    console.log('media   ', data);
-    /*
-    const medias = [];
-    data.documentUploadDate = new Date();
-    if (data.medias) {
-      console.log('media is set ');
-      data.medias.forEach(v => {
-        console.log('assigned ', Object.assign({}, v));
-        medias.push(Object.assign({}, v));
-      });
-      // medias.push ()
-      data.medias = medias;
-    }*/
-    data.documentUploadDate = new Date();
-    console.log('merde alors...', data.medias);
-    return this.db.collection(this.basepath).doc(user).collection(this.path).add(Object.assign({}, data));
+  private col(user: string) {
+    return collection(this.firestore, this.basepath, user, this.path);
   }
 
-  setmedias(user, id, media) {
+  add(user: string, data: Document) {
+    console.log('media   ', data);
+    data.documentUploadDate = new Date();
+    console.log('merde alors...', data.medias);
+    return addDoc(this.col(user), Object.assign({}, data));
+  }
+
+  setmedias(user: string, id: string, media: any[]) {
     console.log('updating alors...', media, user, id);
     const v = [];
     media.forEach(med => {
       v.push(Object.assign({}, med));
     });
     console.log('updating alors...', v, user, id);
-    return this.db.collection(this.basepath).doc(user).collection(this.path).doc(id).update({
+    return updateDoc(doc(this.firestore, this.basepath, user, this.path, id), {
       medias: v
     });
   }
 
-  listdocuments(user, doctype) {
+  listdocuments(user: string, doctype: string) {
     console.log('type  = ', doctype);
-    return this.db.collection(this.basepath).doc(user).collection(this.path).where('documenttype', '==', doctype);
+    return snapshotQuery(
+      query(this.col(user), where('documenttype', '==', doctype))
+    );
   }
 
-  delete(user, id){
-    return this.db.collection(this.basepath).doc(user).collection(this.path).doc(id).delete();
+  delete(user: string, id: string) {
+    return deleteDoc(doc(this.firestore, this.basepath, user, this.path, id));
   }
 
 }
