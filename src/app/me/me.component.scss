@@ -1,0 +1,199 @@
+@use 'src/app/shared/ui/tokens' as *;
+
+:host { display: block; }
+
+// ───── hero ─────
+.me-hero { margin-bottom: $rb-space-4; }
+.me-h1 {
+  margin: $rb-space-2 0 $rb-space-2;
+  font-size: $rb-text-3xl;
+  font-weight: 800;
+  letter-spacing: $rb-tracking-tighter;
+  line-height: 1.1;
+}
+.me-sub {
+  margin: 0;
+  color: $rb-text-muted;
+  font-size: $rb-text-md;
+}
+
+// ───── tab bar ─────
+.me-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-md;
+  background: $rb-surface;
+  margin-bottom: $rb-space-5;
+}
+.me-tab {
+  padding: $rb-space-2 $rb-space-4;
+  border-radius: $rb-radius-sm;
+  text-decoration: none;
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  font-weight: 600;
+  &:hover { color: $rb-text; }
+  &.me-tab-active { background: $rb-accent-15; color: $rb-accent; }
+}
+
+// ───── stats card (feed tab) ─────
+.me-stats-card { padding: $rb-space-4; }
+.me-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $rb-space-3;
+}
+
+// ───── two-column grid (feed tab) ─────
+.me-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $rb-space-4;
+  margin-top: $rb-space-4;
+
+  @media (min-width: 920px) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+.me-col-main { min-width: 0; }
+.me-col-aside {
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-3;
+}
+.me-next {
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-2;
+  padding: $rb-space-4;
+}
+.me-subtle {
+  color: $rb-text-muted;
+  font-size: $rb-text-sm;
+  margin: 0 0 $rb-space-2;
+  line-height: 1.5;
+}
+
+// ───── activity list ─────
+.me-activity {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-1;
+}
+.me-activity-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: $rb-space-3;
+  padding: $rb-space-2 $rb-space-3;
+  border-radius: $rb-radius-sm;
+  align-items: center;
+  &:hover { background: $rb-surface; }
+}
+.me-activity-link {
+  color: $rb-text;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  &:hover { color: $rb-accent; }
+}
+.me-activity-sub { color: $rb-text-muted; font-size: $rb-text-sm; }
+.me-activity-ts  { color: $rb-text-muted; font-size: $rb-text-xs; white-space: nowrap; }
+
+// ───── portfolio grid ─────
+.me-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: $rb-space-3;
+  margin-top: $rb-space-3;
+}
+.me-portfolio-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: $rb-space-3;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-sm;
+  color: $rb-text;
+  text-decoration: none;
+  transition: border-color $rb-duration-micro $rb-ease-out;
+  &:hover { border-color: $rb-accent; }
+  strong { font-size: $rb-text-md; margin-top: 4px; }
+  span { color: $rb-text-muted; font-size: $rb-text-sm; }
+}
+
+// ───── badges grid ─────
+.me-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $rb-space-3;
+}
+.me-badge-card {
+  display: flex;
+  flex-direction: column;
+  gap: $rb-space-2;
+  padding: $rb-space-3;
+  background: $rb-surface;
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-md;
+  color: $rb-text;
+  text-decoration: none;
+  transition: border-color $rb-duration-micro $rb-ease-out, transform $rb-duration-micro $rb-ease-out;
+  &:hover { border-color: $rb-accent; transform: translateY(-2px); }
+}
+.me-badge-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  strong { font-size: $rb-text-md; }
+}
+.me-badge-level {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $rb-accent;
+  padding: 2px 8px;
+  border: 1px solid $rb-accent;
+  border-radius: 999px;
+}
+.me-badge-score {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  strong { font-size: $rb-text-2xl; font-weight: 800; color: $rb-accent; line-height: 1; }
+  span   { color: $rb-text-muted; font-size: $rb-text-sm; }
+  .me-badge-pct { margin-left: auto; }
+}
+.me-badge-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.me-badge-date {
+  color: $rb-text-muted;
+  font-size: $rb-text-xs;
+  margin-left: auto;
+}
+
+// ───── cv tab ─────
+.me-cv-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: $rb-space-3;
+  margin: $rb-space-3 0;
+}
+.me-cv-ctas {
+  display: flex;
+  gap: $rb-space-2;
+  flex-wrap: wrap;
+  margin-top: $rb-space-3;
+}

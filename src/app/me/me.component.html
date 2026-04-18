@@ -1,0 +1,186 @@
+<rb-app-shell active="me" [subActive]="tab">
+<section class="me-hero">
+  <rb-eyebrow>Your hub</rb-eyebrow>
+  <h1 class="me-h1" *ngIf="!loading && userFirstName">Welcome back, {{ userFirstName }}</h1>
+  <h1 class="me-h1" *ngIf="!loading && !userFirstName">Welcome to Richblok</h1>
+  <h1 class="me-h1" *ngIf="loading">Loading your Richblok…</h1>
+  <p class="me-sub" *ngIf="!loading && stats.badgesLifetime > 0">
+    {{ stats.badgesLifetime }} verified {{ stats.badgesLifetime === 1 ? 'badge' : 'badges' }}
+    <ng-container *ngIf="stats.topScore !== null"> · top score {{ stats.topScore }}/100</ng-container>
+    <ng-container *ngIf="stats.aiPairBadges > 0"> · {{ stats.aiPairBadges }} AI-pair</ng-container>
+  </p>
+  <p class="me-sub" *ngIf="!loading && stats.badgesLifetime === 0">
+    No badges yet — take your first AI-pair challenge (45 min) or a skill quiz (20 min).
+  </p>
+</section>
+
+<!-- Tab switcher — mirrored by [subActive] in the app shell nav dropdown. -->
+<nav class="me-tabs" role="tablist" aria-label="Your hub">
+  <a *ngFor="let t of tabOptions"
+     role="tab"
+     [attr.aria-selected]="tab === t.key"
+     class="me-tab"
+     [class.me-tab-active]="tab === t.key"
+     routerLink="/me"
+     [queryParams]="{tab: t.key}">
+    {{ t.label }}
+  </a>
+</nav>
+
+<!-- ================= FEED TAB ================= -->
+<ng-container *ngIf="tab === 'feed'">
+  <rb-card class="me-stats-card" *ngIf="!loading">
+    <rb-card-title>At a glance</rb-card-title>
+    <div class="me-stats-grid">
+      <rb-stat [value]="stats.badgesThisWeek" label="This week" />
+      <rb-stat [value]="stats.badgesLifetime" label="Lifetime badges" />
+      <rb-stat [value]="stats.starStories" label="STAR stories" />
+      <rb-stat
+        [value]="stats.topScore !== null ? (stats.topScore + '/100') : '—'"
+        label="Top score"
+        accent />
+    </div>
+  </rb-card>
+
+  <div class="me-grid" *ngIf="!loading">
+    <section class="me-col-main">
+      <rb-card>
+        <rb-card-title>Recent activity</rb-card-title>
+        <rb-empty-state
+          *ngIf="activity.length === 0"
+          icon="target"
+          heading="No activity yet">
+          <p>
+            Your badges, STAR stories, and challenge submissions will show up here.
+            Start with an <a routerLink="/evaluate">AI-pair challenge</a> or
+            <a routerLink="/onboard">upload your CV</a>.
+          </p>
+        </rb-empty-state>
+        <ul class="me-activity" *ngIf="activity.length > 0">
+          <li *ngFor="let a of activity" class="me-activity-row">
+            <a *ngIf="a.href" [routerLink]="[a.href]" class="me-activity-link">
+              <strong>{{ a.title }}</strong>
+              <span class="me-activity-sub">{{ a.sub }}</span>
+            </a>
+            <span *ngIf="!a.href">
+              <strong>{{ a.title }}</strong>
+              <span class="me-activity-sub">{{ a.sub }}</span>
+            </span>
+            <span class="me-activity-ts">{{ a.ts | date:'shortDate' }}</span>
+          </li>
+        </ul>
+      </rb-card>
+    </section>
+
+    <aside class="me-col-aside">
+      <rb-card class="me-next">
+        <rb-card-title>What to do next</rb-card-title>
+        <rb-button [routerLink]="['/evaluate']">Take a challenge</rb-button>
+        <rb-button variant="ghost" [routerLink]="['/onboard']">Upload CV → STAR</rb-button>
+        <rb-button variant="ghost" [routerLink]="['/me']" [queryParams]="{tab: 'portfolio'}">Complete your portfolio</rb-button>
+      </rb-card>
+      <rb-card class="me-next" *ngIf="stats.aiPairBadges > 0">
+        <rb-card-title>You're on /ai-native</rb-card-title>
+        <p class="me-subtle">Your AI-pair badges rank you in the public directory.</p>
+        <rb-button variant="ghost" [routerLink]="['/ai-native']">View directory</rb-button>
+      </rb-card>
+    </aside>
+  </div>
+</ng-container>
+
+<!-- ================= PORTFOLIO TAB ================= -->
+<ng-container *ngIf="tab === 'portfolio'">
+  <rb-card>
+    <rb-card-title>Portfolio sections</rb-card-title>
+    <p class="me-subtle">
+      These are the sections recruiters see on your public profile.
+      Each opens the legacy editor — full Portfolio-inside-/me absorption
+      is a Week-2 follow-up once the CRUD sub-forms are converted to standalone.
+    </p>
+    <div class="me-portfolio-grid">
+      <a routerLink="/record" [queryParams]="{section: 'experiences'}" class="me-portfolio-tile">
+        <rb-icon name="briefcase" size="20" />
+        <strong>Experiences</strong>
+        <span>Jobs, internships, contracts</span>
+      </a>
+      <a routerLink="/record" [queryParams]="{section: 'realisations'}" class="me-portfolio-tile">
+        <rb-icon name="star" size="20" />
+        <strong>Realisations</strong>
+        <span>Projects, case studies, shipped work</span>
+      </a>
+      <a routerLink="/record" [queryParams]="{section: 'skills'}" class="me-portfolio-tile">
+        <rb-icon name="sparkles" size="20" />
+        <strong>Skills</strong>
+        <span>Declared tech + soft skills</span>
+      </a>
+      <a routerLink="/record" [queryParams]="{section: 'trainings'}" class="me-portfolio-tile">
+        <rb-icon name="award" size="20" />
+        <strong>Training</strong>
+        <span>Academic + professional</span>
+      </a>
+      <a routerLink="/record" [queryParams]="{section: 'languages'}" class="me-portfolio-tile">
+        <rb-icon name="message-circle" size="20" />
+        <strong>Languages</strong>
+        <span>Spoken languages + level</span>
+      </a>
+      <a routerLink="/record" [queryParams]="{section: 'documents'}" class="me-portfolio-tile">
+        <rb-icon name="file-text" size="20" />
+        <strong>Documents</strong>
+        <span>Certifications, diplomas, references</span>
+      </a>
+    </div>
+  </rb-card>
+</ng-container>
+
+<!-- ================= BADGES TAB ================= -->
+<ng-container *ngIf="tab === 'badges'">
+  <rb-empty-state
+    *ngIf="!loading && badges.length === 0"
+    icon="award"
+    heading="No badges yet">
+    <p>
+      Badges are earned by passing timed, scored challenges.
+      <a routerLink="/evaluate">Browse challenges →</a>
+    </p>
+  </rb-empty-state>
+
+  <section class="me-badges-grid" *ngIf="!loading && badges.length > 0">
+    <a *ngFor="let b of badges" [routerLink]="['/badge', b.id]" class="me-badge-card">
+      <div class="me-badge-head">
+        <strong>{{ b.skill }}</strong>
+        <span class="me-badge-level">{{ b.level }}</span>
+      </div>
+      <div class="me-badge-score">
+        <strong>{{ b.score }}</strong>
+        <span>/100</span>
+        <span *ngIf="b.percentile != null" class="me-badge-pct">top {{ 100 - b.percentile }}%</span>
+      </div>
+      <div class="me-badge-meta">
+        <rb-chip *ngIf="b.challengeFormat === 'ai_pair'" variant="verified">✨ AI-pair</rb-chip>
+        <rb-chip *ngIf="b.aiToolUsed">{{ aiToolLabel(b.aiToolUsed) }}</rb-chip>
+        <span class="me-badge-date">{{ b.earnedAt | date:'longDate' }}</span>
+      </div>
+    </a>
+  </section>
+</ng-container>
+
+<!-- ================= CV TAB ================= -->
+<ng-container *ngIf="tab === 'cv'">
+  <rb-card>
+    <rb-card-title>Your CV</rb-card-title>
+    <p class="me-subtle">
+      Auto-generated from your portfolio sections + earned badges.
+      The full printable view opens in a dedicated window so you can export PDF.
+    </p>
+    <div class="me-cv-summary">
+      <rb-stat [value]="stats.badgesLifetime" label="Verified badges" />
+      <rb-stat [value]="stats.starStories" label="STAR stories" />
+      <rb-stat [value]="stats.aiPairBadges" label="AI-pair credentials" />
+    </div>
+    <div class="me-cv-ctas">
+      <rb-button [routerLink]="['/cv']">Open full CV view →</rb-button>
+      <rb-button variant="ghost" [routerLink]="['/onboard']">Upload a new CV</rb-button>
+    </div>
+  </rb-card>
+</ng-container>
+</rb-app-shell>
