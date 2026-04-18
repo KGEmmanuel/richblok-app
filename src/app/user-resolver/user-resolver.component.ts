@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs/operators';
+// D7 Day 2 Batch B — modular Firestore.
+import { Firestore, doc, getDoc, collection, query, where, limit, getDocs } from '@angular/fire/firestore';
 
 /**
  * Resolves /u/:handle to /profile/:uid.
@@ -52,13 +52,14 @@ export class UserResolverComponent implements OnInit {
 
   error = false;
 
+  private firestore = inject(Firestore);
+
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private afs: AngularFirestore
+    private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     const handle = this.route.snapshot.paramMap.get('handle') || '';
     if (!handle) { this.error = true; return; }
 
@@ -66,55 +67,44 @@ export class UserResolverComponent implements OnInit {
     const looksLikeUid = /^[A-Za-z0-9]{20,40}$/.test(handle);
 
     if (looksLikeUid) {
-      // Fast path — go directly
-      this.afs.doc(`utilisateurs/${handle}`).get().pipe(first()).toPromise().then(snap => {
-        if (snap && snap.exists) {
+      try {
+        const snap = await getDoc(doc(this.firestore, 'utilisateurs', handle));
+        if (snap.exists()) {
           this.router.navigate(['/profile', handle], { replaceUrl: true });
-        } else {
-          this.resolveByUsername(handle);
+          return;
         }
-      }).catch(() => this.resolveByUsername(handle));
-    } else {
-      this.resolveByUsername(handle);
+      } catch { /* fall through */ }
     }
+    await this.resolveByUsername(handle);
   }
 
   private async resolveByUsername(handle: string) {
     try {
+      const coll = collection(this.firestore, 'utilisateurs');
       // Try username field match
-      const byUsername = await this.afs.collection('utilisateurs', ref =>
-        ref.where('username', '==', handle).limit(1)
-      ).get().pipe(first()).toPromise();
-      if (byUsername && !byUsername.empty) {
-        const uid = byUsername.docs[0].id;
-        this.router.navigate(['/profile', uid], { replaceUrl: true });
+      const byUsername = await getDocs(query(coll, where('username', '==', handle), limit(1)));
+      if (!byUsername.empty) {
+        this.router.navigate(['/profile', byUsername.docs[0].id], { replaceUrl: true });
         return;
       }
 
       // Try case-insensitive username (store usernameLower)
       const lowered = handle.toLowerCase();
-      const byLower = await this.afs.collection('utilisateurs', ref =>
-        ref.where('usernameLower', '==', lowered).limit(1)
-      ).get().pipe(first()).toPromise();
-      if (byLower && !byLower.empty) {
-        const uid = byLower.docs[0].id;
-        this.router.navigate(['/profile', uid], { replaceUrl: true });
+      const byLower = await getDocs(query(coll, where('usernameLower', '==', lowered), limit(1)));
+      if (!byLower.empty) {
+        this.router.navigate(['/profile', byLower.docs[0].id], { replaceUrl: true });
         return;
       }
 
       // Last resort — email prefix
-      const byEmail = await this.afs.collection('utilisateurs', ref =>
-        ref.where('email', '==', `${handle}@gmail.com`).limit(1)
-      ).get().pipe(first()).toPromise();
-      if (byEmail && !byEmail.empty) {
-        const uid = byEmail.docs[0].id;
-        this.router.navigate(['/profile', uid], { replaceUrl: true });
+      const byEmail = await getDocs(query(coll, where('email', '==', `${handle}@gmail.com`), limit(1)));
+      if (!byEmail.empty) {
+        this.router.navigate(['/profile', byEmail.docs[0].id], { replaceUrl: true });
         return;
       }
 
       this.error = true;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('UserResolver error:', err);
       this.error = true;
     }

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+// D7 Day 2 Batch B — modular Firestore.
+import { Firestore, collection, getDocs, addDoc } from '@angular/fire/firestore';
 import { AnalyticsService } from '../shared/services/analytics.service';
-import { first } from 'rxjs/operators';
 
 interface ChallengePick {
   id: string;
@@ -38,35 +38,38 @@ export class SponsorChallengeComponent implements OnInit {
   contactEmail = '';
   errorMsg = '';
 
+  private firestore = inject(Firestore);
+
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    private afs: AngularFirestore,
     private analytics: AnalyticsService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.analytics.pageView('sponsor_challenge');
-    this.afs.collection<any>('challenges').snapshotChanges().pipe(first()).subscribe(snaps => {
-      this.challenges = snaps.map(s => {
-        const data: any = s.payload.doc.data();
+    try {
+      const snap = await getDocs(collection(this.firestore, 'challenges'));
+      this.challenges = snap.docs.map(d => {
+        const data: any = d.data();
         return {
-          id: s.payload.doc.id,
+          id: d.id,
           titre: data.titre,
           slug: data.slug,
           skills: data.skills,
           competencyTags: data.competencyTags
         };
       });
+    } finally {
       this.loading = false;
+    }
 
-      // If arrived with ?challenge=<id>, preselect + jump to brand step.
-      const pre = this.route.snapshot.queryParamMap.get('challenge');
-      if (pre) {
-        const found = this.challenges.find(c => c.id === pre || c.slug === pre);
-        if (found) { this.pick(found); }
-      }
-    });
+    // If arrived with ?challenge=<id>, preselect + jump to brand step.
+    const pre = this.route.snapshot.queryParamMap.get('challenge');
+    if (pre) {
+      const found = this.challenges.find(c => c.id === pre || c.slug === pre);
+      if (found) { this.pick(found); }
+    }
   }
 
   pick(c: ChallengePick) {
@@ -87,7 +90,7 @@ export class SponsorChallengeComponent implements OnInit {
     try {
       // Persist the sponsorship intent FIRST (so server-side webhook can
       // attach the Stripe session id on completion).
-      await this.afs.collection('challenge_sponsorships').add({
+      await addDoc(collection(this.firestore, 'challenge_sponsorships'), {
         challengeId: this.selected.id,
         challengeTitle: this.selected.titre,
         sponsorName: this.sponsorName,

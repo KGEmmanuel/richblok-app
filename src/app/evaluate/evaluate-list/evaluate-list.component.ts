@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Challenge, CompetencyTag } from 'src/app/shared/entites/Challenge';
 import { COMPETENCY_LABELS } from 'src/app/shared/entites/StarProfile';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+// D7 Day 2 Batch B — modular Firestore.
+import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { AnalyticsService } from 'src/app/shared/services/analytics.service';
 import { first } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-evaluate-list',
@@ -33,8 +35,9 @@ export class EvaluateListComponent implements OnInit {
     { tag: 'feedback_reception', label: 'Feedback Reception' }
   ];
 
+  private firestore = inject(Firestore);
+
   constructor(
-    private afs: AngularFirestore,
     private route: ActivatedRoute,
     private analytics: AnalyticsService
   ) {}
@@ -50,15 +53,11 @@ export class EvaluateListComponent implements OnInit {
     });
 
     // Load ALL published challenges (system + user-created) for the catalog
-    this.afs.collection<Challenge>('challenges')
-      .snapshotChanges()
-      .subscribe(snaps => {
+    // D7 Day 2: collectionData with idField replaces snapshotChanges mapping.
+    (collectionData(collection(this.firestore, 'challenges'), { idField: 'id' }) as Observable<Challenge[]>)
+      .subscribe(list => {
         this.loading = false;
-        this.challenge = snaps.map(s => {
-          const data = s.payload.doc.data() as Challenge;
-          data.id = s.payload.doc.id;
-          return data;
-        });
+        this.challenge = list;
         // Sort: system-seeded ones first (creatorType === 'SYS'), then user-created
         this.challenge.sort((a: any, b: any) => {
           const aSys = (a.creatorType === 'SYS') ? 0 : 1;
