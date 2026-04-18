@@ -76,6 +76,69 @@
   &:hover { background: $rb-surface; color: $rb-text; }
 }
 
+// Week-1 IA — dropdowns for [Me ▾] and [Talent ▾].
+.rb-dd {
+  position: relative;
+}
+.rb-nav-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+.rb-nav-caret {
+  background: transparent;
+  border: none;
+  color: $rb-text-muted;
+  padding: $rb-space-2 $rb-space-1;
+  cursor: pointer;
+  border-radius: $rb-radius-sm;
+  display: inline-flex;
+  align-items: center;
+  &:hover { background: $rb-surface; color: $rb-text; }
+}
+.rb-nav-link-btn {
+  background: transparent;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.rb-dd-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 220px;
+  background: rgba(14, 14, 16, 0.98);
+  border: 1px solid $rb-border;
+  border-radius: $rb-radius-md;
+  padding: $rb-space-1;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  a {
+    display: block;
+    padding: $rb-space-2 $rb-space-3;
+    color: $rb-text;
+    text-decoration: none;
+    border-radius: $rb-radius-sm;
+    font-size: $rb-text-sm;
+    font-weight: 500;
+    &:hover { background: $rb-surface; }
+    &.rb-dd-active { background: $rb-accent-15; color: $rb-accent; }
+  }
+}
+.rb-dd-sep {
+  height: 1px;
+  background: $rb-border;
+  margin: $rb-space-1 $rb-space-1;
+}
+
 // ───── main container
 .rb-main {
   max-width: 1200px;

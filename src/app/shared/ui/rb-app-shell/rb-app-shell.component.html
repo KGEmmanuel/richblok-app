@@ -1,19 +1,79 @@
 <div class="rb-shell">
   <header class="rb-nav">
-    <a class="rb-logo" routerLink="/feed" aria-label="Richblok home">
+    <a class="rb-logo" routerLink="/me" aria-label="Richblok home">
       <span class="rb-logo-mark">r</span>
       <span class="rb-logo-word">ichblok</span>
     </a>
-    <nav class="rb-nav-links">
-      <a routerLink="/feed" class="rb-nav-link" [class.rb-active]="active === 'dashboard'">Dashboard</a>
+
+    <nav class="rb-nav-links" aria-label="Primary">
+      <!-- [Me ▾] — links straight to /me but the caret opens a dropdown of tab-level shortcuts. -->
+      <div class="rb-dd" [class.rb-dd-open]="meOpen">
+        <div class="rb-nav-combo">
+          <a routerLink="/me"
+             class="rb-nav-link"
+             [class.rb-active]="activeIsMe || active === 'me'">Me</a>
+          <button type="button"
+                  class="rb-nav-caret"
+                  aria-haspopup="menu"
+                  [attr.aria-expanded]="meOpen"
+                  (click)="toggleMe($event)">
+            <rb-icon name="chevron-down" size="14" />
+          </button>
+        </div>
+        <div class="rb-dd-menu" *ngIf="meOpen" role="menu">
+          <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'feed'}" (click)="closeMenus()"
+             [class.rb-dd-active]="subActive === 'feed'">Feed</a>
+          <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'portfolio'}" (click)="closeMenus()"
+             [class.rb-dd-active]="subActive === 'portfolio'">Portfolio</a>
+          <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'badges'}" (click)="closeMenus()"
+             [class.rb-dd-active]="subActive === 'badges'">Badges</a>
+          <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'cv'}" (click)="closeMenus()"
+             [class.rb-dd-active]="subActive === 'cv'">CV</a>
+          <div class="rb-dd-sep"></div>
+          <a *ngIf="isAdmin" role="menuitem" routerLink="/admin" (click)="closeMenus()">Admin</a>
+          <a role="menuitem" routerLink="/settings" (click)="closeMenus()">Settings</a>
+        </div>
+      </div>
+
       <a routerLink="/evaluate" class="rb-nav-link" [class.rb-active]="active === 'challenges'">Challenges</a>
-      <a routerLink="/record" class="rb-nav-link" [class.rb-active]="active === 'profile'">Profile</a>
+
+      <!-- [Talent ▾] — surfaces the two public discovery pages + employer dashboard. -->
+      <div class="rb-dd" [class.rb-dd-open]="talentOpen">
+        <button type="button"
+                class="rb-nav-link rb-nav-link-btn"
+                [class.rb-active]="active === 'talent'"
+                aria-haspopup="menu"
+                [attr.aria-expanded]="talentOpen"
+                (click)="toggleTalent($event)">
+          Talent
+          <rb-icon name="chevron-down" size="14" />
+        </button>
+        <div class="rb-dd-menu" *ngIf="talentOpen" role="menu">
+          <a role="menuitem" routerLink="/ai-native" (click)="closeMenus()">
+            ✨ AI-native directory
+          </a>
+          <a role="menuitem" routerLink="/leaderboard" (click)="closeMenus()">
+            🏆 Weekly leaderboard
+          </a>
+          <div class="rb-dd-sep" *ngIf="isEmployer"></div>
+          <a *ngIf="isEmployer" role="menuitem" routerLink="/employer/dashboard" (click)="closeMenus()">
+            Employer dashboard
+          </a>
+        </div>
+      </div>
+
       <a routerLink="/jobs" class="rb-nav-link" [class.rb-active]="active === 'jobs'">Jobs</a>
-      <a *ngIf="isAdmin" routerLink="/admin" class="rb-nav-link" [class.rb-active]="active === 'admin'">Admin</a>
     </nav>
+
     <div class="rb-nav-right">
-      <a routerLink="/settings" class="rb-nav-icon" aria-label="Settings">
-        <rb-icon name="settings" />
+      <a routerLink="/notifications" class="rb-nav-icon" aria-label="Notifications" title="Notifications">
+        <rb-icon name="bell" size="18" />
+      </a>
+      <a routerLink="/messages" class="rb-nav-icon" aria-label="Messages" title="Messages">
+        <rb-icon name="message-square" size="18" />
+      </a>
+      <a routerLink="/settings" class="rb-nav-icon" aria-label="Settings" title="Settings">
+        <rb-icon name="settings" size="18" />
       </a>
     </div>
   </header>
