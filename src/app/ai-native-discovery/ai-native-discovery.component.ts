@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs/operators';
+// D7 Day 2 Batch B — modular Firestore.
+import { Firestore, collection, query, where, limit, getDocs } from '@angular/fire/firestore';
 
 import {
   RbPublicShellComponent,
@@ -89,10 +89,11 @@ export class AiNativeDiscoveryComponent implements OnInit {
   uniqueTools = 0;
   uniqueCountries = 0;
 
+  private firestore = inject(Firestore);
+
   constructor(
     private title: Title,
     private meta: Meta,
-    private afs: AngularFirestore,
     private analytics: AnalyticsService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -120,18 +121,20 @@ export class AiNativeDiscoveryComponent implements OnInit {
       // Only AI-pair passing badges. Firestore supports a compound filter
       // here; limit 200 then post-sort client-side to avoid a composite
       // index requirement (same pattern as /admin/pending-reviews).
-      const snap = await this.afs.collection('badges', ref =>
-        ref.where('challengeFormat', '==', 'ai_pair')
-           .where('passed', '==', true)
-           .limit(200)
-      ).get().pipe(first()).toPromise();
+      const q = query(
+        collection(this.firestore, 'badges'),
+        where('challengeFormat', '==', 'ai_pair'),
+        where('passed', '==', true),
+        limit(200)
+      );
+      const snap = await getDocs(q);
 
       const rows: DiscoveryCard[] = [];
       const tools = new Set<string>();
       const countries = new Set<string>();
       const uids = new Set<string>();
 
-      snap!.forEach(d => {
+      snap.forEach(d => {
         const data: any = d.data();
         if (!data.uid) return;
         rows.push({
@@ -159,7 +162,7 @@ export class AiNativeDiscoveryComponent implements OnInit {
       });
 
       this.cards = rows.slice(0, 100);
-      this.totalAiNativeBadges = snap!.size;
+      this.totalAiNativeBadges = snap.size;
       this.uniqueCandidates = uids.size;
       this.uniqueTools = tools.size;
       this.uniqueCountries = countries.size;

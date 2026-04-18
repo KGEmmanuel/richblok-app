@@ -2,10 +2,11 @@ import { Title, Meta } from '@angular/platform-browser';
 import { UtilisateurService } from './../shared/services/utilisateur.service';
 import { SeoService } from './../shared/services/seo.service';
 import { AnalyticsService } from './../shared/services/analytics.service';
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
+// D7 Day 2 Batch B — modular Firestore + Auth. No more firebase/compat/app import.
+import { Firestore, collection, getCountFromServer } from '@angular/fire/firestore';
+import { Auth } from '@angular/fire/auth';
 import { Router, RouterLink } from '@angular/router';
 
 type Lang = 'en' | 'fr';
@@ -128,10 +129,12 @@ export class LandingComponent implements OnInit {
     }
   };
 
+  private firestore = inject(Firestore);
+  private auth = inject(Auth);
+
   constructor(
     private router: Router,
     private userSvc: UtilisateurService,
-    private afs: AngularFirestore,
     private title: Title,
     private meta: Meta,
     private seo: SeoService,
@@ -146,15 +149,14 @@ export class LandingComponent implements OnInit {
     this.detectLang();
     if (this.isBrowser) {
       this.analytics.track('PageView', { page: 'landing' });
-      // Live counter: count all challenge submissions. Skipped on SSR so the
-      // page renders fast + deterministic for crawlers; client hydrates it.
-      this.afs.collection('challenge_submissions').get().subscribe(
-        snap => {
+      // D7: getCountFromServer is cheaper than getDocs (server returns just the
+      // count, no document bodies). firebase 9.23 gave us this symbol on Day 0.
+      getCountFromServer(collection(this.firestore, 'challenge_submissions'))
+        .then(snap => {
           const base = 847;
-          this.badgeCount = base + (snap ? snap.size : 0);
-        },
-        () => { this.badgeCount = 847; }
-      );
+          this.badgeCount = base + (snap.data().count || 0);
+        })
+        .catch(() => { this.badgeCount = 847; });
     } else {
       this.badgeCount = 847;
     }
@@ -194,7 +196,7 @@ export class LandingComponent implements OnInit {
   // preserved so funnel dashboards don't break — only the destinations flip.
   primaryCta() {
     this.analytics.track('LandingCtaClick', { cta: 'primary_hero_ai_pair_challenge' });
-    const user = this.isBrowser ? firebase.auth().currentUser : null;
+    const user = this.isBrowser ? this.auth.currentUser : null;
     if (user) {
       this.router.navigate(['/evaluate']);
     } else {
@@ -215,7 +217,7 @@ export class LandingComponent implements OnInit {
   goUpgrade() {
     this.analytics.track('LandingCtaClick', { cta: 'pricing_pro' });
     this.analytics.track('InitiateCheckout', { plan: this.annualBilling ? 'pro_annual' : 'pro_monthly' });
-    const user = this.isBrowser ? firebase.auth().currentUser : null;
+    const user = this.isBrowser ? this.auth.currentUser : null;
     if (user) {
       this.router.navigate(['/settings'], { queryParams: { upgrade: 1 } });
     } else {

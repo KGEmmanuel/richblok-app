@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, OnInit, inject } from '@angular/core';
+// D7 Day 2 Batch B — modular Firestore. Parallel loads now use Promise.all
+// (getDocs returns a Promise directly; no .pipe(first()).toPromise() needed).
+import { Firestore, collection, query, orderBy, limit, getDocs } from '@angular/fire/firestore';
 
 interface DashboardCount {
   label: string;
@@ -51,7 +51,6 @@ export class AdminDashboardComponent implements OnInit {
     return this.totalBadges > 0 ? Math.round((this.badgesPassed / this.totalBadges) * 1000) / 10 : 0;
   }
   get d30TargetProgress(): number {
-    // PRD Day-30 target: 100 paying users → $1,000 MRR
     return Math.min(100, Math.round((this.proUsers / 100) * 1000) / 10);
   }
 
@@ -68,26 +67,27 @@ export class AdminDashboardComponent implements OnInit {
     ];
   }
 
-  constructor(private afs: AngularFirestore) {}
+  private firestore = inject(Firestore);
 
   ngOnInit() {
     this.refresh();
   }
 
-  refresh() {
+  async refresh() {
     this.loading = true;
     this.lastRefresh = new Date();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-    // Parallel load
-    combineLatest([
-      this.afs.collection('utilisateurs').get(),
-      this.afs.collection('challenges').get(),
-      this.afs.collection('badges', ref => ref.orderBy('earnedAt', 'desc').limit(10)).get(),
-      this.afs.collection('badges').get(),
-      this.afs.collection('challenge_participations').get(),
-      this.afs.collection('referrals').get()
-    ]).subscribe(([usersSnap, challengesSnap, recentBadgesSnap, allBadgesSnap, partsSnap, refsSnap]) => {
+    try {
+      const [usersSnap, challengesSnap, recentBadgesSnap, allBadgesSnap, partsSnap, refsSnap] = await Promise.all([
+        getDocs(collection(this.firestore, 'utilisateurs')),
+        getDocs(collection(this.firestore, 'challenges')),
+        getDocs(query(collection(this.firestore, 'badges'), orderBy('earnedAt', 'desc'), limit(10))),
+        getDocs(collection(this.firestore, 'badges')),
+        getDocs(collection(this.firestore, 'challenge_participations')),
+        getDocs(collection(this.firestore, 'referrals'))
+      ]);
+
       // Totals
       this.totalUsers = usersSnap.size;
       this.totalChallenges = challengesSnap.size;
@@ -144,17 +144,14 @@ export class AdminDashboardComponent implements OnInit {
         { name: 'Badges earned', count: this.totalBadges },
         { name: 'Paid subscriptions', count: this.proUsers }
       ];
-      // Compute step conversions
       for (let i = 1; i < this.funnel.length; i++) {
         const prev = this.funnel[i - 1].count;
         this.funnel[i].conversion = prev > 0 ? Math.round((this.funnel[i].count / prev) * 1000) / 10 : 0;
       }
-
-      this.loading = false;
-    }, err => {
-      // eslint-disable-next-line no-console
+    } catch (err) {
       console.error('Admin dashboard load error:', err);
+    } finally {
       this.loading = false;
-    });
+    }
   }
 }

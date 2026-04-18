@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+// D7 Day 2 Batch B — modular Firestore.
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { SeoService } from '../shared/services/seo.service';
 import { ShareService } from '../shared/services/share.service';
 import { AnalyticsService } from '../shared/services/analytics.service';
-import { of } from 'rxjs';
-import { catchError, first } from 'rxjs/operators';
 
 interface BadgeRecord {
   id?: string;
@@ -36,16 +35,17 @@ export class BadgePageComponent implements OnInit {
   error: string | null = null;
   copied = false;
 
+  private firestore = inject(Firestore);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private afs: AngularFirestore,
     private seo: SeoService,
     private shareSvc: ShareService,
     private analytics: AnalyticsService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.error = 'Badge not found';
@@ -55,14 +55,10 @@ export class BadgePageComponent implements OnInit {
 
     this.analytics.track('ViewContent', { content_type: 'badge', content_id: id });
 
-    this.afs.doc<BadgeRecord>(`badges/${id}`).valueChanges().pipe(
-      first(),
-      catchError(err => {
-        console.error('Badge fetch error', err);
-        return of(null);
-      })
-    ).subscribe(b => {
+    try {
+      const snap = await getDoc(doc(this.firestore, 'badges', id));
       this.loading = false;
+      const b = snap.exists() ? (snap.data() as BadgeRecord) : null;
       if (!b) {
         // Graceful fallback: show a demo badge so link never looks broken to recruiters
         this.badge = {
@@ -77,12 +73,15 @@ export class BadgePageComponent implements OnInit {
           earnedAt: new Date(),
           verificationHash: id
         };
-        this.applySeo();
-        return;
+      } else {
+        this.badge = { id, ...b };
       }
-      this.badge = { id, ...b };
       this.applySeo();
-    });
+    } catch (err) {
+      console.error('Badge fetch error', err);
+      this.loading = false;
+      this.error = 'Badge not found';
+    }
   }
 
   private applySeo() {

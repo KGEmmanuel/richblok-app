@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Component, OnInit, inject } from '@angular/core';
+// D7 Day 2 Batch B — modular Firestore.
+import { Firestore, collection, query, orderBy, limit, getDocs, addDoc } from '@angular/fire/firestore';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { CompetencyTag } from '../shared/entites/Challenge';
 import { COMPETENCY_LABELS } from '../shared/entites/StarProfile';
 import { Router } from '@angular/router';
-import { first } from 'rxjs/operators';
 
 interface CandidateCard {
   badgeId: string;
@@ -98,8 +98,9 @@ export class EmployerDashboardComponent implements OnInit {
     { tag: 'adaptability', label: 'Adaptability' }
   ];
 
+  private firestore = inject(Firestore);
+
   constructor(
-    private afs: AngularFirestore,
     private analytics: AnalyticsService,
     private router: Router
   ) {}
@@ -113,9 +114,8 @@ export class EmployerDashboardComponent implements OnInit {
     // Badges + STAR profiles are joined by uid so the employer can filter by
     // verified behavioral competencies (not just raw skill badges).
     Promise.all([
-      this.afs.collection('badges', ref => ref.orderBy('earnedAt', 'desc').limit(200))
-        .get().pipe(first()).toPromise(),
-      this.afs.collection('star_profiles').get().pipe(first()).toPromise()
+      getDocs(query(collection(this.firestore, 'badges'), orderBy('earnedAt', 'desc'), limit(200))),
+      getDocs(collection(this.firestore, 'star_profiles'))
     ]).then(([badgesSnap, profilesSnap]) => {
       // Build verified-competency index keyed by uid. A competency is "verified"
       // iff any StarAnswer the user owns has verified === true for that tag.
@@ -247,7 +247,7 @@ export class EmployerDashboardComponent implements OnInit {
     event.stopPropagation();
     this.analytics.track('EmployerRequestIntro', { uid: c.uid, skill: c.skill });
     // Save the request to Firestore for follow-up
-    this.afs.collection('employer_intro_requests').add({
+    addDoc(collection(this.firestore, 'employer_intro_requests'), {
       candidateUid: c.uid,
       candidateBadgeId: c.badgeId,
       candidateName: c.userName,
