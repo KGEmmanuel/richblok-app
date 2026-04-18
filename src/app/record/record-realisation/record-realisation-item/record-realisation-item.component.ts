@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, inject } from '@angular/core';
 import { Experience } from 'src/app/shared/entites/Experience';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { ToastrService } from 'ngx-toastr';
@@ -7,8 +7,7 @@ import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Auth, authState } from '@angular/fire/auth';
 
 
 @Component({
@@ -29,13 +28,14 @@ export class RecordRealisationItemComponent implements OnInit {
   selectForEdit = new EventEmitter<Realisation>();
 
   
+  private auth = inject(Auth);
+
   constructor(private realSvc: PortfolioService,private expSvc: ExperienceService,
-              private toastSvc: ToastrService, private entSvc: OrganisationService,
-              private afStorage: AngularFireStorage, private afAuth: AngularFireAuth) { }
+              private toastSvc: ToastrService, private entSvc: OrganisationService) { }
 
   ngOnInit() {
 
-    this.afAuth.authState.subscribe(v => {
+    authState(this.auth).subscribe(v => {
       if (v) {
         this.uid = v.uid;
         this.realSvc.getportfolios(this.uid).onSnapshot(val => {
