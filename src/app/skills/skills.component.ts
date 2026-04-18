@@ -2,9 +2,6 @@ import { Component, OnInit, Input , inject } from '@angular/core';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
 import { Skill } from '../shared/entites/Skill';
 import { SkillsService } from '../shared/services/skills.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
 import { Auth, authState } from '@angular/fire/auth';
 
