@@ -32,13 +32,18 @@
                           <button type="button" class="btn btn-light btn-sm rounded">
                           <i class="feather-video"></i>
                           </button>
-                          <div class="btn-group">
-                             <button type="button" class="btn btn-light btn-sm rounded" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <!-- D2 reference migration: Bootstrap data-toggle="dropdown"
+                               replaced with NgbDropdown (ng-bootstrap, already in
+                               AppModule via NgbModule). Zero component-code change:
+                               pure template. This pattern repeats across all 12
+                               dropdown sites in docs/V5_SPRINT3_BOOTSTRAP_KILL.md. -->
+                          <div class="btn-group" ngbDropdown>
+                             <button type="button" class="btn btn-light btn-sm rounded" ngbDropdownToggle aria-expanded="false">
                              <i class="feather-more-vertical"></i>
                              </button>
-                             <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button"><i class="feather-trash"></i> Delete</button>
-                                <button class="dropdown-item" type="button"><i class="feather-x-circle"></i> Turn Off</button>
+                             <div ngbDropdownMenu class="dropdown-menu-right">
+                                <button ngbDropdownItem type="button"><i class="feather-trash"></i> Delete</button>
+                                <button ngbDropdownItem type="button"><i class="feather-x-circle"></i> Turn Off</button>
                              </div>
                           </div>
                        </span>
