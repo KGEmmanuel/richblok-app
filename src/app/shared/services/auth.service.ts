@@ -85,7 +85,7 @@ export class AuthService {
           console.warn('SetUserData warning:', err);
         });
         this.ngZone.run(() => {
-          this.router.navigate(['feed']);
+          this.router.navigate(['me']);
         });
         return result.user;
       })
@@ -152,7 +152,7 @@ export class AuthService {
           console.warn('SetUserData warning:', err);
         });
         this.ngZone.run(() => {
-          this.router.navigate(['feed']);
+          this.router.navigate(['me']);
         });
         return result.user;
       })

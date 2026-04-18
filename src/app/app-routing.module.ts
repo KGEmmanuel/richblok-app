@@ -58,15 +58,32 @@ const routes: Routes = [
 
   { path: 'sign-in', component: LoginComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Create Account'} },
   { path: 'register', component: SignupComponent, canActivate: [SecureInnerPagesGuard], data: {title: 'Register'} },
-  { path: 'feed', loadComponent: () => import('./feed/feed.component').then(m => m.FeedComponent), canActivate: [AuthGuard], data: {title: 'Dashboard'} },
-  { path: 'profile', component: UserComponent, canActivate: [AuthGuard], data: {title: 'Profile'}},
+  // Week-1 IA: /me is the unified user hub. /feed and /profile (self) redirect
+  // into it at the right tab. Old URLs keep working — bookmarks, email links,
+  // and Google rankings carry over.
+  //
+  // /record stays available as the legacy editor because the Portfolio tab
+  // in /me links INTO it (via ?section=X) for CRUD. Fully absorbing the
+  // record sub-forms into /me is a Week-2 follow-up that requires
+  // converting record-experiences, record-skills, etc. to standalone.
+  { path: 'me',
+    loadComponent: () => import('./me/me.component').then(m => m.MeComponent),
+    canActivate: [AuthGuard],
+    data: {title: 'Your hub'} },
+  // pathMatch:'full' — only the EXACT old URL redirects, not sub-paths.
+  { path: 'feed',    redirectTo: '/me?tab=feed', pathMatch: 'full' },
+  { path: 'profile', redirectTo: '/me?tab=feed', pathMatch: 'full' },
+  // /profile/:id stays public — that's "view someone else's profile".
+  // It is NOT the same as /me (self). The canonical public URL is /u/:handle.
   { path: 'profile/:id', component: UserViewComponent},
   { path: 'organisation/:id', component: OrganisationProfileComponent},
   { path: 'messages', component: ChatComponent, canActivate: [AuthGuard], data: {title: 'Chat'}},
   { path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard], data: {title: 'Notifications'}},
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard], data: {title: 'Jobs'}},
   { path: 'organisation', component: OrganisationProfileComponent, canActivate: [AuthGuard]},
-  { path: 'record', component: RecordComponent, canActivate: [AuthGuard], data: {title: 'Records'}},
+  // /record — legacy editor reachable from /me?tab=portfolio tiles.
+  // Kept active until Week-2 absorbs all 6 sub-forms into /me directly.
+  { path: 'record', component: RecordComponent, canActivate: [AuthGuard], data: {title: 'Edit portfolio'}},
   { path: 'friends', component: FriendsComponent, canActivate: [AuthGuard], data: {title: 'Connections'}},
   { path: 'settings', component: UserSettingsComponent, canActivate: [AuthGuard], data: {title: 'Settings'}},
   { path: 'cv', component: CvComponent, canActivate: [AuthGuard], data: {title: 'CV'}},

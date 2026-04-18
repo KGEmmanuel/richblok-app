@@ -23,7 +23,9 @@ export class SecureInnerPagesGuard  {
       take(1),
       map(user => {
         if (user) {
-          this.router.navigate(['/feed']);
+          // Week-1 IA: post-auth lands on /me (the unified hub).
+          // Redirect here directly — /feed would double-redirect.
+          this.router.navigate(['/me']);
           return false;
         }
         return true;
