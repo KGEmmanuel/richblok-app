@@ -7,6 +7,7 @@ import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { SkillsService } from 'src/app/shared/services/skills.service';
+import { getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-jobs-applied-item',
@@ -38,7 +39,7 @@ export class JobsAppliedItemComponent implements OnInit {
   }
 
   getskilof(id: string){
-    return this.skilsvc.getSkill(this.currentApplication.userRef,id).get().then(v=>{
+    return getDoc(this.skilsvc.getSkill(this.currentApplication.userRef,id)).then(v=>{
       return v.data();
     }).catch(er=>{
        console.log(er);

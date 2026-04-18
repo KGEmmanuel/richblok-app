@@ -1,41 +1,46 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import {
+  Firestore, addDoc, collection, deleteDoc, doc, orderBy, query, where
+} from '@angular/fire/firestore';
 import { Commentaire } from '../entites/Commentaire';
 import { Post } from '../entites/Post';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
-  db: firebase.firestore.Firestore;
   readonly path = 'posts';
   readonly commentPath = 'commentaires';
+
+  private firestore = inject(Firestore);
+
   constructor() {
-    this.db = firebase.firestore();
   }
 
-  getOwnPostOf(id, type?) {
-    // alert('getting own');
-    if (type) {
-      return this.db.collection(this.path).where('owner', '==', id).where('typePost', '==', type)
-        .orderBy('date', 'desc');
-    } else {
-      return this.db.collection(this.path).where('owner', '==', id)
-        .orderBy('date', 'desc');
-    }
-
+  private postsCol() {
+    return collection(this.firestore, this.path);
   }
 
-  getRelatedPostOf(id) {
-    // alert('related of ' + id);
-    return this.db.collection(this.path).where('abonnees', 'array-contains', id)
-      .orderBy('date', 'desc');
+  private commentsCol(postId: string) {
+    return collection(this.firestore, this.path, postId, this.commentPath);
+  }
+
+  getOwnPostOf(id: string, type?: string) {
+    const base = this.postsCol();
+    const q = type
+      ? query(base, where('owner', '==', id), where('typePost', '==', type), orderBy('date', 'desc'))
+      : query(base, where('owner', '==', id), orderBy('date', 'desc'));
+    return snapshotQuery(q);
+  }
+
+  getRelatedPostOf(id: string) {
+    return snapshotQuery(
+      query(this.postsCol(), where('abonnees', 'array-contains', id), orderBy('date', 'desc'))
+    );
   }
 
   savePost(post: Post) {
-    const chem = this.path;
     console.log(post.medias);
     post.date = new Date();
     const medias = [];
@@ -43,36 +48,33 @@ export class PostService {
       post.medias.forEach(v => {
         medias.push(Object.assign({}, v));
       });
-      // medias.push()
       post.medias = medias;
     }
-    return this.db.collection(chem).add(Object.assign({}, post));
+    return addDoc(this.postsCol(), Object.assign({}, post));
   }
 
   saveComment(post: Post, parent: Commentaire, commentaire: Commentaire) {
-    const chem = this.path + '/' + post.id + '/' + this.commentPath;
     commentaire.parent = parent ? parent.id : null;
-    return this.db.collection(chem).add(Object.assign({}, commentaire));
+    return addDoc(this.commentsCol(post.id), Object.assign({}, commentaire));
   }
 
   deleteComment(commentaire: Commentaire, post: Post) {
     if (confirm('Do you realy want to delete this comment?')) {
-      const chem = this.path + '/' + post.id + '/' + this.commentPath;
-      return this.db.doc(`${chem}/${commentaire.id}`).delete();
+      return deleteDoc(doc(this.firestore, this.path, post.id, this.commentPath, commentaire.id));
     }
-
   }
 
 
   getCommentsofPost(post: Post) {
-    const chem = this.path + '/' + post.id + '/' + this.commentPath;
-    return this.db.collection(chem).where('parent', '==', null).orderBy('date', 'desc');
+    return snapshotQuery(
+      query(this.commentsCol(post.id), where('parent', '==', null), orderBy('date', 'desc'))
+    );
   }
 
   getReply(comm: Commentaire, post: Post) {
-    const chem = this.path + '/' + post.id + '/' + this.commentPath;
-    // alert()
-    return this.db.collection(chem).where('parent', '==', comm.id).orderBy('date', 'desc');
+    return snapshotQuery(
+      query(this.commentsCol(post.id), where('parent', '==', comm.id), orderBy('date', 'desc'))
+    );
   }
 
 

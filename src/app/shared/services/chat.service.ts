@@ -1,34 +1,31 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import {
+  Firestore, addDoc, collection, doc, getDoc, orderBy, query, setDoc, where
+} from '@angular/fire/firestore';
 import { Message } from '../entites/Message';
 import { ChatRoom } from '../entites/ChatRoom';
+import { snapshotDoc, snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
 
-  private db: firebase.firestore.Firestore;
   readonly path = 'chats';
   readonly msgPath = 'messages';
+
+  private firestore = inject(Firestore);
+
   constructor() {
-    this.db = firebase.firestore();
   }
 
-  /* 98836167
-    getchat(user1: string, user2: string) {
-      return this.db.collection(this.path)
-        .where('users', 'array-contains', user1)
-        .where('users', 'array-contains', user2)
-        .where('type', '==', '1');
-    }
-  /*
-    initchat(user1: string, user2: string) {
-      this.db.collection(this.path)
-    }
-  */
+  private chatDoc(uid: string) {
+    return doc(this.firestore, this.path, uid);
+  }
+
+  private messagesCol(uid: string) {
+    return collection(this.firestore, this.path, uid, this.msgPath);
+  }
 
   sendMessage(message: Message) {
     const sender = message.sender;
@@ -42,8 +39,8 @@ export class ChatService {
     } else {
       uid = receiver + sender;
     }
-    this.db.doc(this.path + '/' + uid).get().then(val => {
-      if (val.exists) {
+    getDoc(this.chatDoc(uid)).then(val => {
+      if (val.exists()) {
         this.savemessage(uid, message);
       } else {
         const c = new ChatRoom();
@@ -53,7 +50,7 @@ export class ChatService {
         c.users.push(sender);
         c.users.push(receiver);
         c.type = 1;
-        this.db.collection(this.path).doc(uid).set(Object.assign({}, c)).then(v => {
+        setDoc(this.chatDoc(uid), Object.assign({}, c)).then(() => {
           this.savemessage(uid, message);
         });
       }
@@ -61,8 +58,8 @@ export class ChatService {
   }
 
   savemessage(uid: string, message: Message) {
-    this.db.collection(this.path).doc(uid).collection(this.msgPath).add(Object.assign({}, message)).then(v => {
-     // this.tsvc.success('Succès','Message envoyé avec succès');
+    addDoc(this.messagesCol(uid), Object.assign({}, message)).then(() => {
+      // this.tsvc.success('Succès','Message envoyé avec succès');
     });
   }
 
@@ -73,21 +70,21 @@ export class ChatService {
     } else {
       uid = receiver + sender;
     }
-    return this.db.collection(this.path).doc(uid).collection(this.msgPath).orderBy('sentDate');
+    return snapshotQuery(query(this.messagesCol(uid), orderBy('sentDate')));
   }
 
   getMessagesofChat(chatId: string) {
-    const uid = chatId;
-    return this.db.collection(this.path).doc(uid).collection(this.msgPath).orderBy('sentDate');
+    return snapshotQuery(query(this.messagesCol(chatId), orderBy('sentDate')));
   }
 
   getchatrooms(userId: string) {
-    return this.db.collection(this.path)
-      .where('users', 'array-contains', userId);
+    return snapshotQuery(
+      query(collection(this.firestore, this.path), where('users', 'array-contains', userId))
+    );
   }
 
   getChatRoom(id: string) {
-    return this.db.collection(this.path).doc(id);
+    return snapshotDoc(this.chatDoc(id));
   }
 
   initiateChat(sender: string, receiver: string): Promise<any> {
@@ -104,9 +101,9 @@ export class ChatService {
     c.users.push(sender);
     c.users.push(receiver);
     c.type = 1;
-    return this.db.collection(this.path).doc(uid).set(Object.assign({}, c)).then(a => {
+    return setDoc(this.chatDoc(uid), Object.assign({}, c)).then(() => {
       return uid;
-    }).catch(er => {
+    }).catch(() => {
       return null;
     });
   }

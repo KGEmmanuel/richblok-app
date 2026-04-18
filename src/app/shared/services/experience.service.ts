@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Experience } from '../entites/Experience';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import {
+  Firestore, addDoc, collection, deleteDoc, doc, orderBy, query, updateDoc
+} from '@angular/fire/firestore';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
@@ -10,22 +11,31 @@ import 'firebase/compat/firestore';
 export class ExperienceService {
   readonly basePath = 'utilisateurs';
   readonly path = 'experiences';
-  private db = firebase.firestore();
+
+  private firestore = inject(Firestore);
+
   constructor() { }
 
+  private col(user: string) {
+    return collection(this.firestore, this.basePath, user, this.path);
+  }
+
   listExperiences(user: string) {
-    return this.db.collection(this.basePath).doc(user).collection(this.path).orderBy('debut', 'desc');
+    return snapshotQuery(query(this.col(user), orderBy('debut', 'desc')));
   }
 
-  delete(user: string, dataId: string){
-    return this.db.collection(this.basePath).doc(user).collection(this.path).doc(dataId).delete();
-  };
-
-  save(user, data: Experience){
-    return this.db.collection(this.basePath).doc(user).collection(this.path).add(Object.assign({},data));
+  delete(user: string, dataId: string) {
+    return deleteDoc(doc(this.firestore, this.basePath, user, this.path, dataId));
   }
 
-  update(user, data: Experience){
-    return this.db.collection(this.basePath).doc(user).collection(this.path).doc(data.id).update(Object.assign({},data));
+  save(user: string, data: Experience) {
+    return addDoc(this.col(user), Object.assign({}, data));
+  }
+
+  update(user: string, data: Experience) {
+    return updateDoc(
+      doc(this.firestore, this.basePath, user, this.path, data.id),
+      Object.assign({}, data) as any
+    );
   }
 }

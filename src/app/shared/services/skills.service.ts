@@ -1,47 +1,56 @@
-import { Injectable } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Injectable, inject } from '@angular/core';
+import {
+  Firestore, addDoc, collection, collectionGroup, deleteDoc, doc, updateDoc
+} from '@angular/fire/firestore';
 import { Skill } from '../entites/Skill';
 import { UtilisateurService } from './utilisateur.service';
+import { snapshotQuery } from './firestore-compat-shim';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SkillsService {
-  private afs = firebase.firestore();
   readonly skillPath = 'skills';
 
+  private firestore = inject(Firestore);
+
   constructor(private userSvc: UtilisateurService) {
-    // this.skillPath = this.userSvc.competencePath;
+  }
+
+  private userSkillsCol(userid: string) {
+    return collection(this.firestore, this.userSvc.path, userid, this.skillPath);
   }
 
   adduserSkill(userid: string, sk: Skill) {
-    const p = this.userSvc.path + '/' + userid + '/' + this.skillPath;
-    return this.afs.collection(p).add({ ...sk, dateCreation: new Date() });
+    return addDoc(this.userSkillsCol(userid), { ...sk, dateCreation: new Date() });
   }
 
   updateuserSkill(userid: string, sk: Skill) {
-    const p = this.userSvc.path + '/' + userid + '/' + this.skillPath;
-    return this.afs.collection(p).doc(sk.id).update({ ...sk});
+    return updateDoc(
+      doc(this.firestore, this.userSvc.path, userid, this.skillPath, sk.id),
+      { ...sk }
+    );
   }
 
   getAllUserSkills() {
-    //let usersRef = this.afs.collection('cities');
-    return this.afs.collectionGroup(this.skillPath);
+    return snapshotQuery(collectionGroup(this.firestore, this.skillPath));
   }
 
-  getSkillsof(user) {
-    let p = this.userSvc.path + '/' + user + '/' + this.skillPath;
-    return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath);
+  getSkillsof(user: string) {
+    return snapshotQuery(this.userSkillsCol(user));
   }
 
-  delete(user, sk) {
-    return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk).delete();
+  delete(user: string, sk: string) {
+    return deleteDoc(doc(this.firestore, this.userSvc.path, user, this.skillPath, sk));
   }
 
-  getSkill(user, sk){
-    return this.afs.collection(this.userSvc.path).doc(user).collection(this.skillPath).doc(sk);
+  /**
+   * Returns a modular DocumentReference. Caller should use
+   * `getDoc(ref)` (returns Promise<DocumentSnapshot>) instead of the
+   * old compat `.get().then(...)` pattern.
+   */
+  getSkill(user: string, sk: string) {
+    return doc(this.firestore, this.userSvc.path, user, this.skillPath, sk);
   }
 
 }

@@ -1,12 +1,18 @@
-import { ErrorHandler, Injectable, Injector, NgZone } from '@angular/core';
+import { ErrorHandler, Injectable, Injector, NgZone, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import firebase from 'firebase/compat/app';
-import 'firebase/analytics';
+import { Analytics, logEvent, isSupported } from '@angular/fire/analytics';
 
 @Injectable()
 export class GlobalErrorHandlerService implements ErrorHandler {
 
-  constructor(private injector: Injector, private zone: NgZone) {}
+  // Inject modular Analytics if it's registered as a provider. Fall back
+  // to null so this handler still works in SSR / tests where Analytics
+  // isn't available.
+  private analytics: Analytics | null = null;
+
+  constructor(private injector: Injector, private zone: NgZone) {
+    try { this.analytics = this.injector.get(Analytics, null as any); } catch { /* ignore */ }
+  }
 
   handleError(error: any): void {
     const message = (error && error.message) || 'An unexpected error occurred';
@@ -17,9 +23,8 @@ export class GlobalErrorHandlerService implements ErrorHandler {
 
     // Log to Firebase Analytics if available
     try {
-      const analytics = (firebase as any).analytics ? (firebase as any).analytics() : null;
-      if (analytics && typeof analytics.logEvent === 'function') {
-        analytics.logEvent('exception', {
+      if (this.analytics) {
+        logEvent(this.analytics, 'exception', {
           description: message,
           fatal: false,
           stack: stack ? stack.substring(0, 500) : undefined,
