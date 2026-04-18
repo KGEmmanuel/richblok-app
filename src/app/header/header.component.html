@@ -2,35 +2,7 @@
     <div class="container">
         <a class="navbar-brand mr-2" routerLink="/landing"><img src="../../assets/../../assets/img/log.png" alt="">
         </a>
-        <form class="d-none d-sm-inline-block form-inline mr-auto my-2 my-md-0 mw-100 navbar-search">
-            <div class="input-group">
-                <input type="text" class="form-control shadow-none border-0" placeholder="Search people, jobs & more..." aria-label="Search" aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                    <button class="btn" type="button" routerLink="/search">
-            <i class="feather-search"></i>
-          </button>
-                </div>
-            </div>
-        </form>
         <ul class="navbar-nav ml-auto d-flex align-items-center">
-            <!-- D2: mobile search dropdown migrated to ngbDropdown -->
-            <li class="nav-item no-arrow d-sm-none" ngbDropdown>
-                <a class="nav-link" style="cursor:pointer;" role="button" ngbDropdownToggle>
-                    <i class="feather-search mr-2"></i>
-                </a>
-                <div ngbDropdownMenu class="dropdown-menu-right p-3 shadow-sm" aria-label="Search">
-                    <form class="form-inline mr-auto w-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search people, jobs and more..." aria-label="Search">
-                            <div class="input-group-append">
-                                <button class="btn" type="button">
-                  <i class="feather-search"></i>
-                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </li>
             <li class="nav-item">
                 <a class="nav-link" style="cursor: pointer;" (click)="feed()"><i class="feather-home mr-2"></i><span
             class="d-none d-lg-inline">Home</span></a>
@@ -40,12 +12,8 @@
             class="d-none d-lg-inline">Records</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer;" (click)="demonstrate()"><i class="feather-speaker mr-2"></i><span
-            class="d-none d-lg-inline">Demonstrate</span></a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" style="cursor: pointer;" (click)="evaluate()"><i class="feather-award mr-2"></i><span
-            class="d-none d-lg-inline">Evalaute</span></a>
+            class="d-none d-lg-inline">Evaluate</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" style="cursor: pointer;" (click)="jobs()"><i class="feather-briefcase mr-2"></i><span
@@ -53,7 +21,25 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" style="cursor: pointer;" (click)="friends()"><i class="feather-users mr-2"></i><span
-            class="d-none d-lg-inline">Connection</span></a>
+            class="d-none d-lg-inline">Connections</span></a>
+            </li>
+            <!-- Week 4: Talent dropdown — surfaces the two public discovery pages
+                 (/leaderboard, /ai-native) that were otherwise invisible to signed-in users. -->
+            <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown" ngbDropdown>
+                <a class="nav-link dropdown-toggle" role="button" ngbDropdownToggle id="talentMenu" aria-label="Talent discovery">
+                    <i class="feather-compass mr-2"></i><span class="d-none d-lg-inline">Talent</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right shadow-sm" ngbDropdownMenu aria-labelledby="talentMenu">
+                    <h6 class="dropdown-header">Discover verified talent</h6>
+                    <a class="dropdown-item" routerLink="/leaderboard"><i class="feather-trending-up mr-1"></i> Weekly leaderboard</a>
+                    <a class="dropdown-item" routerLink="/ai-native"><i class="feather-cpu mr-1"></i> AI-native engineers</a>
+                </div>
+            </li>
+            <!-- Week 4: Employer dashboard link — visible only when the user has
+                 opted into the employer surface via the Settings role switcher. -->
+            <li class="nav-item" *ngIf="isEmployer">
+                <a class="nav-link" style="cursor: pointer;" routerLink="/employer/dashboard" title="Employer dashboard"><i class="feather-briefcase mr-2"></i><span
+            class="d-none d-lg-inline">Employer</span></a>
             </li>
             <li class="nav-item dropdown no-arrow mx-1 osahan-list-dropdown" ngbDropdown>
                 <a class="nav-link dropdown-toggle" role="button" ngbDropdownToggle id="message">
@@ -190,23 +176,17 @@
                             </div>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item profile" href="profile"><i class="feather-user mr-1"></i> My Profile</a>
-                        <a class="dropdown-item" href="settings"><i class="feather-edit-2 mr-1"></i> Edit Profile</a>
-                        <a class="dropdown-item" href="post-jobs"><i class="feather-archive mr-1"></i> Post a job</a>
-                        <a class="dropdown-item" href="create-organisation"><i class="feather-plus-square mr-1"></i> Create
-              organisation</a>
+                        <a class="dropdown-item profile" routerLink="/me"><i class="feather-user mr-1"></i> My Profile</a>
+                        <a class="dropdown-item" routerLink="/settings"><i class="feather-edit-2 mr-1"></i> Edit Profile</a>
+                        <!-- Week 4: employer-only entry points live here so talent-mode users
+                             aren't distracted by ATS features they won't use. -->
+                        <ng-container *ngIf="isEmployer">
+                          <a class="dropdown-item" routerLink="/post-jobs"><i class="feather-archive mr-1"></i> Post a job</a>
+                          <a class="dropdown-item" routerLink="/employer/dashboard"><i class="feather-briefcase mr-1"></i> Employer dashboard</a>
+                          <a class="dropdown-item" routerLink="/create-organisation"><i class="feather-plus-square mr-1"></i> Create organisation</a>
+                        </ng-container>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="user-jobs"><i class="feather-inbox mr-1"></i> My Jobs</a>
-
-                        <span class="item" (click)="showOrgs()"><i class="feather-layers mr-1"></i> My Organisations</span>
-                        <div *ngIf="organisations" style="margin: 4%;">
-                            <a class="dropdown-item profile">My Account</a>
-                            <a class="dropdown-item">Edit Profile</a>
-                            <a class="dropdown-item">Post a job</a>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="pricing"><i class="feather-gift mr-1"></i> Pricing</a>
-                        <a class="dropdown-item" href="settings"><i class="feather-settings mr-1"></i> Settings</a>
+                        <a class="dropdown-item" routerLink="/settings"><i class="feather-settings mr-1"></i> Settings</a>
                         <a class="dropdown-item" (click)="logout()"><i class="feather-log-out mr-1"></i> Logout</a>
                     </div>
                 </div>

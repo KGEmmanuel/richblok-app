@@ -19,7 +19,10 @@ import { OrganisationComponent } from './organisation/organisation.component';
 import { OrganisationProfileComponent } from './organisation/organisation-profile/organisation-profile.component';
 import { UserSettingsComponent } from './user/user-settings/user-settings.component';
 import { UserViewComponent } from './user-view/user-view.component';
-import { DemonstrateComponent } from './demonstrate/demonstrate.component';
+// Week 4: DemonstrateComponent retired. The V4 "Demonstrate" flow
+// (self-recorded skill-proof media uploads) was superseded by the V5
+// challenge + STAR credentialing loop. The component files remain on disk
+// but are no longer routed or declared in AppModule.
 import { EvaluateComponent } from './evaluate/evaluate.component';
 import { ParticipateToChallengeComponent } from './evaluate/evaluate-list/participate-to-challenge/participate-to-challenge.component';
 import { FriendsComponent } from './user/friends/friends.component';
@@ -31,16 +34,12 @@ import { ContactComponent } from './RibComponents/contact/contact.component';
 import { JobProfileComponent } from './job-profile/job-profile.component';
 import { UserJobProfileComponent } from './job-profile/user-job-profile/user-job-profile.component';
 import { JobsPostComponent } from './jobs/jobs-post/jobs-post.component';
-import { JobStep1Component } from './jobs/jobs-post/job-step1/job-step1.component';
-import { JobStep2Component } from './jobs/jobs-post/job-step2/job-step2.component';
-import { JobStep3Component } from './jobs/jobs-post/job-step3/job-step3.component';
-import { JobStep4Component } from './jobs/jobs-post/job-step4/job-step4.component';
-import { JobStep5Component } from './jobs/jobs-post/job-step5/job-step5.component';
-import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonstrate-form.component';
+// Week 4: the 5 JobStepN components are still declared in AppModule so the
+// wizard (JobsPostComponent) can render them inline, but they no longer have
+// their own routes.
 import { OrganisationViewComponent } from './organisation-view/organisation-view.component';
 import { EvaluateFormComponent } from './evaluate/evaluate-form/evaluate-form.component';
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
-import { SearchComponent } from './search/search.component';
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
 // BadgePageComponent lazy-loaded (standalone)
 import { AdminSeedComponent } from './admin-seed/admin-seed.component';
@@ -90,7 +89,8 @@ const routes: Routes = [
   { path: 'landing', loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent), data: {title: 'Landing'}},
   { path: 'forgot-password', component: ResetComponent, canActivate: [SecureInnerPagesGuard] },
   { path: 'verify-email-address', component: VerifyEmailComponent, canActivate: [SecureInnerPagesGuard] },
-  { path: 'demonstrate', component: DemonstrateComponent, canActivate: [AuthGuard], data: {title: 'Demonstrate'}},
+  // Week 4: /demonstrate retired (see note at imports).
+  { path: 'demonstrate', redirectTo: '/me?tab=portfolio', pathMatch: 'full' },
   { path: 'evaluate', component: EvaluateComponent, canActivate: [AuthGuard], data: {title: 'Evaluate'}},
   { path: 'participate', component: ParticipateToChallengeComponent, canActivate: [AuthGuard], data: {title: 'Participate'}},
   { path: 'create-organisation', component: CreateOrganisationComponent, canActivate: [AuthGuard]},
@@ -100,17 +100,25 @@ const routes: Routes = [
   { path: 'contact', component: ContactComponent},
   { path: 'job-profile/:id', component: UserJobProfileComponent},
   { path: 'job-process/:id', component: JobProcessComponent},
-  { path: 'post-jobs', component: JobsPostComponent, canActivate: [AuthGuard]},
-  { path: 'post-job-step-one', component: JobStep1Component, canActivate: [AuthGuard]},
-  { path: 'post-job-step-two', component: JobStep2Component, canActivate: [AuthGuard]},
-  { path: 'post-job-step-three', component: JobStep3Component, canActivate: [AuthGuard]},
-  { path: 'post-job-step-four', component: JobStep4Component, canActivate: [AuthGuard]},
-  { path: 'post-job-step-five', component: JobStep5Component, canActivate: [AuthGuard]},
-  { path: 'demo/:type/:id', component: DemonstrateFormComponent},
-  { path: 'demo', component: DemonstrateFormComponent},
+  // Week 4: unified job-posting wizard — /post-jobs is the single entry.
+  // Old deep-link URLs redirect into the wizard; the wizard picks the right
+  // step from the draft's currentStep.
+  { path: 'post-jobs', component: JobsPostComponent, canActivate: [AuthGuard], data: {title: 'Post a job'}},
+  { path: 'post-jobs/:id', component: JobsPostComponent, canActivate: [AuthGuard], data: {title: 'Post a job'}},
+  { path: 'post-job-step-one', redirectTo: '/post-jobs', pathMatch: 'full' },
+  { path: 'post-job-step-two', redirectTo: '/post-jobs', pathMatch: 'full' },
+  { path: 'post-job-step-three', redirectTo: '/post-jobs', pathMatch: 'full' },
+  { path: 'post-job-step-four', redirectTo: '/post-jobs', pathMatch: 'full' },
+  { path: 'post-job-step-five', redirectTo: '/post-jobs', pathMatch: 'full' },
+  // Week 4: /demo routes retired alongside /demonstrate.
+  { path: 'demo', redirectTo: '/me?tab=portfolio', pathMatch: 'full' },
+  { path: 'demo/:type/:id', redirectTo: '/me?tab=portfolio' },
   { path: 'participate-to-challenge/:id', component: ParticipateToChallengeComponent, canActivate: [AuthGuard] },
   { path: 'create-challenge', component: EvaluateFormComponent, canActivate: [AuthGuard]},
-  { path: 'search', component: SearchComponent},
+  // Week 4: /search retired. The old page was a hollow mockup with stock-
+  // photo placeholders and no wired-up search backend. Sending users to the
+  // AI-native discovery index is the closest real "browse talent" surface.
+  { path: 'search', redirectTo: '/ai-native', pathMatch: 'full' },
   { path: 'badge/:id', loadComponent: () => import('./badge/badge-page.component').then(m => m.BadgePageComponent), data: {title: 'Verified Badge'} },
   { path: 'u/:handle', component: UserResolverComponent, data: {title: 'Profile'} },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {title: 'Admin'} },

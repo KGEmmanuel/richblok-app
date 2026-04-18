@@ -99,13 +99,9 @@ import { UserViewComponent } from './user-view/user-view.component';
 import { UserViewCardComponent } from './user-view/user-view-card/user-view-card.component';
 import { UserViewFriendsComponent } from './user-view/user-view-friends/user-view-friends.component';
 import { UserViewFriendsItemComponent } from './user-view/user-view-friends/user-view-friends-item/user-view-friends-item.component';
-import { DemonstrateComponent } from './demonstrate/demonstrate.component';
+// Week 4: Demonstrate feature retired; all demonstrate components removed
+// from declarations. Source files remain on disk as reference only.
 import { EvaluateComponent } from './evaluate/evaluate.component';
-import { DemonstrateDashboardComponent } from './demonstrate/demonstrate-dashboard/demonstrate-dashboard.component';
-import { DemonstrateSuggestionComponent } from './demonstrate/demonstrate-suggestion/demonstrate-suggestion.component';
-import { DemonstrateFormComponent } from './demonstrate/demonstrate-form/demonstrate-form.component';
-import { DemonstrateListeComponent } from './demonstrate/demonstrate-liste/demonstrate-liste.component';
-import { DemonstrateItemComponent } from './demonstrate/demonstrate-liste/demonstrate-item/demonstrate-item.component';
 import { EvaluateListComponent } from './evaluate/evaluate-list/evaluate-list.component';
 import { EvaluateSuggestionComponent } from './evaluate/evaluate-suggestion/evaluate-suggestion.component';
 import { EvaluateOwnerComponent } from './evaluate/evaluate-owner/evaluate-owner.component';
@@ -202,7 +198,7 @@ import { UserslistInlineItemComponent } from './users/userslist-inline-item/user
 import { JobProcessComponent } from './job-profile/job-process/job-process.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FollowOrgsComponent } from './RibComponents/follow-orgs/follow-orgs.component';
-import { SearchComponent } from './search/search.component';
+// Week 4: SearchComponent retired (hollow mockup, superseded by /ai-native).
 import { NotfoundComponent } from './RibComponents/notfound/notfound.component';
 import { VideosComponent } from './RibComponents/videos/videos.component';
 import { ChatContentComponent } from './chat/chat-content/chat-content.component';
@@ -346,13 +342,7 @@ import {
     UserViewCardComponent,
     UserViewFriendsComponent,
     UserViewFriendsItemComponent,
-    DemonstrateComponent,
     EvaluateComponent,
-    DemonstrateDashboardComponent,
-    DemonstrateSuggestionComponent,
-    DemonstrateFormComponent,
-    DemonstrateListeComponent,
-    DemonstrateItemComponent,
     EvaluateListComponent,
     EvaluateSuggestionComponent,
     EvaluateOwnerComponent,
@@ -443,7 +433,6 @@ import {
     UserslistInlineItemComponent,
     JobProcessComponent,
     FollowOrgsComponent,
-    SearchComponent,
     NotfoundComponent,
     VideosComponent,
     ChatContentComponent,
