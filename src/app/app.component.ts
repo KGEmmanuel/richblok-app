@@ -1,10 +1,13 @@
-import { Component, OnInit  } from '@angular/core';
-import firebase from 'firebase/compat/app';
-import { environment } from 'src/environments/environment';
+import { Component, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
+
+// D7 Day 7: firebase.initializeApp() is no longer needed here — the
+// modular provideFirebaseApp(() => initializeApp(environment.firebase))
+// in app.module.ts is now the single source of truth for initializing
+// the Firebase app.
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -13,12 +16,8 @@ import { filter, map } from 'rxjs/operators';
 
 export class AppComponent {
   title = 'RichBlok';
-  firestore: firebase.firestore.Firestore;
 
-  // tslint:disable-next-line: max-line-length
   constructor(private loaderSvc: NgxUiLoaderService, private router: Router, private titleService: Title, private activatedRoute: ActivatedRoute) {
-    firebase.initializeApp(environment.firebase);
-
   }
   ngOnInit() {
     const appTitle = this.titleService.getTitle();
