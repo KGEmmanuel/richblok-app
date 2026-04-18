@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , inject } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -10,15 +10,17 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./connection-aside-item.component.scss']
 })
 export class ConnectionAsideItemComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   @Input()
   currentUser: Utilisateur;
   uid: string;
-  constructor(private userSvc:UtilisateurService, private afAuth: AngularFireAuth, private tostSvc: ToastrService) {
+  constructor(private userSvc:UtilisateurService, private tostSvc: ToastrService) {
 
    }
 
   ngOnInit() {
-    this.afAuth.onAuthStateChanged(v=>{
+    this.auth.onAuthStateChanged(v=>{
       this.uid = v.uid;
     });
 

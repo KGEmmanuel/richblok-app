@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter , inject } from '@angular/core';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
 import { FormationService } from 'src/app/shared/services/formation.service';
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-record-pro-train-item',
@@ -11,6 +11,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./record-pro-train-item.component.scss']
 })
 export class RecordProTrainItemComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   @Input()
   currentItem: Formation;
@@ -21,10 +23,10 @@ export class RecordProTrainItemComponent implements OnInit {
   @Input()
   displaymode = 'priv';
 
-  constructor(private trainSvc: FormationService, private orgSvc: OrganisationService, private afAuth: AngularFireAuth) { }
+  constructor(private trainSvc: FormationService, private orgSvc: OrganisationService) { }
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(v=>{
+    authState(this.auth).subscribe(v=>{
       if(v){
         this.uid = v.uid;
       }

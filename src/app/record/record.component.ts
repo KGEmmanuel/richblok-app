@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { ExperienceService } from '../shared/services/experience.service';
 import { FormationService } from '../shared/services/formation.service';
 import { LanguageService } from '../shared/services/language.service';
 import { SkillsService } from '../shared/services/skills.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
@@ -12,6 +12,8 @@ import { Meta, Title } from '@angular/platform-browser';
   styleUrls: ['./record.component.scss']
 })
 export class RecordComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   nbreAccTrain = 0;
   nbreProTrain = 0;
@@ -20,7 +22,7 @@ export class RecordComponent implements OnInit {
   nbreExp = 0;
   nbreDoc = 0;
   uid;
-  constructor(private afAuth: AngularFireAuth, private expSvc: ExperienceService, private formSvc: FormationService, private lgSvc: LanguageService, private skilSvc: SkillsService,
+  constructor(private expSvc: ExperienceService, private formSvc: FormationService, private lgSvc: LanguageService, private skilSvc: SkillsService,
     private title: Title,
     private meta: Meta) {
 
@@ -29,7 +31,7 @@ export class RecordComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle('RichBlok | Records');
     this.meta.updateTag({ name: 'description', content: 'Make a record or your skills, experiences, trainings and realisations' });
-    this.afAuth.authState.subscribe(v => {
+    authState(this.auth).subscribe(v => {
       if (v) {
         this.uid = v.uid;
         this.formSvc.editableFormationsListQuery(this.uid,'ACC').onSnapshot(acc=>{

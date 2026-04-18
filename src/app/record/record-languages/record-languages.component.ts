@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { Langue } from 'src/app/shared/entites/Langue';
 import { LanguageService } from 'src/app/shared/services/language.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -10,15 +10,17 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./record-languages.component.scss']
 })
 export class RecordLanguagesComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   form = false;
   currentLang = new Langue();
   allLanguages: Array<Langue>;
   uid;
-  constructor(private lngSvc: LanguageService, private afAuth: AngularFireAuth, private toastrSvc: ToastrService) { }
+  constructor(private lngSvc: LanguageService, private toastrSvc: ToastrService) { }
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(v=>{
+    authState(this.auth).subscribe(v=>{
       if(v){
         this.uid = v.uid;
         this.lngSvc.listLanguages(this.uid).onSnapshot(v=>{

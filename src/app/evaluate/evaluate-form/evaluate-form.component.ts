@@ -1,10 +1,10 @@
 import { ChallengeReponse } from './../../shared/entites/ChallengeReponses';
 import { ChallengeQuestions } from './../../shared/entites/ChallengeQuestions';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , inject } from '@angular/core';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { ToastrService } from 'ngx-toastr';
 import { ChallengeService } from 'src/app/shared/services/challenge.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
@@ -13,6 +13,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
   styleUrls: ['./evaluate-form.component.scss']
 })
 export class EvaluateFormComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   question = false;
   @Input()
   currentChal: Challenge;
@@ -39,7 +41,7 @@ export class EvaluateFormComponent implements OnInit {
   nbrQuestion: number;
   uid;
   constructor(private toastr: ToastrService, private chalSvc: ChallengeService,
-              private afAuth: AngularFireAuth, public router: Router,
+              public router: Router,
               private loadsvc: NgxUiLoaderService) {
 
   }
@@ -53,7 +55,7 @@ export class EvaluateFormComponent implements OnInit {
     this.hint = true;
     this.nombreRep = 0;
     this.nbrQuestion = 1;
-    this.afAuth.authState.subscribe(val => {
+    authState(this.auth).subscribe(val => {
       if (val) {
         this.uid = val.uid;
       }

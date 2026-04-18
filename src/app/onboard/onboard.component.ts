@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { StarMapperService } from '../shared/services/star-mapper.service';
 import { first } from 'rxjs/operators';
@@ -26,6 +26,8 @@ type Step = 'upload' | 'extracting' | 'preview' | 'generating' | 'error';
   styleUrls: ['./onboard.component.scss']
 })
 export class OnboardComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   step: Step = 'upload';
   mode: 'pdf' | 'text' = 'pdf';
@@ -55,7 +57,7 @@ export class OnboardComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private afAuth: AngularFireAuth,
+    
     private analytics: AnalyticsService,
     private starMapper: StarMapperService
   ) {}
@@ -165,7 +167,7 @@ export class OnboardComponent implements OnInit {
     this.startProgressMessages();
 
     try {
-      const user = await this.afAuth.authState.pipe(first()).toPromise();
+      const user = await authState(this.auth).pipe(first()).toPromise();
       const uid = user ? user.uid : 'anonymous';
 
       this.analytics.track('CvToStarStart', { uid });

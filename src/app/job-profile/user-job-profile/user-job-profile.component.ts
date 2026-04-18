@@ -1,5 +1,5 @@
 import { Title, Meta } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
@@ -18,7 +18,7 @@ import { Experience } from 'src/app/shared/entites/Experience';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
@@ -27,6 +27,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
   styleUrls: ['./user-job-profile.component.scss']
 })
 export class UserJobProfileComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   currentJob: OffresEmploi;
   org: Entreprise;
@@ -46,7 +48,7 @@ export class UserJobProfileComponent implements OnInit {
   constructor(private route: ActivatedRoute, private jobSvc: OffreEmploiService, private orgSvc: OrganisationService,private loadingSvc: NgxUiLoaderService,
     private userSvc: UtilisateurService, private skilSvc: SkillsService, private trainSvc: FormationService,
     private expSvc: ExperienceService, private JobApplicationSvc: JobApplicationService, private toastrSvc: ToastrService,
-    private afAuth: AngularFireAuth, private router: Router, private title: Title, private meta: Meta) { }
+    private router: Router, private title: Title, private meta: Meta) { }
 
   ngOnInit() {
     this.title.setTitle('RichBlok | Job-profile');
@@ -69,7 +71,7 @@ export class UserJobProfileComponent implements OnInit {
             this.user.id = us.id;
           })
         }
-        this.afAuth.onAuthStateChanged(val => {
+        this.auth.onAuthStateChanged(val => {
           if (val) {
             this.userSvc.getDocRef(val.uid).onSnapshot(u => {
               this.currentUser = u.data() as Utilisateur;

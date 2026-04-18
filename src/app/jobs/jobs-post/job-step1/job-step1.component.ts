@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , inject } from '@angular/core';
 import { OffresEmploi } from 'src/app/shared/entites/OffresEmploi';
 import { JobSkill } from 'src/app/shared/entites/jobSkill';
 import { ToastrService } from 'ngx-toastr';
@@ -7,7 +7,7 @@ import PlaceResult = google.maps.places.PlaceResult;
 import { OrganisationService } from 'src/app/shared/services/organisation.service';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { Entreprise } from 'src/app/shared/entites/Entreprise';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -17,6 +17,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
   styleUrls: ['./job-step1.component.scss']
 })
 export class JobStep1Component implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   question : string;
   type;
   skill: JobSkill;
@@ -31,7 +33,7 @@ export class JobStep1Component implements OnInit {
   uid: string;
   step = 1;
   constructor(private toastr: ToastrService, private orgSvc: OrganisationService, private offreSvc: OffreEmploiService,
-    private afAuth: AngularFireAuth, private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) { }
+    private router: Router, private route: ActivatedRoute, private loadingSvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit() {
     this.step = 1;
@@ -56,7 +58,7 @@ export class JobStep1Component implements OnInit {
       this.offres = new OffresEmploi();
     }
 
-    this.afAuth.authState.subscribe(v=>{
+    authState(this.auth).subscribe(v=>{
        if(v)
        {
          this.uid = v.uid;

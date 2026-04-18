@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , inject } from '@angular/core';
 import { Utilisateur } from '../../../../shared/entites/Utilisateur';
 import { Post } from '../../../../shared/entites/Post';
 import { UtilisateurService } from '../../../../shared/services/utilisateur.service';
 import firebase from 'firebase/compat/app';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { PostService } from '../../../../shared/services/post.service';
 @Component({
   selector: 'app-post-share-item',
@@ -11,6 +11,8 @@ import { PostService } from '../../../../shared/services/post.service';
   styleUrls: ['./post-share-item.component.scss']
 })
 export class PostShareItemComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   detail = false;
   commentcount = 0;
 
@@ -24,11 +26,11 @@ export class PostShareItemComponent implements OnInit {
 
 
 
-  constructor(private userSvc: UtilisateurService, private afAuth: AngularFireAuth, private postSvc: PostService) { }
+  constructor(private userSvc: UtilisateurService, private postSvc: PostService) { }
 
   ngOnInit() {
     this.currentPost = new Post();
-    this.afAuth.onAuthStateChanged(val => {
+    this.auth.onAuthStateChanged(val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(u => {
           this.currentuser = u.data() as Utilisateur;

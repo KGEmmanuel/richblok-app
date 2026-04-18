@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output , inject } from '@angular/core';
 import { Experience } from 'src/app/shared/entites/Experience';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -12,6 +12,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
   styleUrls: ['./record-experiences-form.component.scss']
 })
 export class RecordExperiencesFormComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   @Input()
   currentExperience: Experience;
   @Output()
@@ -21,9 +23,9 @@ export class RecordExperiencesFormComponent implements OnInit {
   uid;
   expForm: UntypedFormGroup;
 submitted = false;
-  constructor(private expeSvc: ExperienceService, private afAuth: AngularFireAuth,
+  constructor(private expeSvc: ExperienceService,
     private toastr: ToastrService, private laodsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
-    this.afAuth.authState.subscribe(val => {
+    authState(this.auth).subscribe(val => {
       if (val) {
         this.uid = val.uid;
       }

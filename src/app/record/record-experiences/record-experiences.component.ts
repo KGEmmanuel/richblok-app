@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter , inject } from '@angular/core';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { Experience } from 'src/app/shared/entites/Experience';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-record-experiences',
@@ -9,16 +9,18 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./record-experiences.component.scss']
 })
 export class RecordExperiencesComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   form = false;
   uid;
   currentExperience;
   experiences = new Array<Experience>();
   
-  constructor(private expSvc: ExperienceService, private afAuth: AngularFireAuth) { }
+  constructor(private expSvc: ExperienceService) { }
 
   ngOnInit() {
 
-    this.afAuth.authState.subscribe(v => {
+    authState(this.auth).subscribe(v => {
       if (v) {
         this.uid = v.uid;
         this.expSvc.listExperiences(this.uid).onSnapshot(val => {

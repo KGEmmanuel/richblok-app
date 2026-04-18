@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , inject } from '@angular/core';
 import { Formation } from '../shared/entites/Formation';
 import { FormationService } from '../shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-trainings',
@@ -9,6 +9,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./trainings.component.scss']
 })
 export class TrainingsComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   @Input()
   displaymode = 'priv'; // pub
 
@@ -18,10 +20,10 @@ export class TrainingsComponent implements OnInit {
   currentTraining = new Formation();
   allTrainings = new Array<Formation>();
   uid;
-  constructor(private formService: FormationService, private afAuth: AngularFireAuth) { }
+  constructor(private formService: FormationService) { }
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(val => {
+    authState(this.auth).subscribe(val => {
       if (val) {
         this.uid = val.uid;
         this.formService.editableFormationsListQuery(this.uid).onSnapshot(val => {

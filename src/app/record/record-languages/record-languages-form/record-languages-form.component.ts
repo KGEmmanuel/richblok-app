@@ -1,9 +1,9 @@
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter , inject } from '@angular/core';
 import { Langue } from 'src/app/shared/entites/Langue';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -12,6 +12,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
   styleUrls: ['./record-languages-form.component.scss']
 })
 export class RecordLanguagesFormComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   @Input()
   currentLang: Langue;
   uid;
@@ -19,11 +21,11 @@ export class RecordLanguagesFormComponent implements OnInit {
   lanForm: UntypedFormGroup;
 submitted = false;
   constructor(private langSvc: LanguageService, private toastrSvc: ToastrService,
-              private agAuth: AngularFireAuth, private formBuilder: UntypedFormBuilder,
+              private agAuth: Auth, private formBuilder: UntypedFormBuilder,
               private loadSvc: NgxUiLoaderService) { }
 
   ngOnInit() {
-    this.agAuth.authState.subscribe(v => {
+    authState(this.agAuth).subscribe(v => {
       if (v) {
         this.uid = v.uid;
       }
