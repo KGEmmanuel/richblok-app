@@ -1,21 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { Utilisateur } from '../../../../shared/entites/Utilisateur';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
+import { Storage, ref as storageRef, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { UserService } from '../../../../shared/services/user.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { PostService } from 'src/app/shared/services/post.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
 import { Post } from 'src/app/shared/entites/Post';
 import { Media } from 'src/app/shared/entites/Media';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-post-share-form',
@@ -29,8 +24,11 @@ export class PostShareFormComponent implements OnInit {
   files: File[] = [];
   currentPost: Post = new Post();
 
-  constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth, private toassvc: ToastrService,
-    private afs: AngularFirestore, private afStorage: AngularFireStorage, private userSvc: UserService, private router: Router, private postSvc: PostService) {
+  private auth = inject(Auth);
+  private storage = inject(Storage);
+
+  constructor(public AuthSvc: AuthService, private toassvc: ToastrService,
+    private userSvc: UserService, private router: Router, private postSvc: PostService) {
 
   }
 
@@ -58,7 +56,7 @@ export class PostShareFormComponent implements OnInit {
 
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(user => {
+    authState(this.auth).subscribe(user => {
       if (user) {
         this.userSvc.get(user.uid).subscribe(v => {
           this.currentUser = v;
@@ -68,80 +66,53 @@ export class PostShareFormComponent implements OnInit {
   }
 
   async upload(file) {
-    // const user = this.getcurrentuser();
     const filePath = 'posts/' + this.currentUser.id + '/' + '_' + (new Date().getMilliseconds()) + file.name;
-
-    const fileRef = firebase.storage().ref(filePath);
-    await fileRef.put(file).then(s => {
-
+    const fileRef = storageRef(this.storage, filePath);
+    try {
+      await uploadBytes(fileRef, file);
       if (!this.currentPost.medias) {
         this.currentPost.medias = new Array<Media>();
       }
-      // mediatype: string; // VID, IMG, DOC, UNK
       const m = new Media();
       const ext: string = file.type;
       if (ext.toLowerCase().includes('image')) {
         m.mediatype = 'IMG';
-      }
-      else if (ext.toLowerCase().includes('video')) {
+      } else if (ext.toLowerCase().includes('video')) {
         m.mediatype = 'VID';
-      }
-      else if (ext.toLowerCase().includes('document')) {
+      } else if (ext.toLowerCase().includes('document')) {
         m.mediatype = 'DOC';
       }
-      fileRef.getDownloadURL().then(v => {
-        m.src = v;
-        console.log('cool' + m);
-        this.currentPost.medias.push(m);
-        console.log(this.currentPost.medias);
-      });
-
-    }).catch(err => {
+      m.src = await getDownloadURL(fileRef);
+      this.currentPost.medias.push(m);
+    } catch (err: any) {
       this.toassvc.error('erreur d\'upload de fichier ' + err.message);
-    });
-
+    }
   }
 
 
   uploadallFiles(files: File[]) {
-
-    const allPromises = [];
+    const allPromises: Promise<void>[] = [];
     files.forEach(el => {
       const filePath = 'posts/' + this.currentUser.id + '/' + '_' + (new Date().getMilliseconds()) + el.name;
-      const fileRef = this.afStorage.ref(filePath);
-      const task = this.afStorage.upload(filePath, el);
-      allPromises.push(task);
-      // allPercentage.push(_percentage$);
-
-      // observe percentage changes
-      // this.uploadPercent = task.percentageChanges();
-
-      // get notified when the download URL is available
-      task.snapshotChanges().pipe(
-        finalize(() => {
-          fileRef.getDownloadURL().subscribe((url) => {
-            if (!this.currentPost.medias) {
-              this.currentPost.medias = new Array<Media>();
-            }
-            // mediatype: string; // VID, IMG, DOC, UNK
-            const m = new Media();
-            const ext: string = el.type;
-            m.mediatype = 'IMG';
-            if (ext.toLowerCase().includes('image')) {
-              m.mediatype = 'IMG';
-            }
-            else if (ext.toLowerCase().includes('video')) {
-              m.mediatype = 'VID';
-            }
-            else if (ext.toLowerCase().includes('document')) {
-              m.mediatype = 'DOC';
-            }
-            m.src = url;
-            this.currentPost.medias.push(m);
-          });
-        })
-      ).subscribe();
-      // this.downloadURLs.push(this.downloadURL);
+      const fileRef = storageRef(this.storage, filePath);
+      const p = uploadBytes(fileRef, el).then(() => getDownloadURL(fileRef)).then(url => {
+        if (!this.currentPost.medias) {
+          this.currentPost.medias = new Array<Media>();
+        }
+        const m = new Media();
+        const ext: string = el.type;
+        m.mediatype = 'IMG';
+        if (ext.toLowerCase().includes('image')) {
+          m.mediatype = 'IMG';
+        } else if (ext.toLowerCase().includes('video')) {
+          m.mediatype = 'VID';
+        } else if (ext.toLowerCase().includes('document')) {
+          m.mediatype = 'DOC';
+        }
+        m.src = url;
+        this.currentPost.medias.push(m);
+      });
+      allPromises.push(p);
     });
     return allPromises;
   }

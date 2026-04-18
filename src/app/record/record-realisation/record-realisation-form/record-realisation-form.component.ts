@@ -1,14 +1,10 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
+import { Storage, ref as storageRef, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
 import { Media } from 'src/app/shared/entites/Media';
-import { finalize } from 'rxjs/operators';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
@@ -32,9 +28,12 @@ export class RecordRealisationFormComponent implements OnInit {
   outil: string;
   realForm: UntypedFormGroup;
 submitted = false;
-  constructor(private realSvc: PortfolioService, private afStorage: AngularFireStorage, private afAuth: AngularFireAuth,
+  private auth = inject(Auth);
+  private storage = inject(Storage);
+
+  constructor(private realSvc: PortfolioService,
               private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
-    this.afAuth.authState.subscribe(val => {
+    authState(this.auth).subscribe(val => {
       if (val) {
         this.uid = val.uid;
       }
@@ -155,80 +154,53 @@ submitted = false;
     this.currentRealisation.outilsutilises.splice(i, 1);
   }
   async upload(file) {
-    // const user = this.getcurrentuser();
     const filePath = 'realisations/' + this.currentRealisation.id + '/' + '_' + (new Date().getMilliseconds()) + file.name;
-
-    const fileRef = firebase.storage().ref(filePath);
-    await fileRef.put(file).then(s => {
-
+    const fileRef = storageRef(this.storage, filePath);
+    try {
+      await uploadBytes(fileRef, file);
       if (!this.currentRealisation.medias) {
         this.currentRealisation.medias = new Array<Media>();
       }
-      // mediatype: string; // VID, IMG, DOC, UNK
       const m = new Media();
       const ext: string = file.type;
       if (ext.toLowerCase().includes('image')) {
         m.mediatype = 'IMG';
-      }
-      else if (ext.toLowerCase().includes('video')) {
+      } else if (ext.toLowerCase().includes('video')) {
         m.mediatype = 'VID';
-      }
-      else if (ext.toLowerCase().includes('document')) {
+      } else if (ext.toLowerCase().includes('document')) {
         m.mediatype = 'DOC';
       }
-      fileRef.getDownloadURL().then(v => {
-        m.src = v;
-        console.log('cool' + m);
-        this.currentRealisation.medias.push(m);
-        console.log(this.currentRealisation.medias);
-      });
-
-    }).catch(err => {
+      m.src = await getDownloadURL(fileRef);
+      this.currentRealisation.medias.push(m);
+    } catch (err: any) {
       this.toastr.error('erreur d\'upload de fichier ' + err.message);
-    });
-
+    }
   }
 
 
   uploadallFiles(files: File[]) {
-
-    const allPromises = [];
+    const allPromises: Promise<void>[] = [];
     files.forEach(el => {
       const filePath = 'posts/' + this.currentRealisation.id + '/' + '_' + (new Date().getMilliseconds()) + el.name;
-      const fileRef = this.afStorage.ref(filePath);
-      const task = this.afStorage.upload(filePath, el);
-      allPromises.push(task);
-      // allPercentage.push(_percentage$);
-
-      // observe percentage changes
-      // this.uploadPercent = task.percentageChanges();
-
-      // get notified when the download URL is available
-      task.snapshotChanges().pipe(
-        finalize(() => {
-          fileRef.getDownloadURL().subscribe((url) => {
-            if (!this.currentRealisation.medias) {
-              this.currentRealisation.medias = new Array<Media>();
-            }
-            // mediatype: string; // VID, IMG, DOC, UNK
-            const m = new Media();
-            const ext: string = el.type;
-            m.mediatype = 'IMG';
-            if (ext.toLowerCase().includes('image')) {
-              m.mediatype = 'IMG';
-            }
-            else if (ext.toLowerCase().includes('video')) {
-              m.mediatype = 'VID';
-            }
-            else if (ext.toLowerCase().includes('document')) {
-              m.mediatype = 'DOC';
-            }
-            m.src = url;
-            this.currentRealisation.medias.push(m);
-          });
-        })
-      ).subscribe();
-      // this.downloadURLs.push(this.downloadURL);
+      const fileRef = storageRef(this.storage, filePath);
+      const p = uploadBytes(fileRef, el).then(() => getDownloadURL(fileRef)).then(url => {
+        if (!this.currentRealisation.medias) {
+          this.currentRealisation.medias = new Array<Media>();
+        }
+        const m = new Media();
+        const ext: string = el.type;
+        m.mediatype = 'IMG';
+        if (ext.toLowerCase().includes('image')) {
+          m.mediatype = 'IMG';
+        } else if (ext.toLowerCase().includes('video')) {
+          m.mediatype = 'VID';
+        } else if (ext.toLowerCase().includes('document')) {
+          m.mediatype = 'DOC';
+        }
+        m.src = url;
+        this.currentRealisation.medias.push(m);
+      });
+      allPromises.push(p);
     });
     return allPromises;
   }

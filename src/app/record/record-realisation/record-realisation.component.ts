@@ -1,11 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Auth, authState } from '@angular/fire/auth';
+
 @Component({
   selector: 'app-record-realisation',
   templateUrl: './record-realisation.component.html',
@@ -17,12 +14,15 @@ export class RecordRealisationComponent implements OnInit {
   uid;
   currentRealisation;
   realisation = new Array<Realisation>();
-  constructor(private realSvc: PortfolioService, private afStorage: AngularFireStorage, private afAuth: AngularFireAuth) {
+
+  private auth = inject(Auth);
+
+  constructor(private realSvc: PortfolioService) {
 
   }
   ngOnInit() {
 
-    this.afAuth.authState.subscribe(v => {
+    authState(this.auth).subscribe(v => {
       if (v) {
         this.uid = v.uid;
         this.realSvc.getportfolios(this.uid).onSnapshot(val => {
