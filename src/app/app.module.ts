@@ -46,15 +46,9 @@ import { OrganisationComponent } from './organisation/organisation.component';
 import { OrganisationProfileComponent } from './organisation/organisation-profile/organisation-profile.component';
 import { OrganisationsListComponent } from './organisation/organisations-list/organisations-list.component';
 import { ToastrModule } from 'ngx-toastr';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
-// D7 Day 1 — modular Firebase providers run alongside compat during the
-// migration. Services migrated to modular resolve `Auth`/`Firestore`/`Storage`;
-// unmigrated components still resolve the compat `AngularFireAuth` etc.
-// Compat imports are removed only when every file under src/app/ is migrated
-// (verify with: grep -rln '@angular/fire/compat' src/app/ — target 0).
+// D7 Day 7: compat SDK fully removed. Modular providers below are now
+// the single source of truth for Firebase initialization across the app.
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
@@ -165,7 +159,6 @@ import { PostListComponent } from './feed/post/post-list/post-list.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { PaginationService } from './shared/services/pagination.service';
 import { PostService } from './shared/services/post.service';
-import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // removed: MatGoogleMapsAutocompleteModule — pulls Angular Material 9 which can't be bumped
 import { IdentifiedUsersComponent } from './feed/post/post-form/post-identify/identified-users/identified-users.component';
@@ -478,19 +471,12 @@ import {
   imports: [
     BrowserModule.withServerTransition({ appId: 'richblok-app' }),
     AppRoutingModule,
-    // D7 Day 1 — modular providers. They construct a SINGLE Firebase app
-    // instance that's shared with the compat wrappers below (compat uses
-    // `firebase.initializeApp` under the hood and modular uses the same app
-    // reference via firebase/app's default registry).
+    // D7 Day 7: modular Firebase providers only. Compat SDK fully removed.
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
 
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
-    AngularFireStorageModule,
     BrowserAnimationsModule,
     NgbTimepickerModule,
     FormsModule,
