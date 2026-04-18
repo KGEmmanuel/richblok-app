@@ -49,6 +49,16 @@ import { ToastrModule } from 'ngx-toastr';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+
+// D7 Day 1 — modular Firebase providers run alongside compat during the
+// migration. Services migrated to modular resolve `Auth`/`Firestore`/`Storage`;
+// unmigrated components still resolve the compat `AngularFireAuth` etc.
+// Compat imports are removed only when every file under src/app/ is migrated
+// (verify with: grep -rln '@angular/fire/compat' src/app/ — target 0).
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideStorage, getStorage } from '@angular/fire/storage';
 import { FormsModule } from '@angular/forms';
 import { UserCardComponent } from './user/user-card/user-card.component';
 import { HeaderComponent } from './header/header.component';
@@ -468,6 +478,15 @@ import {
   imports: [
     BrowserModule.withServerTransition({ appId: 'richblok-app' }),
     AppRoutingModule,
+    // D7 Day 1 — modular providers. They construct a SINGLE Firebase app
+    // instance that's shared with the compat wrappers below (compat uses
+    // `firebase.initializeApp` under the hood and modular uses the same app
+    // reference via firebase/app's default registry).
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
+
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,

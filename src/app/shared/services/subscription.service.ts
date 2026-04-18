@@ -1,11 +1,22 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap, map, first } from 'rxjs/operators';
 import { SubscriptionTier, SubscriptionStatus } from '../entites/Subscription';
 import { AnalyticsService } from './analytics.service';
+
+// D7 Day 1 — modular Firebase.
+import { Auth, authState } from '@angular/fire/auth';
+import {
+  Firestore,
+  doc,
+  docData,
+  collection,
+  addDoc,
+  getDocs,
+  query as fsQuery,
+  where
+} from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +29,10 @@ export class SubscriptionService {
   private statusSubject = new BehaviorSubject<SubscriptionStatus>('free');
   status$: Observable<SubscriptionStatus> = this.statusSubject.asObservable();
 
+  private auth      = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth,
     private http: HttpClient,
     private analytics: AnalyticsService
   ) {
@@ -29,16 +41,14 @@ export class SubscriptionService {
 
   private initSubscriptionListener() {
     let previousTier: SubscriptionTier | null = null;
-    this.afAuth.authState.pipe(
+    authState(this.auth).pipe(
       switchMap(user => {
         if (user) {
-          return this.afs.doc(`utilisateurs/${user.uid}`).valueChanges().pipe(
-            map((userData: any) => {
-              return {
-                tier: (userData && userData.subscription_tier as SubscriptionTier) || 'free',
-                status: (userData && userData.subscription_status as SubscriptionStatus) || 'free'
-              };
-            })
+          return (docData(doc(this.firestore, 'utilisateurs', user.uid)) as Observable<any>).pipe(
+            map(userData => ({
+              tier: (userData && userData.subscription_tier as SubscriptionTier) || 'free',
+              status: (userData && userData.subscription_status as SubscriptionStatus) || 'free'
+            }))
           );
         }
         return of({ tier: 'free' as SubscriptionTier, status: 'free' as SubscriptionStatus });
@@ -68,21 +78,16 @@ export class SubscriptionService {
     return this.tierSubject.value === 'pro' || this.tierSubject.value === 'team';
   }
 
-  /**
-   * Calls /api/stripe/checkout and redirects to Stripe Checkout.
-   * Server uses STRIPE_SECRET_KEY + STRIPE_PRICE_PRO_MONTHLY; webhook updates
-   * the user's subscription_tier when the session completes.
-   */
   async startProSubscription(): Promise<void> {
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) {
       throw new Error('User must be logged in to subscribe');
     }
     const resp: any = await this.http.post('/api/stripe/checkout', {
       kind: 'pro_subscription',
       uid: user.uid,
-      successUrl: window.location.origin + '/profile?subscription=success',
-      cancelUrl: window.location.origin + '/profile?subscription=cancelled'
+      successUrl: window.location.origin + '/me?tab=feed&subscription=success',
+      cancelUrl: window.location.origin + '/me?tab=feed&subscription=cancelled'
     }).toPromise();
 
     if (resp && resp.url) {
@@ -92,10 +97,6 @@ export class SubscriptionService {
     }
   }
 
-  /**
-   * Creates a Stripe Employer License checkout (B2B). tier = 'starter' ($500/yr)
-   * or 'pro' ($1500/yr). Webhook updates employers/{employerId}/license_status.
-   */
   async startEmployerLicense(employerId: string, tier: 'starter' | 'pro' = 'starter'): Promise<void> {
     const resp: any = await this.http.post('/api/stripe/checkout', {
       kind: 'employer_license',
@@ -111,14 +112,10 @@ export class SubscriptionService {
     }
   }
 
-  /**
-   * Opens the Stripe Customer Portal. Requires the user's stripe_customer_id
-   * to be persisted via the webhook handler.
-   */
   async openBillingPortal(): Promise<void> {
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) { throw new Error('User must be logged in'); }
-    const userDoc: any = await this.afs.doc(`utilisateurs/${user.uid}`).valueChanges().pipe(first()).toPromise();
+    const userDoc: any = await (docData(doc(this.firestore, 'utilisateurs', user.uid)) as Observable<any>).pipe(first()).toPromise();
     const customerId = userDoc && userDoc.stripe_customer_id;
     if (!customerId) {
       throw new Error('No Stripe customer on file yet — subscribe first.');
@@ -137,7 +134,7 @@ export class SubscriptionService {
    * Pro users always return true.
    */
   checkChallengeLimit(): Observable<boolean> {
-    return this.afAuth.authState.pipe(
+    return authState(this.auth).pipe(
       first(),
       switchMap(user => {
         if (!user) { return of(false); }
@@ -145,24 +142,28 @@ export class SubscriptionService {
 
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        return this.afs.collection('challenge_submissions', ref =>
-          ref.where('uid', '==', user.uid)
-             .where('submitted_at', '>=', startOfMonth)
-        ).get().pipe(
-          map(snapshot => (snapshot ? snapshot.size : 0) < 3)
+        const q = fsQuery(
+          collection(this.firestore, 'challenge_submissions'),
+          where('uid', '==', user.uid),
+          where('submitted_at', '>=', startOfMonth)
         );
+        return new Observable<boolean>(sub => {
+          getDocs(q).then(snap => {
+            sub.next(snap.size < 3);
+            sub.complete();
+          }).catch(() => {
+            sub.next(false);
+            sub.complete();
+          });
+        });
       })
     );
   }
 
-  /**
-   * Records a challenge submission directly to Firestore (server-side
-   * monthly counter will be enforced once Firestore rules are tightened).
-   */
   async recordChallengeSubmission(challengeId: string): Promise<void> {
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) { return; }
-    await this.afs.collection('challenge_submissions').add({
+    await addDoc(collection(this.firestore, 'challenge_submissions'), {
       uid: user.uid,
       challengeId,
       submitted_at: new Date()

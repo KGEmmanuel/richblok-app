@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { Auth, authState } from '@angular/fire/auth';
 import { ReferralService } from '../../services/referral.service';
 import { ShareService } from '../../services/share.service';
 import { AnalyticsService } from '../../services/analytics.service';
@@ -21,22 +21,24 @@ export class ReferralWidgetComponent implements OnInit {
   stats$: Observable<ReferralStats | null> = of(null);
   copied = false;
 
+  // D7 Day 1 — migrated compat → modular.
+  private auth = inject(Auth);
+
   constructor(
-    private afAuth: AngularFireAuth,
     private referralSvc: ReferralService,
     private shareSvc: ShareService,
     private analytics: AnalyticsService
   ) {}
 
   ngOnInit() {
-    this.afAuth.authState.pipe(first()).subscribe(user => {
+    authState(this.auth).pipe(first()).subscribe(user => {
       if (user) {
         this.inviteCode = this.referralSvc.getInviteCode(user.uid);
         this.inviteUrl = this.referralSvc.getInviteUrl(user.uid);
       }
     });
 
-    this.stats$ = this.afAuth.authState.pipe(
+    this.stats$ = authState(this.auth).pipe(
       switchMap(u => u ? this.referralSvc.getStats(u.uid) : of(null))
     );
   }

@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard  {
-  constructor(
-    private afAuth: AngularFireAuth,
-    private router: Router
-  ) {}
+export class AuthGuard {
+  // D7 Day 1 — migrated compat → modular.
+  // AngularFireAuth.authState (Observable<User|null>) → authState(auth)
+  private auth = inject(Auth);
+  private router = inject(Router);
 
   canActivate(): Observable<boolean> {
-    return this.afAuth.authState.pipe(
+    return authState(this.auth).pipe(
       take(1),
       map(user => {
         if (user) {

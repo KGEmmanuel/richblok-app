@@ -1,11 +1,25 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, from, of } from 'rxjs';
 import { map, catchError, switchMap, first } from 'rxjs/operators';
 import { StarAnswer, StarProfile, COMPETENCY_LABELS, COMPETENCY_QUESTIONS } from '../entites/StarProfile';
-import { CompetencyTag, Challenge } from '../entites/Challenge';
-import firebase from 'firebase/compat/app';
+import { CompetencyTag } from '../entites/Challenge';
+
+// D7 Day 1 — modular Firebase migration.
+import {
+  Firestore,
+  collection,
+  collectionData,
+  doc,
+  docData,
+  addDoc,
+  updateDoc,
+  query as fsQuery,
+  where,
+  orderBy,
+  limit,
+  serverTimestamp
+} from '@angular/fire/firestore';
 
 export interface StarMapInput {
   uid: string;
@@ -47,10 +61,9 @@ export interface CvToStarInput {
 })
 export class StarMapperService {
 
-  constructor(
-    private http: HttpClient,
-    private afs: AngularFirestore
-  ) {}
+  private firestore = inject(Firestore);
+
+  constructor(private http: HttpClient) {}
 
   /**
    * Call the server's Claude proxy to generate STAR answers, then persist.
@@ -76,7 +89,6 @@ export class StarMapperService {
       body
     ).pipe(
       catchError(err => {
-        // eslint-disable-next-line no-console
         console.warn('StarMapper API error, falling back to templates', err);
         return of({
           answers: this.templatedFallback(tags, input),
@@ -90,7 +102,7 @@ export class StarMapperService {
           source: 'challenge' as const,
           verified: true,
           verifiedByBadgeId: input.badgeId,
-          verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+          verifiedAt: serverTimestamp()
         }));
         const profile: StarProfile = {
           uid: input.uid,
@@ -101,20 +113,16 @@ export class StarMapperService {
           score: input.score,
           answers: markedAnswers,
           unlockedQuestions: result.unlockedQuestions,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
         };
-        return from(this.afs.collection('star_profiles').add(profile as any)).pipe(
+        return from(addDoc(collection(this.firestore, 'star_profiles'), profile as any)).pipe(
           map(ref => ({ ...profile, id: ref.id }))
         );
       })
     );
   }
 
-  /**
-   * CV-first flow: turn a parsed CV into DRAFT STAR stories (unverified).
-   * User later completes challenges to flip each competency to verified.
-   */
   generateFromCv(input: CvToStarInput): Observable<StarProfile> {
     const body = {
       cvData: input.cvData,
@@ -127,7 +135,6 @@ export class StarMapperService {
       body
     ).pipe(
       catchError(err => {
-        // eslint-disable-next-line no-console
         console.warn('CV-to-STAR API error, returning empty set', err);
         return of({ answers: [], mode: 'client_fallback' });
       }),
@@ -147,10 +154,10 @@ export class StarMapperService {
           cvProjectCount: (input.cvData.projects || []).length,
           answers: markedAnswers,
           unlockedQuestions,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
         };
-        return from(this.afs.collection('star_profiles').add(profile as any)).pipe(
+        return from(addDoc(collection(this.firestore, 'star_profiles'), profile as any)).pipe(
           map(ref => ({ ...profile, id: ref.id }))
         );
       })
@@ -159,11 +166,11 @@ export class StarMapperService {
 
   /**
    * Mark answers for a given competency as verified when a matching
-   * challenge has been passed. Called from the challenge submit flow
-   * when the user already has a CV-based StarProfile.
+   * challenge has been passed.
    */
   verifyCompetencies(profileId: string, competencies: CompetencyTag[], badgeId: string): Observable<void> {
-    return this.afs.doc<StarProfile>(`star_profiles/${profileId}`).valueChanges().pipe(
+    const ref = doc(this.firestore, 'star_profiles', profileId);
+    return (docData(ref) as Observable<StarProfile | undefined>).pipe(
       first(),
       switchMap(p => {
         if (!p) { return of<void>(undefined); }
@@ -173,43 +180,32 @@ export class StarMapperService {
           }
           return a;
         });
-        return from(this.afs.doc(`star_profiles/${profileId}`).update({
-          answers: updated,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }));
+        return from(updateDoc(ref, { answers: updated, updatedAt: serverTimestamp() } as any));
       })
     );
   }
 
-  /**
-   * Fetch a saved STAR Profile by id.
-   */
   get(id: string): Observable<StarProfile | null> {
-    return this.afs.doc<StarProfile>(`star_profiles/${id}`).valueChanges().pipe(
+    const ref = doc(this.firestore, 'star_profiles', id);
+    return (docData(ref) as Observable<StarProfile | undefined>).pipe(
       first(),
       map(d => d ? ({ ...d, id } as StarProfile) : null)
     );
   }
 
-  /**
-   * List all StarProfiles owned by a user.
-   */
   listForUser(uid: string): Observable<StarProfile[]> {
-    return this.afs.collection<StarProfile>('star_profiles', ref =>
-      ref.where('uid', '==', uid).orderBy('createdAt', 'desc').limit(50)
-    ).snapshotChanges().pipe(
-      map(snaps => snaps.map(s => ({ ...(s.payload.doc.data() as StarProfile), id: s.payload.doc.id })))
+    const q = fsQuery(
+      collection(this.firestore, 'star_profiles'),
+      where('uid', '==', uid),
+      orderBy('createdAt', 'desc'),
+      limit(50)
     );
+    return (collectionData(q, { idField: 'id' }) as Observable<StarProfile[]>);
   }
 
-  /**
-   * Update a single answer (user edited).
-   */
   updateAnswer(profileId: string, updatedAnswers: StarAnswer[]): Observable<void> {
-    return from(this.afs.doc(`star_profiles/${profileId}`).update({
-      answers: updatedAnswers,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }));
+    const ref = doc(this.firestore, 'star_profiles', profileId);
+    return from(updateDoc(ref, { answers: updatedAnswers, updatedAt: serverTimestamp() } as any));
   }
 
   private templatedFallback(tags: CompetencyTag[], input: StarMapInput): StarAnswer[] {
