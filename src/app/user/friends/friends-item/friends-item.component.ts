@@ -1,10 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { Router } from '@angular/router';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -38,12 +36,16 @@ export class FriendsItemComponent implements OnInit {
   @Input() displayAmi: boolean;
   @Input() displayNeture: boolean;
 
+  private auth = inject(Auth);
+
   constructor(private userSvc: UtilisateurService, private router: Router, private toastSvc: ToastrService) {
 
   }
 
   ngOnInit() {
-    this.userSvc.getDocRef(firebase.auth().currentUser.uid).onSnapshot(val => {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) { return; }
+    this.userSvc.getDocRef(uid).onSnapshot(val => {
       this.connectedUser = val.data() as Utilisateur;
       this.connectedUser.id = val.id;
     });

@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { Skill } from 'src/app/shared/entites/Skill';
 import { Router } from '@angular/router';
 import { SkillsService } from 'src/app/shared/services/skills.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -42,19 +40,19 @@ export class UserSettingsComponent implements OnInit {
     return this._nav;
   }
 
+  private auth = inject(Auth);
+
   constructor(private router: Router, private userSvc: UtilisateurService,
     private skSvc: SkillsService,
     private toasterSvc: ToastrService,
     private loadsvc: NgxUiLoaderService) {
-    // nav = this.router.url;
   }
 
   ngOnInit() {
     this.nav = this.router.url;
-    // // alert(this.router.url);
     console.log((this.nav === this.USER_ROUTE_URL));
     console.log(this.nav);
-    firebase.auth().onAuthStateChanged(val => {
+    onAuthStateChanged(this.auth, val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(data => {
           if (data.data()) {

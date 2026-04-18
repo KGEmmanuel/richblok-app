@@ -1,12 +1,10 @@
 import { Title, Meta } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
 import { ChatService } from '../shared/services/chat.service';
 import { ActivatedRoute } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth } from '@angular/fire/auth';
 import { ChatRoom } from '../shared/entites/ChatRoom';
 import { Message } from '../shared/entites/Message';
 
@@ -63,13 +61,15 @@ export class ChatComponent implements OnInit {
   }
   sender: string;
 
+  private auth = inject(Auth);
+
   constructor(private route: ActivatedRoute, private cht: ChatService, private usvc: UtilisateurService,
               private title: Title, private meta: Meta) { }
 
   ngOnInit() {
     this.title.setTitle('RichBlok | Chat');
     this.meta.updateTag({ name: 'description', content: 'Connect and Chat with your RichBlok friends' });
-    this.sender = firebase.auth().currentUser.uid;
+    this.sender = this.auth.currentUser?.uid;
     if (!this.chatid) {
       this.chatid = this.route.snapshot.paramMap.get('room');
     }

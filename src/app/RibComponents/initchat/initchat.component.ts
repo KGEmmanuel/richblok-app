@@ -1,9 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { ChatService } from 'src/app/shared/services/chat.service';
 import { Router } from '@angular/router';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-initchat',
@@ -14,21 +12,22 @@ export class InitchatComponent implements OnInit {
   @Input()
   dest: string;
   currentuser;
+
+  private auth = inject(Auth);
+
   constructor(private chSvc: ChatService, private router: Router) { }
 
   ngOnInit() {
-    firebase.auth().onAuthStateChanged(val => {
-      this.currentuser = val.uid;
+    onAuthStateChanged(this.auth, val => {
+      this.currentuser = val ? val.uid : null;
     });
   }
 
   initchat() {
 
-    this.chSvc.initiateChat(this.currentuser, this.dest).then(val=>{
-      const uid = val ;
-     // alert('test test is' + uid);
+    this.chSvc.initiateChat(this.currentuser, this.dest).then(val => {
+      const uid = val;
       if (uid) {
-        // this.chSvc.initiateChat()
         this.router.navigate(['/messages', uid]);
       }
     });

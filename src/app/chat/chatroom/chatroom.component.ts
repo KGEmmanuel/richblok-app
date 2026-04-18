@@ -1,11 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, inject } from '@angular/core';
 import { ChatRoom } from '../../shared/entites/ChatRoom';
 import { ChatService } from '../../shared/services/chat.service';
 import { Utilisateur } from '../../shared/entites/Utilisateur';
 import { UtilisateurService } from '../../shared/services/utilisateur.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 @Component({
   selector: 'app-chatroom',
   templateUrl: './chatroom.component.html',
@@ -20,10 +18,12 @@ export class ChatroomComponent implements OnInit {
   @Input()
   chatRoom: ChatRoom;
 
+  private auth = inject(Auth);
+
   constructor(private chromSvc: ChatService, private userSvc: UtilisateurService) { }
 
   ngOnInit() {
-    firebase.auth().onAuthStateChanged(va => {
+    onAuthStateChanged(this.auth, va => {
       if (va) {
         if (this.chatRoom) {
           this.chatRoom.users.forEach(val => {

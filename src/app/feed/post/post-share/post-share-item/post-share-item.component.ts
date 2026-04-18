@@ -2,8 +2,8 @@ import { Component, OnInit, Input , inject } from '@angular/core';
 import { Utilisateur } from '../../../../shared/entites/Utilisateur';
 import { Post } from '../../../../shared/entites/Post';
 import { UtilisateurService } from '../../../../shared/services/utilisateur.service';
-import firebase from 'firebase/compat/app';
 import { Auth, authState } from '@angular/fire/auth';
+import { Firestore, arrayRemove, arrayUnion, doc, updateDoc } from '@angular/fire/firestore';
 import { PostService } from '../../../../shared/services/post.service';
 @Component({
   selector: 'app-post-share-item',
@@ -13,6 +13,7 @@ import { PostService } from '../../../../shared/services/post.service';
 export class PostShareItemComponent implements OnInit {
   // D7 Day 2 — modular Auth via inject().
   private auth = inject(Auth);
+  private firestore = inject(Firestore);
   detail = false;
   commentcount = 0;
 
@@ -77,22 +78,17 @@ export class PostShareItemComponent implements OnInit {
   }
 
   like() {
-    const db = firebase.firestore();
     this.currentPost.userliked.push(this.currentuser.id);
-    var dbref = db.collection('posts').doc(this.currentPost.id);
-    dbref.update({
-      userliked: firebase.firestore.FieldValue.arrayUnion(this.currentuser.id)
+    updateDoc(doc(this.firestore, 'posts', this.currentPost.id), {
+      userliked: arrayUnion(this.currentuser.id)
     });
   }
 
   unlike() {
-    const db = firebase.firestore();
     const idx = this.currentPost.userliked.indexOf(this.currentuser.id);
     this.currentPost.userliked.splice(idx);
-    // this.postItem.userliked.push(this.currentuser.id);
-    var dbref = db.collection('posts').doc(this.currentPost.id);
-    dbref.update({
-      userliked: firebase.firestore.FieldValue.arrayRemove(this.currentuser.id)
+    updateDoc(doc(this.firestore, 'posts', this.currentPost.id), {
+      userliked: arrayRemove(this.currentuser.id)
     });
   }
 

@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, inject } from '@angular/core';
 import { ChatService } from '../../shared/services/chat.service';
 import { ChatRoom } from 'src/app/shared/entites/ChatRoom';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth } from '@angular/fire/auth';
+
 @Component({
   selector: 'app-chat-list',
   templateUrl: './chat-list.component.html',
@@ -19,16 +18,18 @@ export class ChatListComponent implements OnInit {
   @Output()
   chatRoomSel: EventEmitter<string> = new EventEmitter<string>();
 
+  private auth = inject(Auth);
+
   constructor(private chatsvc: ChatService) {
 
   }
 
   ngOnInit() {
-    // alert('initi initiated');
-    this.chatsvc.getchatrooms(firebase.auth().currentUser.uid).onSnapshot(val => {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) { return; }
+    this.chatsvc.getchatrooms(uid).onSnapshot(val => {
       this.chatrooms = new Array<ChatRoom>();
       val.forEach(ch => {
-        // console.log('  => '+ ch.data());
         const cr = ch.data() as ChatRoom;
         cr.chatroomId = ch.id;
         this.chatrooms.push(cr);
@@ -39,7 +40,6 @@ export class ChatListComponent implements OnInit {
   }
 
   onSelect(event: string) {
-    // alert(event);
     this.currentChat = event;
     this.chatRoomSel.emit(event);
   }

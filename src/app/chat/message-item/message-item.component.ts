@@ -1,9 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { Message } from '../../shared/entites/Message';
 import { UtilisateurService } from '../../shared/services/utilisateur.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 @Component({
   selector: 'app-message-item',
@@ -32,11 +30,13 @@ export class MessageItemComponent implements OnInit {
   message: Message;
   received: boolean;
   otheruser: Utilisateur;
+  private auth = inject(Auth);
+
   constructor(private userSvc: UtilisateurService) { }
 
   ngOnInit() {
-    firebase.auth().onAuthStateChanged(v => {
-      if (this.message.receiver === v.uid) {
+    onAuthStateChanged(this.auth, v => {
+      if (v && this.message.receiver === v.uid) {
         this.received = true;
       }
     });
