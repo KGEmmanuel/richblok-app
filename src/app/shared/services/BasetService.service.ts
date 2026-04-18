@@ -1,118 +1,95 @@
 import { IBaseService } from './IBaseService.service';
-import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/compat/firestore';
+import {
+  Firestore, CollectionReference, Query, WhereFilterOp,
+  collection, collectionData, doc, docData, addDoc, setDoc,
+  deleteDoc, query, where, orderBy as fbOrderBy
+} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { map } from 'rxjs/operators';
 import { IBaseEntity } from '../entites/IBaseEntity.class';
+
+/**
+ * Modular-SDK BaseService (D7 Day 3).
+ *
+ * Public API:
+ *   - get(id)                     -> Observable<T>            (live)
+ *   - list()                      -> Observable<T[]>          (live)
+ *   - findBy(key, value, order?)  -> Query                    (modular, use onSnapshot / getDocs / collectionData)
+ *   - findByfilters(keys, ops, values, order?) -> Query
+ *   - add(item)                   -> Promise<T>
+ *   - update(item)                -> Promise<T>
+ *   - delete(id)                  -> void
+ *
+ * Breaking change vs. compat version: findBy / findByfilters now return
+ * a modular Query instead of AngularFirestoreCollection. Consumers must
+ * use onSnapshot(query, cb), getDocs(query), or collectionData(query).
+ * There were only two call sites in the app and both were migrated in
+ * this same commit.
+ */
 export abstract class BaseService<T extends IBaseEntity> implements IBaseService<T> {
 
-  protected collection: AngularFirestoreCollection<T>;
-  protected dbpath;
+  protected col: CollectionReference;
+  protected dbpath: string;
+  protected orderByField?: string;
 
-  constructor(path: string, protected afs: AngularFirestore, orderBy?: string) {
-    if (orderBy) {
-      this.collection = this.afs.collection<T>(path, ref => ref.orderBy(orderBy));
-    } else {
-      this.collection = this.afs.collection<T>(path);
-    }
-    // alert(path);
+  constructor(path: string, protected firestore: Firestore, orderByField?: string) {
     this.dbpath = path;
+    this.orderByField = orderByField;
+    this.col = collection(this.firestore, path);
   }
+
+  protected baseQuery(): Query {
+    return this.orderByField
+      ? query(this.col, fbOrderBy(this.orderByField))
+      : this.col;
+  }
+
   get(identifier: string): Observable<T> {
     console.log(`[BaseService] get: ${identifier}`);
-
-    return this.collection
-      .doc<T>(identifier)
-      .snapshotChanges()
-      .pipe(
-        map(doc => {
-          if (doc.payload.exists) {
-            /* workaround until spread works with generic types */
-            const data = doc.payload.data() as T;
-            console.log('doc is ...', doc.payload.data());
-            const id = doc.payload.id;
-            return { id, ...data };
-          }
-        })
-      );
+    const ref = doc(this.firestore, this.dbpath, identifier);
+    return docData(ref, { idField: 'id' }).pipe(
+      map(d => d as unknown as T)
+    );
   }
-
 
   list(): Observable<T[]> {
-    console.log(`[BaseService] list`);
-    return this.collection
-      .snapshotChanges().pipe(
-        map(actions => actions.map(a => {
-          const data = a.payload.doc.data() as T;
-          const id = a.payload.doc.id;
-          return { id, ...data };
-        }))
-      );
+    console.log('[BaseService] list');
+    return collectionData(this.baseQuery(), { idField: 'id' }).pipe(
+      map(arr => arr as unknown as T[])
+    );
   }
 
-  findBy(key: string, value: any, orderby?: string) {
-    if (orderby) {
-      return this.afs.collection(this.dbpath, ref => ref.where(key, '==', value).orderBy(orderby));
-    } else {
-      return this.afs.collection(this.dbpath, ref => ref.where(key, '==', value));
-    }
+  findBy(key: string, value: any, orderby?: string): Query {
+    const clauses: any[] = [where(key, '==', value)];
+    if (orderby) { clauses.push(fbOrderBy(orderby)); }
+    return query(this.col, ...clauses);
   }
 
-  findByfilters(keys: string[], operator: firebase.firestore.WhereFilterOp[], values: any[], orderby?: string) {
-    return this.afs.collection(this.dbpath, ref => {
-      let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
-      let i = 0;
-      keys.forEach(s => {
-        query = query.where(s, operator[i], values[i]);
-        i++;
-      });
-      if (orderby) {
-        return query.orderBy(orderby);
-      }
-      return query;
-    });
+  findByfilters(keys: string[], operator: WhereFilterOp[], values: any[], orderby?: string): Query {
+    const clauses: any[] = keys.map((k, i) => where(k, operator[i], values[i]));
+    if (orderby) { clauses.push(fbOrderBy(orderby)); }
+    return query(this.col, ...clauses);
   }
 
   add(item: T): Promise<T> {
     console.log('[BaseService] adding item', item);
     item.dateCreation = new Date();
-    const promise = new Promise<T>((resolve, reject) => {
-      this.collection.add(Object.assign({},item)).then(ref => {
-        const newItem = {
-          id: ref.id,
-
-          /* workaround until spread works with generic types */
-          ...(item as any)
-        };
-        resolve(newItem);
-      });
-    });
-    return promise;
+    return addDoc(this.col, Object.assign({}, item)).then(ref => ({
+      id: ref.id,
+      ...(item as any)
+    }));
   }
-
 
   update(item: T): Promise<T> {
     console.log(`[BaseService] updating item ${item.id}`);
-
-    const promise = new Promise<T>((resolve, reject) => {
-      const docRef = this.collection
-        .doc<T>(item.id)
-        .set(Object.assign({},item))
-        .then(() => {
-          resolve({
-            ...(item as any)
-          });
-        });
-    });
-    return promise;
+    const ref = doc(this.firestore, this.dbpath, item.id);
+    return setDoc(ref, Object.assign({}, item)).then(() => ({
+      ...(item as any)
+    }));
   }
 
   delete(id: string): void {
     console.log(`[BaseService] deleting item ${id}`);
-
-    const docRef = this.collection.doc<T>(id);
-    docRef.delete();
+    deleteDoc(doc(this.firestore, this.dbpath, id));
   }
-
 }

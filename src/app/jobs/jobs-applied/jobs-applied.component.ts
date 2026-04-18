@@ -1,9 +1,10 @@
-import { Component, OnInit , inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { JobApplication } from 'src/app/shared/entites/JobApplication';
-import { Auth, authState } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
+import { onSnapshot } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-jobs-applied',
@@ -11,7 +12,7 @@ import { Auth, authState } from '@angular/fire/auth';
   styleUrls: ['./jobs-applied.component.scss']
 })
 export class JobsAppliedComponent implements OnInit {
-  // D7 Day 2 — modular Auth via inject().
+  // D7 Day 3 — modular Auth + BaseService.
   private auth = inject(Auth);
 
   jobapplications: Array<JobApplication>;
@@ -23,14 +24,15 @@ export class JobsAppliedComponent implements OnInit {
     this.afAuthSvc.onAuthStateChanged(u => {
       if (u) {
         this.uid = u.uid;
-        this.jobapplicationSvc.findBy('userRef',this.uid,'dateCreation').ref.onSnapshot(v=>{
+        const q = this.jobapplicationSvc.findBy('userRef', this.uid, 'dateCreation');
+        onSnapshot(q, v => {
           this.jobapplications = [];
-            v.forEach(jap=>{
-              const app = jap.data() as JobApplication;
-              app.id = jap.id;
-              this.jobapplications.push(app);
-            })
-        })
+          v.forEach(jap => {
+            const app = jap.data() as JobApplication;
+            app.id = jap.id;
+            this.jobapplications.push(app);
+          });
+        });
       }
     })
 

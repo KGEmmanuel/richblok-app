@@ -19,6 +19,7 @@ import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { ToastrService } from 'ngx-toastr';
 import { Auth, authState } from '@angular/fire/auth';
+import { getDocs } from '@angular/fire/firestore';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
@@ -180,11 +181,12 @@ export class UserJobProfileComponent implements OnInit {
         this.dispApply = false;
       }
     }
-    this.JobApplicationSvc.findByfilters(['userRef', 'jobref'], ["==", "=="], [this.currentUser.id, this.currentJob.id]).snapshotChanges().subscribe(val => {
-      if (val.length >0) {
+    const q = this.JobApplicationSvc.findByfilters(['userRef', 'jobref'], ["==", "=="], [this.currentUser.id, this.currentJob.id]);
+    getDocs(q).then(snap => {
+      if (!snap.empty) {
         this.dispApply = false;
       }
-    })
+    });
   }
 
   save(){

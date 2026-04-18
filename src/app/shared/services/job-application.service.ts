@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JobApplication } from '../entites/JobApplication';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { BaseService } from './BasetService.service';
 
 @Injectable({
@@ -8,10 +8,7 @@ import { BaseService } from './BasetService.service';
 })
 export class JobApplicationService extends BaseService<JobApplication>{
 
-  constructor(afs: AngularFirestore) {
-    const path = 'jobsapplication';
-    // alert(path);
-    super(path, afs);
-
+  constructor(firestore: Firestore) {
+    super('jobsapplication', firestore);
   }
 }
