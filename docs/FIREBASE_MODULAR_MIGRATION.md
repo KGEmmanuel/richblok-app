@@ -1,9 +1,24 @@
 # D7 — Full modular Firebase SDK migration
 
-## Status: blocked on a firebase SDK upgrade + a dedicated 2-3 day session.
-## ~400 KB savings awaiting.
+## Status: Day 0 blocker CLEARED (2026-04-18). Full 3-4 day sprint still awaited.
+## ~400 KB savings awaiting the compat→modular swap of 75 files.
 
-## ⚠️ DAY 0 BLOCKER DISCOVERED (2026-04-18)
+## ✅ DAY 0 COMPLETE (2026-04-18)
+
+Firebase upgraded 9.6.0 → 9.23.0 as a standalone commit. The
+`getCountFromServer` symbol that `@angular/fire` 7.6.1's modular path
+needs now exists. The AppModule provider swap from the main D7 sprint
+will now build cleanly.
+
+Verification performed:
+- `ng build --configuration production` → green (+50 KB bundle, expected)
+- `node --test test/server/` → 23/23 tests pass
+- `node -e "require('./server.js')"` → loads clean
+- `require('firebase/firestore').getCountFromServer` → `function`
+
+Deploys of this upgrade run in production starting with commit X (see git log).
+
+## ⚠️ ORIGINAL DAY 0 BLOCKER (now resolved — kept for history)
 
 An in-session attempt to kick off D7 revealed a version gate that wasn't in
 the original plan:
