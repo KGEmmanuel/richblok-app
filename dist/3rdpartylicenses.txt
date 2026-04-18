@@ -78,6 +78,9 @@ Apache-2.0
 @firebase/firestore-compat
 Apache-2.0
 
+@firebase/functions
+Apache-2.0
+
 @firebase/installations
 Apache-2.0
 
@@ -157,6 +160,8 @@ firebase/app
 
 firebase/app-check
 
+firebase/auth
+
 firebase/compat/app
 
 firebase/compat/auth
@@ -165,9 +170,15 @@ firebase/compat/firestore
 
 firebase/compat/storage
 
+firebase/firestore
+
+firebase/functions
+
 firebase/messaging
 
 firebase/remote-config
+
+firebase/storage
 
 idb
 ISC
@@ -445,6 +456,10 @@ Apache-2.0
 
    END OF TERMS AND CONDITIONS
 
+
+rxfire/auth
+
+rxfire/firestore
 
 rxjs
 Apache-2.0

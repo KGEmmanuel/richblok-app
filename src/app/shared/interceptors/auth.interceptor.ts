@@ -1,14 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, from, throwError } from 'rxjs';
 import { switchMap, catchError, first } from 'rxjs/operators';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState, idToken, user } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
+/**
+ * Attaches a Firebase ID token to outbound Cloud Function calls. Retries
+ * once with a freshly-refreshed token on 401.
+ *
+ * D7 Day 1 — migrated compat → modular:
+ *   AngularFireAuth.idToken         → idToken(auth)    (same Observable<string|null>)
+ *   AngularFireAuth.authState       → authState(auth)  (same Observable<User|null>)
+ */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private afAuth: AngularFireAuth, private router: Router) {}
+  private auth = inject(Auth);
+  private router = inject(Router);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Only attach tokens for our own Cloud Functions calls.
@@ -23,7 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     // Use first() to take one emission then COMPLETE the observable
     // (idToken is an infinite BehaviorSubject — toPromise alone would hang forever)
-    return this.afAuth.idToken.pipe(
+    return idToken(this.auth).pipe(
       first(),
       switchMap((token: string | null) => {
         const authReq = token
@@ -35,24 +44,24 @@ export class AuthInterceptor implements HttpInterceptor {
         if (err.status === 401) {
           // Token expired — refresh once then retry
           return from(
-            this.afAuth.authState.pipe(first()).toPromise()
+            authState(this.auth).pipe(first()).toPromise()
               .then(u => u ? u.getIdToken(true) : null)
           ).pipe(
             switchMap((newToken: string | null) => {
               if (!newToken) {
                 this.router.navigate(['/sign-in']);
-                return throwError(err);
+                return throwError(() => err);
               }
               const retryReq = req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } });
               return next.handle(retryReq);
             }),
             catchError(() => {
               this.router.navigate(['/sign-in']);
-              return throwError(err);
+              return throwError(() => err);
             })
           );
         }
-        return throwError(err);
+        return throwError(() => err);
       })
     );
   }

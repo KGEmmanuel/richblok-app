@@ -1,30 +1,28 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 /**
  * Redirects already-authenticated users AWAY from auth pages (sign-in, register, forgot-password)
  * back to the feed. Lets logged-out users through.
+ *
+ * D7 Day 1 — migrated compat → modular (identical semantics).
  */
 @Injectable({
   providedIn: 'root'
 })
-export class SecureInnerPagesGuard  {
-
-  constructor(
-    private afAuth: AngularFireAuth,
-    private router: Router
-  ) {}
+export class SecureInnerPagesGuard {
+  private auth = inject(Auth);
+  private router = inject(Router);
 
   canActivate(): Observable<boolean> {
-    return this.afAuth.authState.pipe(
+    return authState(this.auth).pipe(
       take(1),
       map(user => {
         if (user) {
           // Week-1 IA: post-auth lands on /me (the unified hub).
-          // Redirect here directly — /feed would double-redirect.
           this.router.navigate(['/me']);
           return false;
         }
