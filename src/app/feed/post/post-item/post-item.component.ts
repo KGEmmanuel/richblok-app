@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, TemplateRef } from '@angular/core';
+import { Component, OnInit, Input, TemplateRef , inject } from '@angular/core';
 import { Utilisateur } from '../../../shared/entites/Utilisateur';
 import { Post } from '../../../shared/entites/Post';
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
 import firebase from 'firebase/compat/app';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { PostService } from '../../../shared/services/post.service';
 import { NgbPopoverConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -13,6 +13,8 @@ import { NgbPopoverConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./post-item.component.scss']
 })
 export class PostItemComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   detail = false;
   commentcount = 0;
 
@@ -28,7 +30,7 @@ export class PostItemComponent implements OnInit {
 
   constructor(
     private userSvc: UtilisateurService,
-    private afAuth: AngularFireAuth,
+    
     private postSvc: PostService,
     private modalService: NgbModal,            // D2: share modal now opens via NgbModal
     config: NgbPopoverConfig
@@ -45,7 +47,7 @@ export class PostItemComponent implements OnInit {
 
   ngOnInit() {
 
-    this.afAuth.onAuthStateChanged(val => {
+    this.auth.onAuthStateChanged(val => {
       if (val) {
         this.userSvc.getDocRef(val.uid).onSnapshot(u => {
           this.currentuser = u.data() as Utilisateur;

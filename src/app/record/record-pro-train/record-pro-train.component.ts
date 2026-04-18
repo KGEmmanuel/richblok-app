@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-record-pro-train',
@@ -9,16 +9,18 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./record-pro-train.component.scss']
 })
 export class RecordProTrainComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   form = false;
 
   currentTraining = new Formation();
   allTrainings = new Array<Formation>();
   uid;
-  constructor(private formService: FormationService, private afAuth: AngularFireAuth) { }
+  constructor(private formService: FormationService) { }
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(val => {
+    authState(this.auth).subscribe(val => {
       if (val) {
         this.uid = val.uid;
         this.formService.editableFormationsListQuery(this.uid).onSnapshot(val => {

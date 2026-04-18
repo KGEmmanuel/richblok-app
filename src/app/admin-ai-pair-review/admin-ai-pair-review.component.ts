@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef , inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { first } from 'rxjs/operators';
 
 import {
@@ -67,6 +67,8 @@ type AiCompetency = 'ai_pair_programming' | 'ai_tool_orchestration' | 'verificat
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminAiPairReviewComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   loading = true;
   errorMsg = '';
   items: ReviewItem[] = [];
@@ -97,7 +99,7 @@ export class AdminAiPairReviewComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private afAuth: AngularFireAuth,
+    
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -106,7 +108,7 @@ export class AdminAiPairReviewComponent implements OnInit {
   }
 
   private async authHeader(): Promise<{ Authorization: string }> {
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) throw new Error('Not signed in');
     const token = await user.getIdToken();
     return { Authorization: `Bearer ${token}` };

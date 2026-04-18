@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter , inject } from '@angular/core';
 import { Langue } from 'src/app/shared/entites/Langue';
 import { LanguageService } from 'src/app/shared/services/language.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -10,19 +10,21 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./record-languages-item.component.scss']
 })
 export class RecordLanguagesItemComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   @Input()
   currentItem: Langue;
   @Output()
   editItem = new EventEmitter<Langue>();
   uid;
-  constructor(private lngSvc: LanguageService, private agfAuth: AngularFireAuth, private toastr: ToastrService) { }
+  constructor(private lngSvc: LanguageService, private agfAuth: Auth, private toastr: ToastrService) { }
 
   ngOnInit() {
     if(!this.currentItem){
       this.currentItem = new Langue();
     }
-    this.agfAuth.authState.subscribe(v=>{
+    authState(this.agfAuth).subscribe(v=>{
       if(v){
         this.uid = v.uid;
       }

@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter , inject } from '@angular/core';
 import { Formation } from 'src/app/shared/entites/Formation';
 import { FormationService } from 'src/app/shared/services/formation.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -12,6 +12,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
   styleUrls: ['./record-pro-train-form.component.scss']
 })
 export class RecordProTrainFormComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   @Input()
   currentTraining: Formation;
   uid;
@@ -21,13 +23,13 @@ submitted = false;
   @Output()
   trainingSaved = new EventEmitter<boolean>();
 
-  constructor(private formationSvc: FormationService, private afAuth: AngularFireAuth,
+  constructor(private formationSvc: FormationService,
               private toastr: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
 
   }
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(val=>{
+    authState(this.auth).subscribe(val=>{
       this.uid = val.uid;
     })
     if(!this.currentTraining) {

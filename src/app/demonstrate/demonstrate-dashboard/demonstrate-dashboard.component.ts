@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { DemonstrateService } from 'src/app/shared/services/demonstrate.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { Demonstration } from 'src/app/shared/entites/demonstration';
 
 @Component({
@@ -9,6 +9,8 @@ import { Demonstration } from 'src/app/shared/entites/demonstration';
   styleUrls: ['./demonstrate-dashboard.component.scss']
 })
 export class DemonstrateDashboardComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
   nbreVideos = 0;
   nbredocuments = 0;
   nbreVideoVue = 0;
@@ -16,7 +18,7 @@ export class DemonstrateDashboardComponent implements OnInit {
   nbreImg = 0;
   nbreImgVue = 0;
   uid;
-  constructor(private demoSvc: DemonstrateService, private authSvc: AngularFireAuth) { }
+  constructor(private demoSvc: DemonstrateService, private authSvc: Auth) { }
 
   ngOnInit() {
 

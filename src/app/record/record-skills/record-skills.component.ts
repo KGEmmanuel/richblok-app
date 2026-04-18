@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input , inject } from '@angular/core';
 import { UtilisateurService } from '../../shared/services/utilisateur.service';
 import { Skill } from '../../shared/entites/Skill';
 import { SkillsService } from '../../shared/services/skills.service';
@@ -6,13 +6,15 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 @Component({
   selector: 'app-record-skills',
   templateUrl: './record-skills.component.html',
   styleUrls: ['./record-skills.component.scss']
 })
 export class RecordSkillsComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   form = false;
   @Input()
@@ -20,12 +22,12 @@ export class RecordSkillsComponent implements OnInit {
   userSkills = new Array<Skill>();
   uid;
   currentSkil : Skill;
-  constructor(private skilSvc: SkillsService, private afAuth: AngularFireAuth) {
+  constructor(private skilSvc: SkillsService) {
 
   }
 
   ngOnInit() {
-    this.afAuth.authState.subscribe(v => {
+    authState(this.auth).subscribe(v => {
       this.uid = v.uid;
       this.skilSvc.getSkillsof(this.uid).onSnapshot(all => {
         this.userSkills = new Array<Skill>();

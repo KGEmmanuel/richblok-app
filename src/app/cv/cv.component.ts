@@ -1,12 +1,14 @@
 import { Meta, Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
 import { Formation } from '../shared/entites/Formation';
 import { Langue } from '../shared/entites/Langue';
 import { Experience } from '../shared/entites/Experience';
 import { Skill } from '../shared/entites/Skill';
-import firebase from 'firebase/compat/app';
+// D7 Day 2 — firebase/compat/app side-effect imports kept until downstream
+// services (UtilisateurService etc.) migrate off compat in Day 3.
+import 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { Router } from '@angular/router';
@@ -17,7 +19,7 @@ import { ExperienceService } from '../shared/services/experience.service';
 import { FormationService } from '../shared/services/formation.service';
 import { Realisation } from 'src/app/shared/entites/Realisation';
 import { PortfolioService } from 'src/app/shared/services/portfolio.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState, onAuthStateChanged } from '@angular/fire/auth';
 import * as jsPDF from 'jspdf';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
@@ -57,10 +59,13 @@ export class CvComponent implements OnInit {
 
   private _nav: string;
 
+  // D7 Day 2: AngularFireAuth replaced with modular Auth via inject().
+  private auth = inject(Auth);
+
   constructor(private router: Router, private userSvc: UtilisateurService,
     private skSvc: SkillsService, private lngsvc: LanguageService, private frmtionSvc: FormationService,
      private expSvc: ExperienceService,private langSvc: LanguageService,
-     private afAuth: AngularFireAuth, private realSvc: PortfolioService,
+     private realSvc: PortfolioService,
      private loadSvc: NgxUiLoaderService, private toast: ToastrService, private title: Title, private meta: Meta) {
       this.LangLevels = lngsvc.LanguagesLevels;
   }
@@ -71,7 +76,7 @@ export class CvComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle('RichBlok | CV');
     this.meta.updateTag({ name: 'description', content: 'Generate your CV and send them to recruiters' });
-    firebase.auth().onAuthStateChanged(val => {
+    onAuthStateChanged(this.auth, val => {
       if (val) {
         this.uid = val.uid;
         this.userSvc.getDocRef(this.uid).onSnapshot(data => {
@@ -120,7 +125,7 @@ export class CvComponent implements OnInit {
         });
       }
     });
-    this.afAuth.authState.subscribe(v => {
+    authState(this.auth).subscribe(v => {
       if (v) {
         this.uid = v.uid;
         this.realSvc.getportfolios(this.uid).onSnapshot(val => {

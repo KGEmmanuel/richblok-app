@@ -1,7 +1,7 @@
 import { Title, Meta } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { OffreEmploiService } from '../shared/services/offre-emploi.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { SkillsService } from '../shared/services/skills.service';
 import { Skill } from '../shared/entites/Skill';
 import { OffresEmploi } from '../shared/entites/OffresEmploi';
@@ -14,6 +14,8 @@ import { UtilisateurService } from '../shared/services/utilisateur.service';
   styleUrls: ['./jobs.component.scss']
 })
 export class JobsComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   uid;
   skills: Array<Skill>
@@ -24,7 +26,7 @@ export class JobsComponent implements OnInit {
   tags: Array<string>;
   currentuser: Utilisateur;
 
-  constructor(private jobSvc: OffreEmploiService, private afAuth: AngularFireAuth, private skillSvc: SkillsService,
+  constructor(private jobSvc: OffreEmploiService, private skillSvc: SkillsService,
               private userSvc: UtilisateurService, private title: Title, private meta: Meta) { }
 
   ngOnInit() {
@@ -39,7 +41,7 @@ export class JobsComponent implements OnInit {
           this.allJobs.push(job);
         });
     });
-    this.afAuth.onAuthStateChanged(v=>{
+    this.auth.onAuthStateChanged(v=>{
       if(v){
         this.userSvc.getDocRef(v.uid).onSnapshot(u=>{
           this.currentuser = u.data() as Utilisateur;

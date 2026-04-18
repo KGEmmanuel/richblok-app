@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject } from '@angular/core';
 import { OffreEmploiService } from 'src/app/shared/services/offre-emploi.service';
 import { JobApplicationService } from 'src/app/shared/services/job-application.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { JobApplication } from 'src/app/shared/entites/JobApplication';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-jobs-applied',
@@ -11,10 +11,12 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./jobs-applied.component.scss']
 })
 export class JobsAppliedComponent implements OnInit {
+  // D7 Day 2 — modular Auth via inject().
+  private auth = inject(Auth);
 
   jobapplications: Array<JobApplication>;
   uid;
-  constructor(private afAuthSvc: AngularFireAuth, private jobSvc: OffreEmploiService, private jobapplicationSvc: JobApplicationService, private userSvc: UtilisateurService) { }
+  constructor(private afAuthSvc: Auth, private jobSvc: OffreEmploiService, private jobapplicationSvc: JobApplicationService, private userSvc: UtilisateurService) { }
 
   ngOnInit(): void {
 
