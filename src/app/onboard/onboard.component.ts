@@ -166,38 +166,62 @@ export class OnboardComponent implements OnInit {
     this.extractingIndex = 2;  // "drafting STAR answers..."
     this.startProgressMessages();
 
-    try {
-      const user = await authState(this.auth).pipe(first()).toPromise();
-      const uid = user ? user.uid : 'anonymous';
+    const user = await authState(this.auth).pipe(first()).toPromise();
+    const uid = user ? user.uid : 'anonymous';
 
-      this.analytics.track('CvToStarStart', { uid });
+    this.analytics.track('CvToStarStart', { uid });
 
-      const profile = await this.starMapper.generateFromCv({
+    // One automatic retry: the Anthropic round-trip on a 3-page CV can take
+    // 20-40s and occasionally times out at the edge. The earlier version
+    // silently swallowed failures into an empty profile ("0 draft interview
+    // stories"); we now retry once before surfacing the error.
+    const attempt = async (): Promise<any> =>
+      this.starMapper.generateFromCv({
         uid,
         cvData: this.extracted,
         userName: (this.extracted.profile && this.extracted.profile.fullName) || ''
       }).toPromise();
 
-      this.stopProgressMessages();
-      this.analytics.track('CvToStarSuccess', {
-        profileId: profile.id,
-        answerCount: profile.answers.length
-      });
-
-      // If not logged in, send them to register with the generated draft stashed in localStorage
-      // (handled by /register flow on first login — draft is auto-claimed).
-      if (!user) {
-        try {
-          localStorage.setItem('richblok_pending_star', JSON.stringify({ id: profile.id }));
-        } catch { /* ignore */ }
-        this.router.navigate(['/register'], { queryParams: { from: 'cv' } });
-      } else {
-        this.router.navigate(['/star', profile.id], { queryParams: { fromCv: 1 } });
+    let profile: any = null;
+    let lastErr: any = null;
+    for (let i = 0; i < 2; i++) {
+      try {
+        profile = await attempt();
+        if (profile && Array.isArray(profile.answers) && profile.answers.length > 0) { break; }
+        lastErr = new Error('Extractor returned no answers.');
+      } catch (err) {
+        lastErr = err;
       }
-    } catch (err) {
-      this.stopProgressMessages();
-      this.errorMsg = (err as any).message || 'Could not generate STAR stories. Please try again.';
+    }
+
+    this.stopProgressMessages();
+
+    if (!profile || !profile.answers?.length) {
+      this.analytics.track('CvToStarFailed', {
+        uid,
+        message: lastErr?.message || 'unknown'
+      });
+      this.errorMsg = (lastErr?.message && lastErr.message.length < 200)
+        ? lastErr.message
+        : 'The STAR drafter timed out. Your CV extraction is saved — try again.';
       this.step = 'error';
+      return;
+    }
+
+    this.analytics.track('CvToStarSuccess', {
+      profileId: profile.id,
+      answerCount: profile.answers.length
+    });
+
+    // If not logged in, send them to register with the generated draft stashed in localStorage
+    // (handled by /register flow on first login — draft is auto-claimed).
+    if (!user) {
+      try {
+        localStorage.setItem('richblok_pending_star', JSON.stringify({ id: profile.id }));
+      } catch { /* ignore */ }
+      this.router.navigate(['/register'], { queryParams: { from: 'cv' } });
+    } else {
+      this.router.navigate(['/star', profile.id], { queryParams: { fromCv: 1 } });
     }
   }
 

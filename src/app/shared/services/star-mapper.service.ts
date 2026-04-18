@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from, of } from 'rxjs';
-import { map, catchError, switchMap, first } from 'rxjs/operators';
+import { Observable, from, of, throwError } from 'rxjs';
+import { map, catchError, switchMap, first, retryWhen, scan, delay } from 'rxjs/operators';
 import { StarAnswer, StarProfile, COMPETENCY_LABELS, COMPETENCY_QUESTIONS } from '../entites/StarProfile';
 import { CompetencyTag } from '../entites/Challenge';
 
@@ -130,16 +130,34 @@ export class StarMapperService {
       targetCompetencies: input.targetCompetencies || []
     };
 
-    return this.http.post<{ answers: StarAnswer[]; mode: string }>(
+    // Hardening (MVP Sprint A follow-up): the previous implementation used
+    // catchError() to swallow any cv-to-star failure into `{ answers: [] }`,
+    // then unconditionally wrote a STAR profile doc with zero answers. That
+    // produced the "Your CV just became 0 draft interview stories" UX —
+    // the user went through a 45-second extraction pipeline and landed on
+    // a functionally empty profile with no signal that anything went wrong.
+    //
+    // New behavior:
+    //   1. Transport-level failures (5xx, network) throw up to the caller,
+    //      which surfaces a real error + retry affordance in /onboard.
+    //   2. The API returning an empty `answers` array is treated the same
+    //      as a failure — we never persist a 0-answer profile.
+    //   3. Only a non-empty answers array triggers the Firestore write.
+
+    return this.http.post<{ answers: StarAnswer[]; mode: string; error?: string }>(
       '/api/cv-to-star',
       body
     ).pipe(
-      catchError(err => {
-        console.warn('CV-to-STAR API error, returning empty set', err);
-        return of({ answers: [], mode: 'client_fallback' });
-      }),
       switchMap(result => {
-        const markedAnswers = (result.answers || []).map(a => ({
+        const answers = Array.isArray(result?.answers) ? result.answers : [];
+        if (answers.length === 0) {
+          const reason = result?.error || result?.mode || 'empty';
+          return throwError(() => new Error(
+            `CV-to-STAR returned no answers (mode=${reason}). ` +
+            `Try again — the extractor occasionally times out on large CVs.`
+          ));
+        }
+        const markedAnswers = answers.map(a => ({
           ...a,
           source: 'cv' as const,
           verified: false

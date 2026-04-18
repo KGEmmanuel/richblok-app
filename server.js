@@ -754,17 +754,25 @@ app.post('/api/cv-to-star', async (req, res) => {
     : allCompetencies.slice(0, 6);
 
   function fallbackAnswers() {
-    // Pick the first experience or project we can reference, or return empty.
-    const source = experiences[0] || projects[0];
+    // Build a defensive source: an experience, else a project, else a
+    // synthesised stub from the first listed skill. We never return [] if
+    // ANY signal exists on the CV — the client treats empty as a failure
+    // and surfaces a retry affordance.
+    const expSrc = experiences.find(e => e && (e.role || e.company || e.description || (e.achievements && e.achievements.length))) || experiences[0];
+    const projSrc = projects.find(p => p && (p.name || p.description)) || projects[0];
+    const skillSrc = Array.isArray(cv.skills) && cv.skills.length
+      ? { role: 'Senior Engineer', company: '', description: `Applying ${cv.skills.slice(0, 3).join(', ')}` }
+      : null;
+    const source = expSrc || projSrc || skillSrc;
     if (!source) { return []; }
     return targetCompetencies.slice(0, 5).map(tag => ({
       competency: tag,
       competencyLabel: COMPETENCY_LABELS[tag] || tag,
       question: COMPETENCY_Q[tag] || 'Tell me about a challenging experience.',
-      situation: `In my role as ${source.role || source.name || 'a contributor'} ${source.company ? 'at ' + source.company : ''}, ${source.description || ''}`.trim(),
+      situation: `In my role as ${source.role || source.name || 'a contributor'}${source.company ? ' at ' + source.company : ''}, ${source.description || ''}`.trim(),
       task: `Demonstrate ${(COMPETENCY_LABELS[tag] || tag).toLowerCase()} in a concrete professional context.`,
-      action: (source.achievements && source.achievements[0]) || 'I took ownership of the outcome and executed.',
-      result: `Delivered measurable impact on the project.`,
+      action: (source.achievements && source.achievements[0]) || (source.impact || 'I took ownership of the outcome and executed.'),
+      result: source.impact || 'Delivered measurable impact on the project.',
       verified: false,
       source: 'cv'
     }));
@@ -830,6 +838,13 @@ Rules:
       source: 'cv'
     }));
 
+    // If Claude returned a well-formed but empty answers array, don't hand
+    // the client an empty set — fall through to the deterministic fallback
+    // so the user always sees at least 3-5 draft STAR stories.
+    if (!answers || answers.length === 0) {
+      console.warn('cv-to-star: AI returned 0 answers; using fallback');
+      return res.json({ mode: 'ai_empty_fallback', answers: fallbackAnswers() });
+    }
     res.json({ mode: 'ai', answers });
   } catch (err) {
     console.error('cv-to-star error:', err.message);
