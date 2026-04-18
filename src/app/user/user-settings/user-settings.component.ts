@@ -115,4 +115,30 @@ export class UserSettingsComponent implements OnInit {
       this.router.navigateByUrl('/feed');
     }
   }
+
+  /** Week 4: true when the account is opted into the Employer UI surface. */
+  get isEmployer(): boolean {
+    return this.currentUser?.typeCompte === 'employer';
+  }
+
+  /**
+   * Week 4: flip the account-type toggle. This is a UI affordance (hides/shows
+   * ATS entry points) — not a permissions boundary. Server-side enforcement
+   * still owns any real access control.
+   */
+  setAccountType(type: 'talent' | 'employer') {
+    if (!this.currentUser?.id) { return; }
+    if (this.currentUser.typeCompte === type) { return; }
+    const prev = this.currentUser.typeCompte;
+    this.currentUser.typeCompte = type;  // optimistic UI
+    this.userSvc.update(this.currentUser.id, { typeCompte: type }).then(() => {
+      this.toasterSvc.success(
+        type === 'employer' ? 'Employer mode on' : 'Talent mode on',
+        'Account type updated'
+      );
+    }).catch(err => {
+      this.currentUser.typeCompte = prev;  // revert on failure
+      this.toasterSvc.error('Error: ' + (err?.message || err), 'Update failed');
+    });
+  }
 }

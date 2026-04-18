@@ -71,6 +71,42 @@
                 </div>
             </aside>
             <main class="col-md-8">
+                <!-- Week 4: account-type switcher. Flipping this toggle flips the
+                     employer-only entry points (Post a job, Employer dashboard,
+                     Create organisation) in the header and profile menu. Not a
+                     permissions gate — it's a UI affordance toggle. -->
+                <div class="border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3 d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="m-0">Account type</h6>
+                            <p class="mb-0 mt-0 small">Switch to Employer mode to surface hiring tools (Post a job, talent dashboard). You can flip back any time.</p>
+                        </div>
+                    </div>
+                    <div class="box-body p-3">
+                        <div class="btn-group btn-group-toggle" role="group" aria-label="Account type">
+                            <button type="button"
+                                    class="btn"
+                                    [class.btn-primary]="!isEmployer"
+                                    [class.btn-outline-primary]="isEmployer"
+                                    (click)="setAccountType('talent')">
+                                <i class="feather-user mr-1"></i> Talent
+                            </button>
+                            <button type="button"
+                                    class="btn"
+                                    [class.btn-primary]="isEmployer"
+                                    [class.btn-outline-primary]="!isEmployer"
+                                    (click)="setAccountType('employer')">
+                                <i class="feather-briefcase mr-1"></i> Employer
+                            </button>
+                        </div>
+                        <p class="small text-muted mb-0 mt-2" *ngIf="isEmployer">
+                            Employer mode is on. The header now shows the Employer dashboard link and a Post-a-job shortcut.
+                        </p>
+                        <p class="small text-muted mb-0 mt-2" *ngIf="!isEmployer">
+                            Talent mode is on. Switch to Employer to see the ATS and discovery tools.
+                        </p>
+                    </div>
+                </div>
                 <div class="border rounded bg-white mb-3">
                     <div class="box-title border-bottom p-3">
                         <h6 class="m-0">Edit Basic Info</h6>
