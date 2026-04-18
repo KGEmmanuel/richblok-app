@@ -1,47 +1,39 @@
-<ul class="nav nav-justified border-bottom osahan-line-tab" id="myTab" role="tablist">
-    <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="feather-edit"></i> Share an update</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="feather-image"></i> Upload a file</a>
-    </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-        <div class="p-3 d-flex align-items-center w-100" href="#">
-            <div class="dropdown-list-image mr-3">
-                <img class="rounded-circle" [src]="currentUser?.imageprofil" alt="">
-                <div class="status-indicator bg-success"></div>
-            </div>
-            <div class="w-100">
-                <textarea placeholder=" {{currentUser?.nom}} {{currentUser?.prenom}} write your thoughts..." [(ngModel)]="currentPost.description" class="form-control border-0 p-0 shadow-none" style="width: 100% !important;"></textarea>
-            </div>
-        </div>
-    </div>
-    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-        <div class="p-3 w-100">
-            <h6>{{urls.length}} file<span *ngIf="urls.length>1">s</span> selected</h6>
-
-            <div class="row">
-                <div class=" job-item col-lg-3 align-items-center" *ngFor='let url of urls, let i= index'>
-                    <img [src]="url" style="width: 100% !important; margin-top: 5%;">
-                    <i class="feather-trash" style="position: absolute; color: rgb(230, 78, 78); margin-left: -1%;" (click)="removeItem(i)"></i>
+<!-- D2: Bootstrap tabs migrated to ngbNav. -->
+<ul ngbNav #postNav="ngbNav" class="nav nav-justified border-bottom osahan-line-tab">
+    <li [ngbNavItem]="'update'">
+        <a ngbNavLink><i class="feather-edit"></i> Share an update</a>
+        <ng-template ngbNavContent>
+            <div class="p-3 d-flex align-items-center w-100">
+                <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" [src]="currentUser?.imageprofil" alt="">
+                    <div class="status-indicator bg-success"></div>
+                </div>
+                <div class="w-100">
+                    <textarea placeholder=" {{currentUser?.nom}} {{currentUser?.prenom}} write your thoughts..." [(ngModel)]="currentPost.description" class="form-control border-0 p-0 shadow-none" style="width: 100% !important;"></textarea>
                 </div>
             </div>
-            <div class="upload-btn-wrapper d-flex justify-content-end">
-                <button class="btn btn-outline-primary btn-sm mr-1" style="cursor: pointer;">Upload an image</button>
-                <input type="file" name="myfile" (change)="onSelectFile($event)" multiple/>
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="'upload'">
+        <a ngbNavLink><i class="feather-image"></i> Upload a file</a>
+        <ng-template ngbNavContent>
+            <div class="p-3 w-100">
+                <h6>{{urls.length}} file<span *ngIf="urls.length>1">s</span> selected</h6>
+                <div class="row">
+                    <div class=" job-item col-lg-3 align-items-center" *ngFor='let url of urls, let i= index'>
+                        <img [src]="url" style="width: 100% !important; margin-top: 5%;">
+                        <i class="feather-trash" style="position: absolute; color: rgb(230, 78, 78); margin-left: -1%;" (click)="removeItem(i)"></i>
+                    </div>
+                </div>
+                <div class="upload-btn-wrapper d-flex justify-content-end">
+                    <button class="btn btn-outline-primary btn-sm mr-1" style="cursor: pointer;">Upload an image</button>
+                    <input type="file" name="myfile" (change)="onSelectFile($event)" multiple/>
+                </div>
             </div>
-
-
-        </div>
-    </div>
-    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-        <div class="p-3 w-100">
-            <app-post-identify></app-post-identify>
-        </div>
-    </div>
-</div>
+        </ng-template>
+    </li>
+</ul>
+<div [ngbNavOutlet]="postNav"></div>
 <div class="border-top p-3 d-flex align-items-center">
     <div class="mr-auto">
         <a class="text-link small" (click)="addLocation()" style="color: rgb(12, 102, 109); cursor: pointer;"><i class="feather-map-pin"></i> Add Location</a>

@@ -27,37 +27,30 @@
      <div class="row">
         <!-- Main Content -->
         <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
+           <!-- D2: Bootstrap tabs migrated to ngbNav. -->
            <div class="box shadow-sm rounded bg-white mb-3 overflow-hidden">
-              <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
-                 <li class="nav-item">
-                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+              <ul ngbNav #orgViewNav="ngbNav" class="nav border-bottom osahan-line-tab">
+                 <li [ngbNavItem]="'about'">
+                    <a ngbNavLink>About</a>
+                    <ng-template ngbNavContent>
+                      <app-organisation-about></app-organisation-about>
+                    </ng-template>
                  </li>
-                 <li class="nav-item">
-                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Publications</a>
+                 <li [ngbNavItem]="'publications'">
+                    <a ngbNavLink>Publications</a>
+                    <ng-template ngbNavContent>
+                      <app-organisation-post></app-organisation-post>
+                    </ng-template>
                  </li>
-                 <li class="nav-item">
-                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Jobs</a>
+                 <li [ngbNavItem]="'jobs'">
+                    <a ngbNavLink>Jobs</a>
+                    <ng-template ngbNavContent>
+                      <app-organisation-view-jobs></app-organisation-view-jobs>
+                    </ng-template>
                  </li>
-
-                 <li class="nav-item">
-                  <a class="nav-link" id="chal-tab" data-toggle="tab" href="#chal" role="tab" aria-controls="chal" aria-selected="false">Challenge</a>
-               </li>
-               <li class="nav-item">
-                <a class="nav-link" id="cert-tab" data-toggle="tab" href="#cert" role="tab" aria-controls="cert" aria-selected="false">Certifications</a>
-             </li>
-              </ul>
-           </div>
-           <div class="tab-content" id="myTabContent">
-              <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <app-organisation-about></app-organisation-about>
-              </div>
-              <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <app-organisation-post></app-organisation-post>
-              </div>
-              <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                <app-organisation-view-jobs></app-organisation-view-jobs>
-              </div>
-              <div class="tab-pane fade" id="chal" role="tabpanel" aria-labelledby="chal-tab">
+                 <li [ngbNavItem]="'chal'">
+                   <a ngbNavLink>Challenge</a>
+                   <ng-template ngbNavContent>
                 <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
                    <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
                       <div class="dropdown-list-image mr-3">
@@ -120,12 +113,17 @@
                       <textarea placeholder="Add Comment..." class="form-control border-0 p-0 shadow-none" rows="1"></textarea>
                    </div>
                 </div>
-             </div>
-             <div class="tab-pane fade" id="cert" role="tabpanel" aria-labelledby="cert-tab">
-               <app-organisation-view-certif></app-organisation-view-certif>
-             </div>
-
+                   </ng-template>
+                 </li>
+                 <li [ngbNavItem]="'cert'">
+                   <a ngbNavLink>Certifications</a>
+                   <ng-template ngbNavContent>
+                     <app-organisation-view-certif></app-organisation-view-certif>
+                   </ng-template>
+                 </li>
+              </ul>
            </div>
+           <div [ngbNavOutlet]="orgViewNav"></div>
         </main>
         <aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
            <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">

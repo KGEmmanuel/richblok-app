@@ -15,46 +15,49 @@
               </span>
                         </div>
                     </h5>
-                    <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="exp-tab" data-toggle="tab" href="#exp" role="tab" aria-controls="home" aria-selected="true">Experiences</a>
+                    <!-- D2: Bootstrap tabs migrated to ngbNav.
+                         Content is lazy — each tab's sub-component only instantiates
+                         when the tab activates, because <ng-template ngbNavContent>
+                         defers rendering. Faster initial paint on this page. -->
+                    <ul ngbNav #recordNav="ngbNav" class="nav border-bottom osahan-line-tab">
+                        <li [ngbNavItem]="'exp'">
+                            <a ngbNavLink>Experiences</a>
+                            <ng-template ngbNavContent>
+                                <app-record-experiences></app-record-experiences>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="ptrain-tab" data-toggle="tab" href="#ptrain" role="tab" aria-controls="contact" aria-selected="false">Trainings</a>
+                        <li [ngbNavItem]="'ptrain'">
+                            <a ngbNavLink>Trainings</a>
+                            <ng-template ngbNavContent>
+                                <app-record-pro-train></app-record-pro-train>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="realisation-tab" data-toggle="tab" href="#realisation" role="tab" aria-controls="contact" aria-selected="false">Realisations</a>
+                        <li [ngbNavItem]="'realisation'">
+                            <a ngbNavLink>Realisations</a>
+                            <ng-template ngbNavContent>
+                                <app-record-realisation></app-record-realisation>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="skills-tab" data-toggle="tab" href="#skills" role="tab" aria-controls="profile" aria-selected="false">Skills</a>
+                        <li [ngbNavItem]="'skills'">
+                            <a ngbNavLink>Skills</a>
+                            <ng-template ngbNavContent>
+                                <app-record-skills></app-record-skills>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="doc-tab" data-toggle="tab" href="#doc" role="tab" aria-controls="type" aria-selected="false">Documents</a>
+                        <li [ngbNavItem]="'doc'">
+                            <a ngbNavLink>Documents</a>
+                            <ng-template ngbNavContent>
+                                <app-record-documents></app-record-documents>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="lang-tab" data-toggle="tab" href="#lang" role="tab" aria-controls="type" aria-selected="false">Languages</a>
+                        <li [ngbNavItem]="'lang'">
+                            <a ngbNavLink>Languages</a>
+                            <ng-template ngbNavContent>
+                                <app-record-languages></app-record-languages>
+                            </ng-template>
                         </li>
                     </ul>
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="exp" role="tabpanel" aria-labelledby="exp-tab">
-                            <app-record-experiences></app-record-experiences>
-                        </div>
-                        <div class="tab-pane fade" id="skills" role="tabpanel" aria-labelledby="skills-tab">
-                            <app-record-skills> </app-record-skills>
-                        </div>
-                        <div class="tab-pane fade" id="ptrain" role="tabpanel" aria-labelledby="ptrain-tab">
-                            <app-record-pro-train></app-record-pro-train>
-                        </div>
-                        <div class="tab-pane fade" id="realisation" role="tabpanel" aria-labelledby="realisation-tab">
-                            <app-record-realisation></app-record-realisation>
-                        </div>
-                        <div class="tab-pane fade" id="doc" role="tabpanel" aria-labelledby="doc-tab">
-                            <app-record-documents></app-record-documents>
-                        </div>
-                        <div class="tab-pane fade" id="lang" role="tabpanel" aria-labelledby="lang-tab">
-                            <app-record-languages></app-record-languages>
-                        </div>
-                    </div>
+                    <div [ngbNavOutlet]="recordNav"></div>
                 </div>
             </main>
             <aside class="col col-xl-3 order-xl-2 col-lg-12 order-lg-2 col-12">

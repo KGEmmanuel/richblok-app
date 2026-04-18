@@ -8,41 +8,28 @@
             <main class="col col-xl-9 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
                 <div class="box shadow-sm border rounded bg-white mb-3 osahan-share-post">
                     <h5 class="pl-3 pt-3 pr-3 border-bottom mb-0 pb-3">More suggestions for you</h5>
-                    <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Suggestions</a>
+                    <!-- D2: Bootstrap tabs migrated to ngbNav. -->
+                    <ul ngbNav #friendsNav="ngbNav" class="nav border-bottom osahan-line-tab">
+                        <li [ngbNavItem]="'suggestions'">
+                            <a ngbNavLink>Suggestions</a>
+                            <ng-template ngbNavContent>
+                                <div class="p-3"><app-friend-suggestion></app-friend-suggestion></div>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Invitations</a>
+                        <li [ngbNavItem]="'invitations'">
+                            <a ngbNavLink>Invitations</a>
+                            <ng-template ngbNavContent>
+                                <div class="p-3 w-100"><app-friend-invitation></app-friend-invitation></div>
+                            </ng-template>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Connections</a>
-                        </li>
-                        <li class="nav-item">
+                        <li [ngbNavItem]="'connections'">
+                            <a ngbNavLink>Connections</a>
+                            <ng-template ngbNavContent>
+                                <div class="p-3 w-100"><app-friends-list></app-friends-list></div>
+                            </ng-template>
                         </li>
                     </ul>
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <div class="p-3">
-                                <app-friend-suggestion></app-friend-suggestion>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <div class="p-3 w-100">
-                                <app-friend-invitation></app-friend-invitation>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                            <div class="p-3 w-100">
-                                <app-friends-list></app-friends-list>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="type" role="tabpanel" aria-labelledby="type-tab">
-                            <div class="p-3 w-100">
-                                <h6>Soon in next free update</h6>
-                            </div>
-                        </div>
-                    </div>
+                    <div [ngbNavOutlet]="friendsNav"></div>
                 </div>
             </main>
             <aside class="col col-xl-3 order-xl-2 col-lg-12 order-lg-2 col-12">

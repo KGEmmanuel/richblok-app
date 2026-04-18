@@ -32,55 +32,47 @@
             </aside>
 
             <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-2 col-md-12 col-sm-12 col-12">
+                <!-- D2: Bootstrap tabs migrated to ngbNav. -->
                 <div class="box shadow-sm rounded bg-white mb-3 overflow-hidden">
-                    <div>
-                        <ul class="nav border-bottom osahan-line-tab" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="connections-tab" data-toggle="tab" href="#portfolio" role="tab" aria-controls="porfolio" aria-selected="true">Portfolio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="false">About</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" id="real-tab" data-toggle="tab" href="#real" role="tab" aria-controls="home" aria-selected="false">Realisations</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="updates-tab" data-toggle="tab" href="#updates" role="tab" aria-controls="updates" aria-selected="false">Updates</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="connections-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="false">Connections</a>
-                            </li>
-
-                        </ul>
-                    </div>
+                    <ul ngbNav #userNav="ngbNav" class="nav border-bottom osahan-line-tab">
+                        <li [ngbNavItem]="'portfolio'">
+                            <a ngbNavLink>Portfolio</a>
+                            <ng-template ngbNavContent>
+                                <app-user-portfolio></app-user-portfolio>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'about'">
+                            <a ngbNavLink>About</a>
+                            <ng-template ngbNavContent>
+                                <app-user-about></app-user-about>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'real'">
+                            <a ngbNavLink>Realisations</a>
+                            <ng-template ngbNavContent>
+                                <div class="box shadow-sm border rounded bg-white mb-3">
+                                    <div class="box-title border-bottom p-3">
+                                        <h6 class="m-0">Realisations</h6>
+                                    </div>
+                                    <app-realisation></app-realisation>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'updates'">
+                            <a ngbNavLink>Updates</a>
+                            <ng-template ngbNavContent>
+                                <app-user-post></app-user-post>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'connections'">
+                            <a ngbNavLink>Connections</a>
+                            <ng-template ngbNavContent>
+                                <app-user-friends></app-user-friends>
+                            </ng-template>
+                        </li>
+                    </ul>
                 </div>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <app-user-about></app-user-about>
-
-                    </div>
-                    <div class="tab-pane fade" id="updates" role="updates" aria-labelledby="updates-tab">
-                        <app-user-post></app-user-post>
-                    </div>
-                    <div class="tab-pane fade" id="real" role="real" aria-labelledby="real-tab">
-                        <div class="box shadow-sm border rounded bg-white mb-3">
-                            <div class="box-title border-bottom p-3">
-                                <h6 class="m-0">Realisations</h6>
-                            </div>
-
-                            <app-realisation></app-realisation>
-
-                        </div>
-
-                    </div>
-                    <div class="tab-pane fade" id="connections" role="connections" aria-labelledby="connections-tab">
-                        <app-user-friends></app-user-friends>
-                    </div>
-                    <div class="tab-pane  show active fade" id="portfolio" role="portfolio" aria-labelledby="portfolio-tab">
-                        <app-user-portfolio></app-user-portfolio>
-                    </div>
-                </div>
+                <div [ngbNavOutlet]="userNav"></div>
 
             </main>
             <aside class="col col-xl-3 order-xl-3 col-lg-12 order-lg-3 col-12">
