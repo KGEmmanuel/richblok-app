@@ -1126,14 +1126,20 @@ app.get('/api/leaderboard', async (req, res) => {
   }
 
   try {
-    const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const cutoffMs = Date.now() - days * 24 * 60 * 60 * 1000;
+    // MVP Sprint A fix: the previous query chained `.where('passed','==',true)
+    // .where('earnedAt','>=', cutoff)` which requires a composite Firestore
+    // index that was never created — that's why `/api/leaderboard` was
+    // returning 500 (console: [leaderboard] failed: The query requires an
+    // index). Pool is small enough in MVP that filtering client-side is
+    // cheap; when the pool crosses ~5k badges, re-add the composite index
+    // via firestore.indexes.json + the two `.where()` clauses below.
     let query = admin.firestore().collection('badges')
-      .where('passed', '==', true)
-      .where('earnedAt', '>=', cutoff);
+      .where('passed', '==', true);
     if (format === 'ai_pair') {
       query = query.where('challengeFormat', '==', 'ai_pair');
     }
-    const snap = await query.limit(500).get();
+    const snap = await query.limit(2000).get();
 
     // Aggregate per-uid so a candidate with 3 badges this week doesn't
     // appear 3 times. Rank metric = sum of scores (rewards both volume
@@ -1142,6 +1148,12 @@ app.get('/api/leaderboard', async (req, res) => {
     snap.forEach(d => {
       const data = d.data();
       if (!data.uid) return;
+      // Client-side earnedAt window filter (was previously a Firestore WHERE
+      // that needed a composite index). Firestore Timestamp -> Date.
+      const earnedAtMs = (data.earnedAt && data.earnedAt.toDate)
+        ? data.earnedAt.toDate().getTime()
+        : (data.earnedAt && data.earnedAt._seconds ? data.earnedAt._seconds * 1000 : 0);
+      if (earnedAtMs < cutoffMs) return;
       const row = byUid.get(data.uid) || {
         uid: data.uid,
         userName: data.userName || 'Anonymous',

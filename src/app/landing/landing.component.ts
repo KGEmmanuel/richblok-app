@@ -149,17 +149,26 @@ export class LandingComponent implements OnInit {
     this.detectLang();
     if (this.isBrowser) {
       this.analytics.track('PageView', { page: 'landing' });
-      // D7: getCountFromServer is cheaper than getDocs (server returns just the
-      // count, no document bodies). firebase 9.23 gave us this symbol on Day 0.
-      getCountFromServer(collection(this.firestore, 'challenge_submissions'))
-        .then(snap => {
-          const base = 847;
-          this.badgeCount = base + (snap.data().count || 0);
-        })
-        .catch(() => { this.badgeCount = 847; });
-    } else {
-      this.badgeCount = 847;
+      // MVP Sprint A — real social proof only. Counter pill hidden below the
+      // reveal threshold instead of printing a fake seed value. The template
+      // reads `badgeCount > MIN_SOCIAL_PROOF` before rendering the chip.
+      // `getCountFromServer` is cheaper than `getDocs` (server returns count,
+      // no doc bodies). firebase 9.23+ ships this symbol.
+      getCountFromServer(collection(this.firestore, 'badges'))
+        .then(snap => { this.badgeCount = snap.data().count || 0; })
+        .catch(() => { this.badgeCount = 0; });
     }
+  }
+
+  /**
+   * Honest threshold: hide the "N badges earned this week" pill until the real
+   * count is non-embarrassing. When the pool is 1, the pill would undercut the
+   * pitch more than it supports it.
+   */
+  readonly MIN_SOCIAL_PROOF = 10;
+
+  get showBadgeCounter(): boolean {
+    return this.badgeCount >= this.MIN_SOCIAL_PROOF;
   }
 
   t(key: string): string {

@@ -31,7 +31,8 @@
                             </h6>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <span style="font-size: 1em; font-weight: bold;" class="text-danger" *ngIf="currentChal?.note != null">Pass mark : {{currentChal.note}}/{{currentChal.questions.length}}</span>
+                            <span style="font-size: 1em; font-weight: bold;" class="text-danger" *ngIf="currentChal?.note != null && (currentChal?.questions?.length || 0) > 0">Pass mark : {{currentChal.note}}/{{currentChal.questions.length}}</span>
+                            <span style="font-size: 1em; font-weight: bold;" class="text-danger" *ngIf="currentChal?.note != null && !(currentChal?.questions?.length)">Pass mark : {{currentChal.note}}%</span>
                         </div>
                     </div>
                 </div>

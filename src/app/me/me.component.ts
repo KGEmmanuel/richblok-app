@@ -18,30 +18,23 @@ import {
 import { AnalyticsService } from '../shared/services/analytics.service';
 
 /**
- * /me — unified user hub (Week-1 IA rewrite).
+ * /me — unified user hub.
  *
- * Replaces the trio /feed + /record + /profile with a single surface that
- * has four tabs, each tied to a URL query param so the tab state is
- * shareable + deep-linkable:
+ * MVP Sprint A: the hub has exactly TWO tabs — Feed (recent activity) and
+ * Badges (the credentials that are the portfolio). The Portfolio and CV
+ * tabs were retired because:
+ *   - Portfolio: badges ARE the portfolio. Structured profile fields
+ *     (Experiences / Skills / Languages / etc.) added friction without
+ *     selling more subscriptions.
+ *   - CV: the CV is an INPUT (see /onboard) and an OUTPUT (server-rendered
+ *     PDF from badges), not an editable feature.
  *
- *   /me                     → tab=feed      (default)
- *   /me?tab=feed            → Recent activity + stats + CTAs
- *   /me?tab=portfolio       → Experiences / Trainings / Realisations / Skills / Docs / Languages
- *   /me?tab=badges          → All badges earned by the current user
- *   /me?tab=cv              → Printable CV view (links to /cv for the legacy full-page render)
- *
- * Backward compat redirects handled at the router level:
- *   /feed      → /me?tab=feed
- *   /record    → /me?tab=portfolio
- *   /profile   → /me?tab=feed   (self-profile absorbed; /u/:handle remains public)
- *
- * This component is INTENTIONALLY simple — it does NOT re-implement the
- * legacy /record sub-form CRUD. The Portfolio tab links to /record/:section
- * style legacy routes for now; the full Portfolio-inside-/me absorption
- * is a Week-2 follow-up (requires converting record-experiences etc. to
- * standalone components first).
+ * Router redirects route old links into MVP-appropriate targets:
+ *   /feed   → /me?tab=feed
+ *   /record → /me?tab=badges
+ *   /cv     → /onboard
  */
-type Tab = 'feed' | 'portfolio' | 'badges' | 'cv';
+type Tab = 'feed' | 'badges';
 
 interface MeStats {
   badgesLifetime:  number;
@@ -108,10 +101,8 @@ export class MeComponent implements OnInit, OnDestroy {
   activity: ActivityItem[] = [];
 
   readonly tabOptions: Array<{ key: Tab; label: string; icon: string }> = [
-    { key: 'feed',      label: 'Feed',      icon: 'home' },
-    { key: 'portfolio', label: 'Portfolio', icon: 'file-text' },
-    { key: 'badges',    label: 'Badges',    icon: 'award' },
-    { key: 'cv',        label: 'CV',        icon: 'file-text' }
+    { key: 'feed',   label: 'Feed',   icon: 'home' },
+    { key: 'badges', label: 'Badges', icon: 'award' }
   ];
 
   private sub?: Subscription;
@@ -130,8 +121,10 @@ export class MeComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.sub = this.route.queryParamMap.subscribe(qp => {
-      const t = qp.get('tab') as Tab | null;
-      this.tab = (t === 'portfolio' || t === 'badges' || t === 'cv') ? t : 'feed';
+      const t = qp.get('tab');
+      // Retired tabs (portfolio, cv) silently fall through to Feed — no redirect
+      // churn for users with stale bookmarks or email links.
+      this.tab = (t === 'badges') ? 'badges' : 'feed';
       this.applyTitleForTab();
       this.analytics.track('MeTabView', { tab: this.tab });
       this.cdr.markForCheck();
@@ -147,7 +140,13 @@ export class MeComponent implements OnInit, OnDestroy {
     this.uid = user.uid;
     this.userFirstName = (user.displayName || user.email || '').split(/[\s@]/)[0];
 
-    await Promise.all([this.loadBadges(), this.loadStats(), this.loadActivity()]);
+    // Order matters: loadStats + loadActivity both derive from this.badges,
+    // so badges must finish first. Previously these ran in parallel via
+    // Promise.all(), which caused the hub subtitle to show "No badges yet"
+    // while the Badges tab simultaneously rendered the user's badges —
+    // stats read an empty this.badges before loadBadges completed.
+    await this.loadBadges();
+    await Promise.all([this.loadStats(), this.loadActivity()]);
     this.loading = false;
     this.cdr.markForCheck();
   }
@@ -168,10 +167,8 @@ export class MeComponent implements OnInit, OnDestroy {
 
   private applyTitleForTab() {
     const titles: Record<Tab, string> = {
-      feed:      'Richblok · Your hub',
-      portfolio: 'Richblok · Portfolio',
-      badges:    'Richblok · Badges',
-      cv:        'Richblok · CV'
+      feed:   'Richblok · Your hub',
+      badges: 'Richblok · Badges'
     };
     this.title.setTitle(titles[this.tab] || 'Richblok · Your hub');
   }

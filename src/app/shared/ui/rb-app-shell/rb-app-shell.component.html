@@ -6,7 +6,8 @@
     </a>
 
     <nav class="rb-nav-links" aria-label="Primary">
-      <!-- [Me ▾] — links straight to /me but the caret opens a dropdown of tab-level shortcuts. -->
+      <!-- [Me ▾] — MVP hub only surfaces the two live tabs (Feed, Badges)
+           plus Settings and an Admin shortcut when the user has the role. -->
       <div class="rb-dd" [class.rb-dd-open]="meOpen">
         <div class="rb-nav-combo">
           <a routerLink="/me"
@@ -23,21 +24,17 @@
         <div class="rb-dd-menu" *ngIf="meOpen" role="menu">
           <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'feed'}" (click)="closeMenus()"
              [class.rb-dd-active]="subActive === 'feed'">Feed</a>
-          <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'portfolio'}" (click)="closeMenus()"
-             [class.rb-dd-active]="subActive === 'portfolio'">Portfolio</a>
           <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'badges'}" (click)="closeMenus()"
              [class.rb-dd-active]="subActive === 'badges'">Badges</a>
-          <a role="menuitem" routerLink="/me" [queryParams]="{tab: 'cv'}" (click)="closeMenus()"
-             [class.rb-dd-active]="subActive === 'cv'">CV</a>
           <div class="rb-dd-sep"></div>
-          <a *ngIf="isAdmin" role="menuitem" routerLink="/admin" (click)="closeMenus()">Admin</a>
           <a role="menuitem" routerLink="/settings" (click)="closeMenus()">Settings</a>
+          <a *ngIf="isAdmin" role="menuitem" routerLink="/admin" (click)="closeMenus()">Admin</a>
         </div>
       </div>
 
       <a routerLink="/evaluate" class="rb-nav-link" [class.rb-active]="active === 'challenges'">Challenges</a>
 
-      <!-- [Talent ▾] — surfaces the two public discovery pages + employer dashboard. -->
+      <!-- [Talent ▾] — public discovery pages + employer dashboard (role-gated). -->
       <div class="rb-dd" [class.rb-dd-open]="talentOpen">
         <button type="button"
                 class="rb-nav-link rb-nav-link-btn"
@@ -55,23 +52,17 @@
           <a role="menuitem" routerLink="/leaderboard" (click)="closeMenus()">
             🏆 Weekly leaderboard
           </a>
-          <div class="rb-dd-sep" *ngIf="isEmployer"></div>
-          <a *ngIf="isEmployer" role="menuitem" routerLink="/employer/dashboard" (click)="closeMenus()">
+          <div class="rb-dd-sep" *ngIf="effectiveIsEmployer"></div>
+          <a *ngIf="effectiveIsEmployer" role="menuitem" routerLink="/employer/dashboard" (click)="closeMenus()">
             Employer dashboard
           </a>
         </div>
       </div>
-
-      <a routerLink="/jobs" class="rb-nav-link" [class.rb-active]="active === 'jobs'">Jobs</a>
     </nav>
 
     <div class="rb-nav-right">
-      <a routerLink="/notifications" class="rb-nav-icon" aria-label="Notifications" title="Notifications">
-        <rb-icon name="bell" size="18" />
-      </a>
-      <a routerLink="/messages" class="rb-nav-icon" aria-label="Messages" title="Messages">
-        <rb-icon name="message-square" size="18" />
-      </a>
+      <!-- Settings is the only icon kept in MVP. Notifications + Messages
+           are deferred routes; surfacing them as icons would mislead users. -->
       <a routerLink="/settings" class="rb-nav-icon" aria-label="Settings" title="Settings">
         <rb-icon name="settings" size="18" />
       </a>
