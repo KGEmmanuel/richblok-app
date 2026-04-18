@@ -1,12 +1,9 @@
 import { Title, Meta } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
 import { Entreprise } from '../shared/entites/Entreprise';
 import { OrganisationService } from '../shared/services/organisation.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -26,6 +23,8 @@ export class CreateOrganisationComponent implements OnInit {
     this.Form = true;
 
   }
+  private auth = inject(Auth);
+
   constructor(private organisationSvc: OrganisationService,private toastr: ToastrService, private router: Router,
               private route: ActivatedRoute, private title:Title, private meta: Meta) {
   }
@@ -42,7 +41,7 @@ export class CreateOrganisationComponent implements OnInit {
     this.step -= 1;
   }
   save() {
-    this.currentEts.utilisateurId = firebase.auth().currentUser.uid;
+    this.currentEts.utilisateurId = this.auth.currentUser?.uid;
     this.currentEts.dateCreation = new Date();
     this.organisationSvc.save(this.currentEts).then(val => {
       this.toastr.success('Company created successfully', 'Success');

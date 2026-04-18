@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Demonstration } from 'src/app/shared/entites/demonstration';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { Experience } from 'src/app/shared/entites/Experience';
@@ -17,9 +17,8 @@ import { ToastrService } from 'ngx-toastr';
 import { DemonstrateService } from 'src/app/shared/services/demonstrate.service';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 import { Media } from 'src/app/shared/entites/Media';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { Storage, ref as storageRef, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-demonstrate-form',
@@ -52,6 +51,8 @@ export class DemonstrateFormComponent implements OnInit {
   currentitemId: string;
   // realisations: Array<any>
 
+  private auth = inject(Auth);
+  private storage = inject(Storage);
 
   constructor(private sanitizer: DomSanitizer, private expSvc: ExperienceService, private formSvc: FormationService
     , private skillSvc: SkillsService, private lngSvc: LanguageService, private route: ActivatedRoute,
@@ -145,8 +146,7 @@ export class DemonstrateFormComponent implements OnInit {
       this.currentDemonst.relatedElement = this.currentitemId;
      // alert(this.currentitemId);
     }
-    firebase.auth().onAuthStateChanged(val => {
-      // // alert(val);
+    onAuthStateChanged(this.auth, val => {
       if (val) {
         this.uid = val.uid;
         this.userSvc.getDocRef(this.uid).onSnapshot(v => {
@@ -207,9 +207,9 @@ export class DemonstrateFormComponent implements OnInit {
       this.contentmedia.src = this.currentDemonst.content;
       this.post.medias.push(this.contentmedia);
     }
-    const fileRef = firebase.storage().ref(filePath);
+    const fileRef = storageRef(this.storage, filePath);
     this.files.forEach(f => {
-      this.uploadpromise.push(fileRef.put(f).then(a => {
+      this.uploadpromise.push(uploadBytes(fileRef, f).then(() => {
         if (!this.currentDemonst.medias) {
           this.currentDemonst.medias = new Array<Media>();
         }
@@ -226,14 +226,13 @@ export class DemonstrateFormComponent implements OnInit {
             }
           }
         }
-        fileRef.getDownloadURL().then(v => {
+        return getDownloadURL(fileRef).then(v => {
           med.src = v;
           console.log('cool dem ' + med);
           this.currentDemonst.medias.push(med);
           this.post.medias.push(med);
-          console.log(this.currentDemonst.medias);
         });
-      }).catch(err => {
+      }).catch((err: any) => {
         console.log('error', err.message);
       }));
     });

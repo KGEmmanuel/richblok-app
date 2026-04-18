@@ -1,10 +1,8 @@
-import { Component, OnInit, ɵConsole, EventEmitter, Output, Input } from '@angular/core';
+import { Component, OnInit, ɵConsole, EventEmitter, Output, Input, inject } from '@angular/core';
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
 import { Skill } from '../../../shared/entites/Skill';
 import { SkillsService } from '../../../shared/services/skills.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -39,6 +37,8 @@ submitted = false;
   }
   owner;
   skillpropositions = [];
+  private auth = inject(Auth);
+
   constructor(private userSvc: UtilisateurService, private skillSvc: SkillsService,
               private tostSvc: ToastrService, private loadsvc: NgxUiLoaderService, private formBuilder: UntypedFormBuilder) {
 
@@ -49,8 +49,8 @@ submitted = false;
     if (!this.currentSkill) {
       this.currentSkill = new Skill();
     }
-    firebase.auth().onAuthStateChanged(v => {
-      this.owner = v.uid;
+    onAuthStateChanged(this.auth, v => {
+      this.owner = v ? v.uid : null;
     });
     this.skillSvc.getAllUserSkills().onSnapshot(vla => {
 

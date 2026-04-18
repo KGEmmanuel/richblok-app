@@ -1,12 +1,10 @@
 import { Utilisateur } from './../../../shared/entites/Utilisateur';
 import { UtilisateurService } from './../../../shared/services/utilisateur.service';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { Post } from 'src/app/shared/entites/Post';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Firestore, arrayRemove, arrayUnion, doc, updateDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-evaluate-item',
@@ -24,6 +22,9 @@ export class EvaluateItemComponent implements OnInit {
   @Input()
   preview = false;
   showcomments = false;
+
+  private firestore = inject(Firestore);
+
   constructor(private router: Router,private usrSvc: UtilisateurService) { }
 
 
@@ -59,28 +60,22 @@ export class EvaluateItemComponent implements OnInit {
   }
 
   like() {
-    const db = firebase.firestore();
     this.currentPost.userliked.push(this.user.id);
-    var dbref = db.collection('posts').doc(this.currentPost.id);
-    dbref.update({
-      userliked: firebase.firestore.FieldValue.arrayUnion(this.user.id)
+    updateDoc(doc(this.firestore, 'posts', this.currentPost.id), {
+      userliked: arrayUnion(this.user.id)
     });
   }
 
   unlike() {
-    const db = firebase.firestore();
     const idx = this.currentPost.userliked.indexOf(this.user.id);
     this.currentPost.userliked.splice(idx);
-    // this.postItem.userliked.push(this.currentuser.id);
-    var dbref = db.collection('posts').doc(this.currentPost.id);
-    dbref.update({
-      userliked: firebase.firestore.FieldValue.arrayRemove(this.user.id)
+    updateDoc(doc(this.firestore, 'posts', this.currentPost.id), {
+      userliked: arrayRemove(this.user.id)
     });
   }
 
   tooglecomments(){
     this.showcomments = !this.showcomments;
-   // alert( this.showcomments)
   }
 
 }

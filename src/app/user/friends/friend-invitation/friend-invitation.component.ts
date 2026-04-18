@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { UtilisateurService } from 'src/app/shared/services/utilisateur.service';
 
 @Component({
@@ -12,15 +10,18 @@ import { UtilisateurService } from 'src/app/shared/services/utilisateur.service'
 })
 export class FriendInvitationComponent implements OnInit {
   currentUser = new Utilisateur();
+
+  private auth = inject(Auth);
+
   constructor(private userSvc: UtilisateurService) { }
   ngOnInit() {
-    firebase.auth().onAuthStateChanged(v=>{
-       this.userSvc.getDocRef(v.uid).onSnapshot(val=>{
-          this.currentUser = val.data() as Utilisateur;
-          this.currentUser.id = val.id;
-          console.log(this.currentUser.demandesabonnees);
-          // this.currentUser.demandesabonnees
-       });
+    onAuthStateChanged(this.auth, v => {
+      if (!v) { return; }
+      this.userSvc.getDocRef(v.uid).onSnapshot(val => {
+        this.currentUser = val.data() as Utilisateur;
+        this.currentUser.id = val.id;
+        console.log(this.currentUser.demandesabonnees);
+      });
     });
 
   }

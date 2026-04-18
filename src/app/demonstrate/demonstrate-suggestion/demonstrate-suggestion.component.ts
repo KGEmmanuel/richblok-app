@@ -1,12 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Incitation } from 'src/app/shared/entites/Incitation';
 import { ExperienceService } from 'src/app/shared/services/experience.service';
 import { SkillsService } from 'src/app/shared/services/skills.service';
 import { FormationService } from 'src/app/shared/services/formation.service';
 import { Skill } from 'src/app/shared/entites/Skill';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-demonstrate-suggestion',
@@ -20,11 +18,14 @@ export class DemonstrateSuggestionComponent implements OnInit {
 
 
 
+  private auth = inject(Auth);
+
   constructor(private sksvc: SkillsService, private expSvc: ExperienceService, private formSvc: FormationService) { }
 
   ngOnInit() {
 
-    firebase.auth().onAuthStateChanged(val => {
+    onAuthStateChanged(this.auth, val => {
+      if (!val) { return; }
       const userid = val.uid;
       this.sksvc.getSkillsof(userid).onSnapshot(skl => {
         this.incitations = [];
