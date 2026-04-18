@@ -25,13 +25,25 @@
         {{currentChal?.description}}
         <br>
         <br>
-        <span style="font-size: 1em; font-weight: bold;" class="text-danger" *ngIf="currentChal?.note != null">Pass mark : {{currentChal.note}}/{{currentChal.questions.length}}</span>
+        <!-- MVP Sprint A fix: only render the "Pass mark: N/M" line when there
+             IS an M. AI-pair challenges have no MCQ questions → questions.length
+             is 0 → the old template printed "60/0" which looked broken. -->
+        <span
+            style="font-size: 1em; font-weight: bold;" class="text-danger"
+            *ngIf="currentChal?.note != null && (currentChal?.questions?.length || 0) > 0">
+            Pass mark : {{currentChal.note}}/{{currentChal.questions.length}}
+        </span>
+        <span
+            style="font-size: 1em; font-weight: bold;" class="text-danger"
+            *ngIf="currentChal?.note != null && !(currentChal?.questions?.length)">
+            Pass mark : {{currentChal.note}}%
+        </span>
         <div class="row" style="margin-top: 2%;">
-            <div class="col-lg-6">
+            <div class="col-lg-6" *ngIf="currentChal?.duree">
                 <span style="font-size: 1.5em;">{{currentChal?.duree}} Seconds</span>
             </div>
-            <div class="col-lg-6 d-flex justify-content-end">
-                <span style="font-size: 1.5em;">{{currentChal?.questions.length}} Question<span *ngIf="currentChal.questions.length > 1">s</span></span>
+            <div class="col-lg-6 d-flex justify-content-end" *ngIf="(currentChal?.questions?.length || 0) > 0">
+                <span style="font-size: 1.5em;">{{currentChal.questions.length}} Question<span *ngIf="currentChal.questions.length > 1">s</span></span>
             </div>
         </div>
     </div>

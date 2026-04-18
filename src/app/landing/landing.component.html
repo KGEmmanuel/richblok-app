@@ -20,7 +20,9 @@
   <section class="rb-hero">
     <div class="rb-hero-inner">
       <div class="rb-hero-copy">
-        <div class="rb-pill">
+        <!-- MVP Sprint A: real social proof only. Pill hides until the
+             verified-badge count crosses the honesty threshold. -->
+        <div class="rb-pill" *ngIf="showBadgeCounter">
           <span class="rb-pill-dot"></span>
           <span>{{ badgeCount | number }} {{ t('counter_prefix') }}</span>
         </div>
