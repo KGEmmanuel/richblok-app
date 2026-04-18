@@ -1,7 +1,5 @@
-<header>
-    <app-header></app-header>
-</header>
-<div class="py-4" *ngIf="currentUser">
+<!-- D1 / V5 Sprint 2: chrome swapped; inner Bootstrap layout for D2. -->
+<rb-app-shell active="profile" *ngIf="currentUser">
     <div class="container">
         <div class="row">
             <!-- Main Content -->
@@ -95,7 +93,4 @@
 
         </div>
     </div>
-</div>
-<footer>
-    <app-footer></app-footer>
-</footer>
+</rb-app-shell>

@@ -1,7 +1,7 @@
-<header>
-    <app-header></app-header>
-</header>
-<div class="py-4">
+<!-- D1 / V5 Sprint 2: legacy <app-header>+<footer> swapped for <rb-app-shell>.
+     Inner 3-column Bootstrap grid + data-toggle tabs intentionally left intact
+     — those are D2 (Bootstrap kill) work. This commit swaps chrome only. -->
+<rb-app-shell active="profile">
     <div class="container">
         <div class="row">
             <!-- Main Content -->
@@ -88,6 +88,4 @@
             </aside>
         </div>
     </div>
-</div>
-<footer>
-</footer>
+</rb-app-shell>
