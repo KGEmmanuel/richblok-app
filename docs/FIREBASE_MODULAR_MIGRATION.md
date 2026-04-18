@@ -1,5 +1,48 @@
 # D7 — Full modular Firebase SDK migration
 
+## Status: blocked on a firebase SDK upgrade + a dedicated 2-3 day session.
+## ~400 KB savings awaiting.
+
+## ⚠️ DAY 0 BLOCKER DISCOVERED (2026-04-18)
+
+An in-session attempt to kick off D7 revealed a version gate that wasn't in
+the original plan:
+
+  **`@angular/fire` 7.6.1 expects `firebase` ≥ 9.16 for its modular entry.**
+  We ship `firebase: 9.6.0`.
+
+Symptom when adding `provideFirestore(() => getFirestore())` to AppModule:
+
+```
+./node_modules/rxfire/firestore/index.esm.js:358:14-32
+Error: export 'getCountFromServer' (imported as 'getCountFromServer')
+was not found in 'firebase/firestore'
+```
+
+`getCountFromServer` landed in firebase 9.16. rxfire (a transitive dep of
+@angular/fire modular) assumes it exists.
+
+### Why this matters
+
+You cannot do the modular migration without upgrading `firebase` first.
+Upgrading `firebase` 9.6 → 9.23 is a minor version bump inside the same
+major, but it IS a separate risk event (Firestore query semantics have
+had subtle changes across 9.x minors; `signInWithPopup` reconnect logic
+was rewritten in 9.15). **Don't combine the two.**
+
+### New Day-0 step (prepend to the sprint plan below)
+
+```bash
+# 1. Upgrade firebase to the latest 9.x compatible with @angular/fire 7.6.1.
+npm install --save --legacy-peer-deps firebase@^9.23.0
+# 2. Regression pass (smoke test every Firestore-reading page and Google OAuth).
+# 3. Ship that as its own commit BEFORE starting D7.
+# 4. Only then start the AppModule provider swap.
+```
+
+Budget for the firebase upgrade itself: 1 day including regression testing.
+So the total D7 runway is now **3-4 days**, not 2-3.
+
 ## Status: planned, NOT started. ~400 KB savings awaiting.
 
 This is Tier D7 from the roadmap. The effort estimate is 2-3 days of
