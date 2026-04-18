@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import firebase from 'firebase/compat/app';
+import { Component, OnInit, Input, inject } from '@angular/core';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { WhereFilterOp } from '@angular/fire/firestore';
 import { Post } from '../../../shared/entites/Post';
 import { PaginationService } from '../../../shared/services/pagination.service';
 import { PostService } from '../../../shared/services/post.service';
@@ -37,17 +38,19 @@ export class PostListComponent implements OnInit {
 
   uid;
   keys: string[] = [];
-  operator: firebase.firestore.WhereFilterOp[] = [];
+  operator: WhereFilterOp[] = [];
   values: object[] = [];
   tags: Array<string>;
   users: Observable<Utilisateur[]>;
+
+  private auth = inject(Auth);
 
   constructor(private usvc: UtilisateurService,public page: PaginationService, private postSvc: PostService, private jobSvc: OffreEmploiService,) {
 
   }
 
   ngOnInit(): void {
-    firebase.auth().onAuthStateChanged(v => {
+    onAuthStateChanged(this.auth, v => {
       this.uid = v.uid;
       if (this.uid) {
         //  this.loadposts();
