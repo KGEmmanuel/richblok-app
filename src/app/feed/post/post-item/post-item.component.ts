@@ -1,11 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 import { Utilisateur } from '../../../shared/entites/Utilisateur';
 import { Post } from '../../../shared/entites/Post';
 import { UtilisateurService } from '../../../shared/services/utilisateur.service';
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { PostService } from '../../../shared/services/post.service';
-import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-post-item',
@@ -26,12 +26,22 @@ export class PostItemComponent implements OnInit {
 
 
 
-  constructor(private userSvc: UtilisateurService, private afAuth: AngularFireAuth, private postSvc: PostService, config: NgbPopoverConfig) {
+  constructor(
+    private userSvc: UtilisateurService,
+    private afAuth: AngularFireAuth,
+    private postSvc: PostService,
+    private modalService: NgbModal,            // D2: share modal now opens via NgbModal
+    config: NgbPopoverConfig
+  ) {
     config.placement = 'right';
     config.triggers = 'hover';
     config.autoClose = 'outside';
     config.closeDelay = 1000000;
    }
+
+  openShareModal(tpl: TemplateRef<any>) {
+    this.modalService.open(tpl, { size: 'lg', ariaLabelledBy: 'post-share' });
+  }
 
   ngOnInit() {
 
