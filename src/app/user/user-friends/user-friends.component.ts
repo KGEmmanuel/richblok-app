@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { UserService } from 'src/app/shared/services/user.service';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+
+// D7 Day 2 Batch C — modular Auth; AngularFirestore unused.
 
 @Component({
   selector: 'app-user-friends',
@@ -13,14 +14,13 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 export class UserFriendsComponent implements OnInit {
   currentUser: Utilisateur;
   views = 0;
-  constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
-              private afs: AngularFirestore, private userSvc: UserService) {
 
-  }
+  private auth = inject(Auth);
+
+  constructor(public AuthSvc: AuthService, private userSvc: UserService) {}
 
   ngOnInit() {
-
-    this.afAuth.authState.subscribe(user => {
+    authState(this.auth).subscribe(user => {
       if (user) {
         this.userSvc.get(user.uid).subscribe(v => {
           this.currentUser = v;
@@ -28,7 +28,5 @@ export class UserFriendsComponent implements OnInit {
         });
       }
     });
-
   }
-
 }

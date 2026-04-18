@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from '../shared/services/auth.service';
 import { Utilisateur } from '../shared/entites/Utilisateur';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { UserService } from '../shared/services/user.service';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
+// D7 Day 2 Batch C — modular Auth. Firestore is unused here so the import
+// can be dropped entirely (UserService encapsulates the profile read).
 
 @Component({
   selector: 'app-header',
@@ -14,16 +14,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-organisations: boolean = false;
+  organisations: boolean = false;
   currentUser: Utilisateur;
-  constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
-    private afs: AngularFirestore, private userSvc: UserService, private router: Router) {
 
-  }
+  private auth = inject(Auth);
+
+  constructor(public AuthSvc: AuthService, private userSvc: UserService, private router: Router) {}
 
   ngOnInit() {
-
-    this.afAuth.authState.subscribe(user => {
+    authState(this.auth).subscribe(user => {
       if (user) {
         this.userSvc.get(user.uid).subscribe(v => {
           this.currentUser = v;
@@ -33,42 +32,14 @@ organisations: boolean = false;
     this.currentUser = new Utilisateur();
   }
 
-  logout(){
-    this.AuthSvc.SignOut();
-  }
-showOrgs(){
-  this.organisations = !this.organisations;
-}
-  feed() {
-    this.router.navigateByUrl('/feed');
-  }
-
-  messages() {
-    this.router.navigateByUrl('/messages');
-  }
-
-  record() {
-    this.router.navigateByUrl('/record');
-  }
-
-  demonstrate() {
-    this.router.navigateByUrl('/demonstrate');
-  }
-
-  evaluate() {
-    this.router.navigateByUrl('/evaluate');
-  }
-
-  jobs() {
-    this.router.navigateByUrl('/jobs');
-  }
-
-  friends() {
-    this.router.navigateByUrl('/friends');
-  }
-
-  notifications() {
-    this.router.navigateByUrl('/notifications');
-  }
-
+  logout() { this.AuthSvc.SignOut(); }
+  showOrgs() { this.organisations = !this.organisations; }
+  feed()          { this.router.navigateByUrl('/me?tab=feed'); }
+  messages()      { this.router.navigateByUrl('/messages'); }
+  record()        { this.router.navigateByUrl('/me?tab=portfolio'); }
+  demonstrate()   { this.router.navigateByUrl('/demonstrate'); }
+  evaluate()      { this.router.navigateByUrl('/evaluate'); }
+  jobs()          { this.router.navigateByUrl('/jobs'); }
+  friends()       { this.router.navigateByUrl('/friends'); }
+  notifications() { this.router.navigateByUrl('/notifications'); }
 }

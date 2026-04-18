@@ -1,12 +1,13 @@
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
 import { AuthService } from '../shared/services/auth.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UserService } from '../shared/services/user.service';
+import { Auth, authState } from '@angular/fire/auth';
 import { ActivatedRoute } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
 import { Title, Meta } from '@angular/platform-browser';
+
+// D7 Day 2 Batch C — modular Auth; AngularFirestore was unused, UserService
+// not referenced (imported but never injected originally).
 
 @Component({
   selector: 'app-user',
@@ -18,11 +19,11 @@ export class UserComponent implements OnInit {
   currentUser: Utilisateur;
   visiteduser: Utilisateur;
   views = 0;
-  constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
-    private afs: AngularFirestore, private userSvc: UtilisateurService, private route: ActivatedRoute,
-    private title: Title, private meta : Meta) {
 
-  }
+  private auth = inject(Auth);
+
+  constructor(public AuthSvc: AuthService, private userSvc: UtilisateurService, private route: ActivatedRoute,
+    private title: Title, private meta: Meta) {}
 
   ngOnInit() {
     this.title.setTitle('RichBlok | Profile');
@@ -32,34 +33,24 @@ export class UserComponent implements OnInit {
       this.userSvc.get(id).subscribe(v => {
         this.currentUser = v;
 
-        this.afAuth.authState.subscribe(user => {
+        authState(this.auth).subscribe(user => {
           if (user) {
-            if(!this.currentUser.visiteurs){
+            if (!this.currentUser.visiteurs) {
               this.currentUser.visiteurs = [];
             }
-            if(!this.currentUser.visiteurs.includes(user.uid)){
+            if (!this.currentUser.visiteurs.includes(user.uid)) {
               this.currentUser.visiteurs.push(user.uid);
-                this.userSvc.update(this.currentUser.id,{visiteurs:this.currentUser.visiteurs});
+              this.userSvc.update(this.currentUser.id, { visiteurs: this.currentUser.visiteurs });
             }
           }
         });
         this.views = this.currentUser.visiteurs ? this.currentUser.visiteurs.length : 0;
       });
     });
-/*
-    this.afAuth.authState.subscribe(user => {
-      if (user) {
-        this.userSvc.get(user.uid).subscribe(v => {
-
-          this.currentUser = v;
-          this.views = this.currentUser.visiteurs ? this.currentUser.visiteurs.length : 0;
-        });
-      }
-    });
-    this.currentUser = new Utilisateur();*/
     this.currentUser = new Utilisateur();
   }
-  logout(){
+
+  logout() {
     this.AuthSvc.SignOut();
   }
 }

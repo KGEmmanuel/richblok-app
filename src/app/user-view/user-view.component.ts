@@ -5,11 +5,10 @@ import { SkillsService } from './../shared/services/skills.service';
 import { Skill } from './../shared/entites/Skill';
 import { FormationService } from './../shared/services/formation.service';
 import { Formation } from './../shared/entites/Formation';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Utilisateur } from '../shared/entites/Utilisateur';
 import { AuthService } from '../shared/services/auth.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { UserService } from '../shared/services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { UtilisateurService } from '../shared/services/utilisateur.service';
@@ -33,14 +32,13 @@ export class UserViewComponent implements OnInit {
   showexp: number;
   showfrm: number;
 
-  constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
-              private afs: AngularFirestore, private userSvc: UtilisateurService, private route: ActivatedRoute,
-              private title: Title, private meta : Meta,
+  private auth = inject(Auth);
+
+  constructor(public AuthSvc: AuthService, private userSvc: UtilisateurService, private route: ActivatedRoute,
+              private title: Title, private meta: Meta,
               private expSvc: ExperienceService, private trainSvc: FormationService,
               private skillSvc: SkillsService, private realSvc: PortfolioService,
-              private seo: SeoService) {
-
-  }
+              private seo: SeoService) {}
   form = false;
   uid;
 
@@ -83,7 +81,7 @@ export class UserViewComponent implements OnInit {
             this.realisations.push(rl);
           });
         });
-        this.afAuth.authState.subscribe(user => {
+        authState(this.auth).subscribe(user => {
           if (user) {
             if(!this.currentUser.visiteurs){
               this.currentUser.visiteurs = [];

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Component, OnInit, inject } from '@angular/core';
+import { Auth, authState } from '@angular/fire/auth';
+import { Firestore, collection, doc, getDoc, getDocs, query, where, limit } from '@angular/fire/firestore';
 import { AnalyticsService } from '../shared/services/analytics.service';
 import { first } from 'rxjs/operators';
 
@@ -31,16 +31,17 @@ export class UniversityDashboardComponent implements OnInit {
   totalBadges = 0;
   avgScore = 0;
 
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth,
     private analytics: AnalyticsService
   ) {}
 
   ngOnInit() {
     this.analytics.pageView('university_dashboard');
 
-    this.afAuth.authState.pipe(first()).subscribe(user => {
+    authState(this.auth).pipe(first()).subscribe(async user => {
       if (!user) {
         this.isPilotPreview = true;
         this.institutionName = 'Pilot preview';
@@ -50,28 +51,29 @@ export class UniversityDashboardComponent implements OnInit {
       // University admins have role === 'university_admin' + institution_id
       // stored on their user doc. Everyone else gets a pilot preview of the
       // global cohort so the dashboard is never empty during sales demos.
-      this.afs.doc(`utilisateurs/${user.uid}`).valueChanges().pipe(first()).subscribe((u: any) => {
-        if (u && u.role === 'university_admin' && u.institution_id) {
-          this.institutionId = u.institution_id;
-          this.institutionName = u.institution_name || u.institution_id;
-          this.loadCohort(u.institution_id);
-        } else {
-          this.isPilotPreview = true;
-          this.institutionName = 'Pilot preview · your cohort';
-          this.loadCohort(null);
-        }
-      });
+      const userSnap = await getDoc(doc(this.firestore, 'utilisateurs', user.uid));
+      const u: any = userSnap.exists() ? userSnap.data() : null;
+      if (u && u.role === 'university_admin' && u.institution_id) {
+        this.institutionId = u.institution_id;
+        this.institutionName = u.institution_name || u.institution_id;
+        this.loadCohort(u.institution_id);
+      } else {
+        this.isPilotPreview = true;
+        this.institutionName = 'Pilot preview · your cohort';
+        this.loadCohort(null);
+      }
     });
   }
 
   private loadCohort(institutionId: string | null) {
+    const usersCol = collection(this.firestore, 'utilisateurs');
     const studentsQuery = institutionId
-      ? this.afs.collection('utilisateurs', ref => ref.where('institution_id', '==', institutionId).limit(500))
-      : this.afs.collection('utilisateurs', ref => ref.limit(200));
+      ? query(usersCol, where('institution_id', '==', institutionId), limit(500))
+      : query(usersCol, limit(200));
 
     Promise.all([
-      studentsQuery.get().pipe(first()).toPromise(),
-      this.afs.collection('badges').get().pipe(first()).toPromise()
+      getDocs(studentsQuery),
+      getDocs(collection(this.firestore, 'badges'))
     ]).then(([usersSnap, badgesSnap]) => {
       const studentUids = new Set<string>(usersSnap.docs.map(d => d.id));
 

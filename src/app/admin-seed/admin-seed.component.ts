@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Component, inject } from '@angular/core';
+import { Auth, authState } from '@angular/fire/auth';
+import {
+  Firestore, addDoc, collection, doc, getDocs, limit, query, serverTimestamp,
+  setDoc, where
+} from '@angular/fire/firestore';
 import { CHALLENGES_SEED } from '../shared/data/challenges-seed';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { first } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
 
 interface SeedStatus {
   slug: string;
@@ -23,10 +25,8 @@ export class AdminSeedComponent {
   running = false;
   statuses: SeedStatus[] = [];
 
-  constructor(
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth
-  ) {}
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
 
   async runSeed() {
     if (this.running) { return; }
@@ -35,12 +35,14 @@ export class AdminSeedComponent {
       slug: c.slug, title: c.titre, status: 'pending' as const
     }));
 
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) {
       this.statuses.forEach(s => { s.status = 'error'; s.message = 'Sign in first'; });
       this.running = false;
       return;
     }
+
+    const challengesCol = collection(this.firestore, 'challenges');
 
     for (let i = 0; i < CHALLENGES_SEED.length; i++) {
       const c = CHALLENGES_SEED[i];
@@ -48,25 +50,25 @@ export class AdminSeedComponent {
       st.status = 'creating';
       try {
         // Upsert by slug: if a challenge with this slug already exists, overwrite it.
-        const existing = await this.afs.collection('challenges', ref =>
-          ref.where('slug', '==', c.slug).limit(1)
-        ).get().pipe(first()).toPromise();
+        const existing = await getDocs(
+          query(challengesCol, where('slug', '==', c.slug), limit(1))
+        );
 
         const payload: any = {
           ...c,
           creatorRef: user.uid,
           dateCreation: new Date(),
-          dateDeb: firebase.firestore.FieldValue.serverTimestamp(),
+          dateDeb: serverTimestamp(),
           dateFin: null
         };
 
         if (existing && !existing.empty) {
           const docId = existing.docs[0].id;
-          await this.afs.collection('challenges').doc(docId).set(payload, { merge: true });
+          await setDoc(doc(this.firestore, 'challenges', docId), payload, { merge: true });
           st.id = docId;
           st.message = 'Updated existing';
         } else {
-          const ref = await this.afs.collection('challenges').add(payload);
+          const ref = await addDoc(challengesCol, payload);
           st.id = ref.id;
           st.message = 'Created new';
         }

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
+import { Firestore, collection, doc, getDoc, getDocs } from '@angular/fire/firestore';
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
 import { CompetencyTag } from '../shared/entites/Challenge';
@@ -54,38 +54,36 @@ export class AdminChallengesComponent implements OnInit {
     'solo_capstone', 'team', 'hackathon', 'pivot', 'review', 'oss'
   ];
 
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
     private http: HttpClient,
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth,
     private toastr: ToastrService
   ) {}
 
   ngOnInit() {
-    this.afAuth.authState.pipe(first()).subscribe(user => {
+    authState(this.auth).pipe(first()).subscribe(async user => {
       if (!user) {
         this.isAdmin = false;
         this.loading = false;
         return;
       }
-      this.afs.doc(`utilisateurs/${user.uid}`).valueChanges().pipe(first())
-        .subscribe((u: any) => {
-          this.isAdmin = u && u.role === 'admin';
-          this.loadChallenges();
-        });
+      const userSnap = await getDoc(doc(this.firestore, 'utilisateurs', user.uid));
+      const u: any = userSnap.exists() ? userSnap.data() : null;
+      this.isAdmin = u && u.role === 'admin';
+      this.loadChallenges();
     });
   }
 
-  private loadChallenges() {
-    this.afs.collection<AdminChallenge>('challenges').snapshotChanges().pipe(first())
-      .subscribe(snaps => {
-        this.challenges = snaps.map(s => {
-          const data = s.payload.doc.data() as AdminChallenge;
-          data.id = s.payload.doc.id;
-          return data;
-        }).sort((a, b) => (a.titre || '').localeCompare(b.titre || ''));
-        this.loading = false;
-      });
+  private async loadChallenges() {
+    const snap = await getDocs(collection(this.firestore, 'challenges'));
+    this.challenges = snap.docs.map(d => {
+      const data = d.data() as AdminChallenge;
+      data.id = d.id;
+      return data;
+    }).sort((a, b) => (a.titre || '').localeCompare(b.titre || ''));
+    this.loading = false;
   }
 
   newChallenge() {
@@ -134,7 +132,7 @@ export class AdminChallengesComponent implements OnInit {
       .split(',').map(s => s.trim()).filter(Boolean);
     this.saving = true;
     try {
-      const user = await this.afAuth.authState.pipe(first()).toPromise();
+      const user = await authState(this.auth).pipe(first()).toPromise();
       const token = user ? await user.getIdToken() : '';
       const resp: any = await this.http.post('/api/admin/challenges',
         this.editing,
@@ -158,7 +156,7 @@ export class AdminChallengesComponent implements OnInit {
     if (!c.id) { return; }
     if (!confirm(`Delete "${c.titre}"? This cannot be undone.`)) { return; }
     try {
-      const user = await this.afAuth.authState.pipe(first()).toPromise();
+      const user = await authState(this.auth).pipe(first()).toPromise();
       const token = user ? await user.getIdToken() : '';
       await this.http.delete('/api/admin/challenges/' + c.id,
         { headers: new HttpHeaders({ Authorization: 'Bearer ' + token }) }

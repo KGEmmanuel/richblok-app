@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+// D7 Day 2 Batch C — modular Firebase.
+import { Auth, authState } from '@angular/fire/auth';
+import { Firestore, collection, query, where, limit, getDocs } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
-import { filter, first, map } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 import {
   RbAppShellComponent,
@@ -115,13 +116,14 @@ export class MeComponent implements OnInit, OnDestroy {
 
   private sub?: Subscription;
 
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private title: Title,
     private meta: Meta,
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth,
     private analytics: AnalyticsService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -136,7 +138,7 @@ export class MeComponent implements OnInit, OnDestroy {
     });
 
     // Resolve auth once — everything else depends on uid.
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) {
       this.loading = false;
       this.cdr.markForCheck();
@@ -179,13 +181,13 @@ export class MeComponent implements OnInit, OnDestroy {
   private async loadBadges() {
     if (!this.uid) return;
     try {
-      const snap = await this.afs
-        .collection('badges', ref => ref.where('uid', '==', this.uid).limit(100))
-        .get()
-        .pipe(first())
-        .toPromise();
+      const snap = await getDocs(query(
+        collection(this.firestore, 'badges'),
+        where('uid', '==', this.uid),
+        limit(100)
+      ));
       const rows: BadgeCard[] = [];
-      snap!.forEach(d => {
+      snap.forEach(d => {
         const data: any = d.data();
         rows.push({
           id:               d.id,
@@ -223,13 +225,12 @@ export class MeComponent implements OnInit, OnDestroy {
     // STAR profiles — count answers owned by this uid.
     if (this.uid) {
       try {
-        const starSnap = await this.afs
-          .collection('star_profiles', ref => ref.where('uid', '==', this.uid))
-          .get()
-          .pipe(first())
-          .toPromise();
+        const starSnap = await getDocs(query(
+          collection(this.firestore, 'star_profiles'),
+          where('uid', '==', this.uid)
+        ));
         let count = 0;
-        starSnap!.forEach(d => {
+        starSnap.forEach(d => {
           const data: any = d.data();
           if (Array.isArray(data.answers)) count += data.answers.length;
         });
