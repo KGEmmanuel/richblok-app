@@ -1,17 +1,16 @@
 import { ChallengeParticipationAnswer } from './../../../shared/entites/ChallengeParticipationAnswer';
 import { ChallengeService } from './../../../shared/services/challenge.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Challenge } from 'src/app/shared/entites/Challenge';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChalengeParticipation } from 'src/app/shared/entites/ChallengeParticipation';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
+import { Firestore, addDoc, collection, doc, getDoc, serverTimestamp } from '@angular/fire/firestore';
 import { AnalyticsService } from 'src/app/shared/services/analytics.service';
 import { StarMapperService } from 'src/app/shared/services/star-mapper.service';
 import { CompetencyTag } from 'src/app/shared/entites/Challenge';
 import { HttpClient } from '@angular/common/http';
-import firebase from 'firebase/compat/app';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -29,12 +28,13 @@ export class ParticipateToChallengeComponent implements OnInit {
   currentAnswer = new ChallengeParticipationAnswer();
   currentparticipation: ChalengeParticipation;
 
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
     private router: Router,
     private chalSvc: ChallengeService,
     private route: ActivatedRoute,
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth,
     private analytics: AnalyticsService,
     private starMapper: StarMapperService,
     private http: HttpClient
@@ -100,15 +100,15 @@ export class ParticipateToChallengeComponent implements OnInit {
     const level = this.inferLevel(this.currentChal);
 
     // Resolve user info
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
 
     let userName = '';
     let userAvatar = '';
     let userCountry = '';
     if (user) {
       try {
-        const userDoc = await this.afs.doc(`utilisateurs/${user.uid}`).get().pipe(first()).toPromise();
-        const ud: any = userDoc && userDoc.data ? userDoc.data() : null;
+        const userSnap = await getDoc(doc(this.firestore, 'utilisateurs', user.uid));
+        const ud: any = userSnap.exists() ? userSnap.data() : null;
         if (ud) {
           userName = [ud.prenom, ud.nom].filter(Boolean).join(' ').trim() || user.displayName || user.email || '';
           userAvatar = ud.imageprofil || user.photoURL || '';
@@ -123,7 +123,7 @@ export class ParticipateToChallengeComponent implements OnInit {
     }
 
     const primarySkill = (this.currentChal.skills && this.currentChal.skills[0]) || this.currentChal.titre;
-    const earnedAt = firebase.firestore.FieldValue.serverTimestamp();
+    const earnedAt = serverTimestamp();
     const verificationHash = this.hash(`${user?.uid}|${this.currentChal.id}|${Date.now()}`);
     const passed = correct >= (this.currentChal.note || 12);
 
@@ -151,7 +151,7 @@ export class ParticipateToChallengeComponent implements OnInit {
       this.currentparticipation.participant = user ? user.uid : 'anonymous';
       this.currentparticipation.participationDate = new Date();
       this.currentparticipation.succeed = passed;
-      await this.afs.collection('challenge_participations').add({
+      await addDoc(collection(this.firestore, 'challenge_participations'), {
         ...this.currentparticipation,
         score,
         percentile,
@@ -159,7 +159,7 @@ export class ParticipateToChallengeComponent implements OnInit {
       });
 
       // Create badge doc
-      const badgeRef = await this.afs.collection('badges').add(badgePayload);
+      const badgeRef = await addDoc(collection(this.firestore, 'badges'), badgePayload);
       const badgeId = badgeRef.id;
 
       // Track analytics
@@ -272,7 +272,7 @@ export class ParticipateToChallengeComponent implements OnInit {
     // Try to auto-match the user to an accountability pod (4-6 people starting
     // this same challenge within a 7-day rolling window). Non-blocking; a
     // failure here must never block challenge start.
-    this.afAuth.authState.pipe(first()).subscribe(u => {
+    authState(this.auth).pipe(first()).subscribe(u => {
       if (!u || !this.currentChal.id) { return; }
       this.http.post('/api/pods/match', {
         uid: u.uid,

@@ -1,10 +1,20 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+// D7 Day 2 Batch C — modular Firebase.
+import { Auth, authState } from '@angular/fire/auth';
+import {
+  Firestore,
+  collection,
+  query,
+  where,
+  limit,
+  getDocs,
+  addDoc,
+  serverTimestamp
+} from '@angular/fire/firestore';
 import { first } from 'rxjs/operators';
 
 import {
@@ -114,12 +124,13 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
     { value: 'none',           label: 'No AI tool (baseline)' },
   ];
 
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private afs: AngularFirestore,
-    private afAuth: AngularFireAuth,
     private analytics: AnalyticsService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -138,11 +149,14 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
     if (this.timerIntervalId) { clearInterval(this.timerIntervalId); }
   }
 
-  private loadChallenge() {
+  private async loadChallenge() {
     this.analytics.pageView('ai_pair_challenge');
-    this.afs.collection<Challenge>('challenges', ref =>
-      ref.where('slug', '==', this.slug).limit(1)
-    ).get().pipe(first()).subscribe(snap => {
+    try {
+      const snap = await getDocs(query(
+        collection(this.firestore, 'challenges'),
+        where('slug', '==', this.slug),
+        limit(1)
+      ));
       if (snap.empty) {
         this.errorMsg = 'This AI-pair challenge could not be found. Check the link or browse the catalog.';
         this.step = 'error';
@@ -160,7 +174,11 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
         challengeId: this.challenge.id
       });
       this.cdr.markForCheck();
-    });
+    } catch (err) {
+      this.errorMsg = 'Could not load challenge.';
+      this.step = 'error';
+      this.cdr.markForCheck();
+    }
   }
 
   startChallenge() {
@@ -214,7 +232,7 @@ export class AiPairChallengeComponent implements OnInit, OnDestroy {
 
     // TSEF-A3: Require a real signed-in user with a Firebase ID token.
     // Server also enforces this, but blocking here gives a clearer UX.
-    const user = await this.afAuth.authState.pipe(first()).toPromise();
+    const user = await authState(this.auth).pipe(first()).toPromise();
     if (!user) {
       this.errorMsg = 'You need to be signed in to submit. Please sign in and retry.';
       this.step = 'error';

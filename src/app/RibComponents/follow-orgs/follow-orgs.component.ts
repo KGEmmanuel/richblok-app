@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Utilisateur } from 'src/app/shared/entites/Utilisateur';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, authState } from '@angular/fire/auth';
 import { UserService } from 'src/app/shared/services/user.service';
 import { Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+// D7 Day 2 Batch C — firestore still compat because UserService.get() returns
+// a compat Observable. Safe to leave until UserService migrates in Day 3.
 
 @Component({
   selector: 'app-follow-orgs',
@@ -13,22 +14,20 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class FollowOrgsComponent implements OnInit {
   organisations: boolean = false;
-    currentUser: Utilisateur;
-    constructor(public AuthSvc: AuthService, private afAuth: AngularFireAuth,
-      private afs: AngularFirestore, private userSvc: UserService, private router: Router) {
+  currentUser: Utilisateur;
 
-    }
+  private auth = inject(Auth);
 
-    ngOnInit() {
+  constructor(public AuthSvc: AuthService, private userSvc: UserService, private router: Router) {}
 
-      this.afAuth.authState.subscribe(user => {
-        if (user) {
-          this.userSvc.get(user.uid).subscribe(v => {
-            this.currentUser = v;
-          });
-        }
-      });
-      this.currentUser = new Utilisateur();
-    }
-
+  ngOnInit() {
+    authState(this.auth).subscribe(user => {
+      if (user) {
+        this.userSvc.get(user.uid).subscribe(v => {
+          this.currentUser = v;
+        });
+      }
+    });
+    this.currentUser = new Utilisateur();
   }
+}

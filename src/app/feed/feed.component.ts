@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { first, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Auth, authState } from '@angular/fire/auth';
+import { Firestore, collection, doc, getDoc, getDocs, query, where, limit } from '@angular/fire/firestore';
+import { first } from 'rxjs/operators';
 
 import {
   RbCardComponent, RbCardTitleComponent, RbEyebrowComponent,
@@ -76,9 +75,10 @@ export class FeedComponent implements OnInit {
   // One suggested next action
   suggested: SuggestedChallenge | null = null;
 
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   constructor(
-    private afAuth: AngularFireAuth,
-    private afs: AngularFirestore,
     private title: Title,
     private meta: Meta,
   ) {}
@@ -90,7 +90,7 @@ export class FeedComponent implements OnInit {
       content: 'Your Richblok verified credentials and recent activity.'
     });
 
-    this.afAuth.authState.pipe(first()).subscribe(user => {
+    authState(this.auth).pipe(first()).subscribe(user => {
       if (!user) {
         this.loading = false;
         return;
@@ -107,14 +107,12 @@ export class FeedComponent implements OnInit {
     // a custom Firestore composite index per project. We sort client-side
     // after the fetch (limits are small — 50 badges + 20 profiles).
     Promise.all([
-      this.afs.doc(`utilisateurs/${uid}`).valueChanges().pipe(first()).toPromise(),
-      this.afs.collection('badges', ref => ref.where('uid', '==', uid).limit(50))
-        .get().pipe(first()).toPromise(),
-      this.afs.collection('star_profiles', ref => ref.where('uid', '==', uid).limit(20))
-        .get().pipe(first()).toPromise(),
-      this.afs.collection('challenges', ref => ref.where('creatorType', '==', 'SYS').limit(10))
-        .get().pipe(first()).toPromise(),
-    ]).then(([userDoc, badgesSnap, starsSnap, challengesSnap]: any[]) => {
+      getDoc(doc(this.firestore, 'utilisateurs', uid)),
+      getDocs(query(collection(this.firestore, 'badges'), where('uid', '==', uid), limit(50))),
+      getDocs(query(collection(this.firestore, 'star_profiles'), where('uid', '==', uid), limit(20))),
+      getDocs(query(collection(this.firestore, 'challenges'), where('creatorType', '==', 'SYS'), limit(10))),
+    ]).then(([userSnap, badgesSnap, starsSnap, challengesSnap]: any[]) => {
+      const userDoc = userSnap?.exists?.() ? userSnap.data() : null;
       const u: any = userDoc || {};
       this.userName = [u.prenom, u.nom].filter(Boolean).join(' ') || u.email || '';
       this.userFirstName = u.prenom || (this.userName.split(' ')[0] || 'there');
